@@ -1,9 +1,7 @@
 package maciej_witkowski.teamlister
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -15,8 +13,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.hardware.camera2.CameraDevice
-import android.hardware.camera2.CameraManager
 import android.util.Log
 import com.google.firebase.FirebaseApp
 import com.google.firebase.ml.vision.FirebaseVision
@@ -24,6 +20,9 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.text.FirebaseVisionText
 import com.mindorks.paracamera.Camera
 
+import maciej_witkowski.teamlister.TextUtils.Companion
+
+import maciej_witkowski.teamlister.TextUtils
 
 
 class MainActivity : AppCompatActivity() {
@@ -167,25 +166,6 @@ private fun sortLines(data: MutableList<FirebaseVisionText.Line>){
 
 
 
-
-    @SuppressLint("MissingPermission")
-    private fun startCamera() {
-        val cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
-        val cameraId = cameraManager.cameraIdList[0]
-        cameraManager.openCamera(cameraId, object : CameraDevice.StateCallback() {
-            override fun onOpened(device: CameraDevice) {
-                // Do something with `device`
-            }
-
-            override fun onDisconnected(device: CameraDevice) {
-                device.close()
-            }
-
-            override fun onError(device: CameraDevice, error: Int) {
-                onDisconnected(device)
-            }
-        }, null)
-    }
 
     private fun getCameraPermissions() {
         val rxPermissions = RxPermissions(this);
