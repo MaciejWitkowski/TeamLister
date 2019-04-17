@@ -13,8 +13,64 @@ import org.junit.Assert.*
 class CaseFormatUnitTest {
 
     @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+    fun abcdDefaultTest(){
+        val input ="abcd"
+        val expected="abcd"
+        val actual=TextUtils.caseFormatting(input,CaseFormat.DEFAULT)
+        assertEquals(expected, actual)
     }
 
+    @Test
+    fun abcdUpperLowerTest(){
+        val input ="abcd"
+        val expected="Abcd"
+        val actual=TextUtils.caseFormatting(input,CaseFormat.UPPERLOWER)
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun abcdUpperTest(){
+        val input ="abcd"
+        val expected="ABCD"
+        val actual=TextUtils.caseFormatting(input,CaseFormat.UPPER)
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun abcdLowerTest(){
+        val input ="abcd"
+        val expected="abcd"
+        val actual=TextUtils.caseFormatting(input,CaseFormat.LOWER)
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun nameSurnameDefaultTest(){
+        val input ="name SURNAME"
+        val expected="name SURNAME"
+        val actual=TextUtils.caseFormatting(input,CaseFormat.DEFAULT)
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun nameSurnameUpperLowerTest(){
+        val input ="name SURNAME"
+        val expected="Name Surname"
+        val actual=TextUtils.caseFormatting(input,CaseFormat.UPPERLOWER)
+        assertEquals(expected, actual)
+    }
+    @Test
+    fun nameSurnameUpperTest(){
+        val input ="name SURNAME"
+        val expected="NAME SURNAME"
+        val actual=TextUtils.caseFormatting(input,CaseFormat.UPPER)
+        assertEquals(expected, actual)
+    }
+    @Test
+    fun nameSurnameLowerTest(){
+        val input ="name SURNAME"
+        val expected="name surname"
+        val actual=TextUtils.caseFormatting(input,CaseFormat.LOWER)
+        assertEquals(expected, actual)
+    }
 }

@@ -24,10 +24,10 @@ import maciej_witkowski.teamlister.TextUtils.Companion
 
 import maciej_witkowski.teamlister.TextUtils
 
+private const val TAG = "FIREBASE"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var camera: Camera
-    private val TAG = "FIREBASE"
     private val textRecognitionModels = ArrayList<TextRecognitionModel>()
     private var imageHeight=0
     private var imageWidth=0
@@ -126,9 +126,9 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-private fun sortLines(data: MutableList<FirebaseVisionText.Line>){
+private fun sortLines(data: MutableList<FirebaseVisionText.Line>){//TODO crashes if empty
     val min=data.minBy {it.cornerPoints!![0].x  }
-    Log.d(TAG, "Min: "+min?.cornerPoints!![0].x)//TODO crashes if null
+    Log.d(TAG, "Min: "+min?.cornerPoints!![0].x)
     data.sortBy { it.cornerPoints!![0].y.toFloat() }
     val newSb = StringBuilder()
     for (line in data) {
