@@ -14,17 +14,18 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import com.google.firebase.FirebaseApp
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.text.FirebaseVisionText
 import com.mindorks.paracamera.Camera
-
-import maciej_witkowski.teamlister.TextUtils.Companion
-
-import maciej_witkowski.teamlister.TextUtils
+import maciej_witkowski.remoterelease.SettingsFragment
+import maciej_witkowski.teamlister.utils.TextRecognitionModel
 
 private const val TAG = "FIREBASE"
+private const val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
 
 class MainActivity : AppCompatActivity() {
     private lateinit var camera: Camera
@@ -44,11 +45,49 @@ class MainActivity : AppCompatActivity() {
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_notifications -> {
+                getGalleryPermissions()
                 return@OnNavigationItemSelectedListener true
             }
         }
         false
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.action_settings ->{Toast.makeText(this.applicationContext, "Settings clicked", Toast.LENGTH_SHORT).show()
+                val fragment = SettingsFragment()
+                val ft = supportFragmentManager.beginTransaction()
+                ft.replace(R.id.container, fragment)
+                ft.commit()
+                return true}
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        //setSupportActionBar(toolbar)
+        FirebaseApp.initializeApp(this)
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        message.text = "Hello Kotlin"
+        camera = Camera.Builder()
+            .resetToCorrectOrientation(true)
+            .setTakePhotoRequestCode(Camera.REQUEST_TAKE_PHOTO)
+            .setDirectory("pics")
+            .setName("testlister_${System.currentTimeMillis()}")
+            .setImageFormat(Camera.IMAGE_JPEG)
+            .setCompression(75)
+            .build(this)
+    }
+
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -61,6 +100,9 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     Toast.makeText(this.applicationContext, "picutre not taken", Toast.LENGTH_SHORT).show()
                 }
+            }
+            else if(requestCode==REQUEST_SELECT_IMAGE_IN_ALBUM){
+
             }
         }
     }
@@ -184,6 +226,30 @@ private fun sortLines(data: MutableList<FirebaseVisionText.Line>){//TODO crashes
                 }
             }
     }
+    private fun getGalleryPermissions(){
+        val rxPermissions = RxPermissions(this);
+        var a = rxPermissions
+            .request(Manifest.permission.READ_EXTERNAL_STORAGE)
+            .subscribe { granted ->
+                if (granted) {
+                    Toast.makeText(this, "Granted", Toast.LENGTH_LONG).show()
+                    selectFromGallery()
+                    //startCamera()
+                    // Always true pre-M
+                    // I can control the camera now
+                } else {
+                    Toast.makeText(this, "Not Granted", Toast.LENGTH_LONG).show()
+                    // permission denied
+                }
+            }
+    }
+   private fun selectFromGallery() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "image/*"
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
+        }
+    }
 
     private fun takePicture() {
         try {
@@ -194,19 +260,5 @@ private fun sortLines(data: MutableList<FirebaseVisionText.Line>){//TODO crashes
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        FirebaseApp.initializeApp(this)
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-        message.text = "Hello Kotlin"
-        camera = Camera.Builder()
-            .resetToCorrectOrientation(true)
-            .setTakePhotoRequestCode(Camera.REQUEST_TAKE_PHOTO)
-            .setDirectory("pics")
-            .setName("testlister_${System.currentTimeMillis()}")
-            .setImageFormat(Camera.IMAGE_JPEG)
-            .setCompression(75)
-            .build(this)
-    }
+
 }

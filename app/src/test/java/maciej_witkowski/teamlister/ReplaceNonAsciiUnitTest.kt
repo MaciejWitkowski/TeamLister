@@ -1,5 +1,6 @@
 package maciej_witkowski.teamlister
 
+import maciej_witkowski.teamlister.utils.TextUtils
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -16,7 +17,7 @@ class ReplaceNonAsciiUnitTest {
     fun simpleTest(){
         val input="áéíóůĈ ĉ Ĝ ĝ Ĥ ĥ Ĵ ĵ Ŝ ŝ Ŭ ŭ"
         val expected="aeiouC c G g H h J j S s U u"
-        val actual=TextUtils.replaceNonAsciiChars(input)
+        val actual= TextUtils.replaceNonAsciiChars(input)
         assertEquals(expected, actual)
     }
 
@@ -24,7 +25,7 @@ class ReplaceNonAsciiUnitTest {
     fun polishLowercaseLettersTest(){
         val input="ąćęłńóśźż"
         val expected="acelnoszz"
-        val actual=TextUtils.replaceNonAsciiChars(input)
+        val actual= TextUtils.replaceNonAsciiChars(input)
         assertEquals(expected, actual)
     }
 
@@ -32,7 +33,7 @@ class ReplaceNonAsciiUnitTest {
     fun polishUppercaseLetterTest(){
         val input="Ą Ć Ę Ł Ń Ó Ś Ź Ż"
         val expected="A C E L N O S Z Z"
-        val actual=TextUtils.replaceNonAsciiChars(input)
+        val actual= TextUtils.replaceNonAsciiChars(input)
         assertEquals(expected, actual)
     }
 
@@ -40,7 +41,7 @@ class ReplaceNonAsciiUnitTest {
     fun oTest(){
         val input="Øø"
         val expected="Oo"
-        val actual=TextUtils.replaceNonAsciiChars(input)
+        val actual= TextUtils.replaceNonAsciiChars(input)
         assertEquals(expected, actual)
     }
 

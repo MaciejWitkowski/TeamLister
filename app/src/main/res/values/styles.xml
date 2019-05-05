@@ -7,5 +7,11 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
 
+    </style>
+    <style name="NightYellowTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorPrimary">@android:color/white</item><!--Displayed in app name-->
+        <item name="colorPrimaryDark">@android:color/white</item><!--Displayed in highest bar-->
+    </style>
 </resources>

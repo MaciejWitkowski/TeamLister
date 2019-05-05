@@ -1,5 +1,6 @@
 package maciej_witkowski.teamlister
 
+import maciej_witkowski.teamlister.utils.TextUtils
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -15,7 +16,7 @@ class SplitUnitTest {
     @Test
     fun oneDigitTest() {
         val str="1Name Surname"
-        val actualArray=TextUtils.splitNumbers(str)
+        val actualArray= TextUtils.splitNumbers(str)
 
         val expectedArray= listOf("1","Name Surname")
         assertEquals(expectedArray[0],actualArray[0])
@@ -24,7 +25,7 @@ class SplitUnitTest {
     @Test
     fun twoDigitTest() {
         val str="19Name Surname"
-        val actualArray=TextUtils.splitNumbers(str)
+        val actualArray= TextUtils.splitNumbers(str)
 
         val expectedArray= listOf("19","Name Surname")
         assertEquals(expectedArray[0],actualArray[0])
@@ -34,7 +35,7 @@ class SplitUnitTest {
     @Test
     fun threeDigitTest() {
         val str="191Name Surname"
-        val actualArray=TextUtils.splitNumbers(str)
+        val actualArray= TextUtils.splitNumbers(str)
 
         val expectedArray= listOf("191","Name Surname")
         assertEquals(expectedArray[0],actualArray[0])
@@ -44,7 +45,7 @@ class SplitUnitTest {
     @Test
     fun oneDigitSpaceTest() {
         val str="1 Name Surname"
-        val actualArray=TextUtils.splitNumbers(str)
+        val actualArray= TextUtils.splitNumbers(str)
 
         val expectedArray= listOf("1","Name Surname")
         assertEquals(expectedArray[0],actualArray[0])
@@ -53,7 +54,7 @@ class SplitUnitTest {
     @Test
     fun twoDigitSpaceTest() {
         val str="19 Name Surname"
-        val actualArray=TextUtils.splitNumbers(str)
+        val actualArray= TextUtils.splitNumbers(str)
 
         val expectedArray= listOf("19","Name Surname")
         assertEquals(expectedArray[0],actualArray[0])
@@ -63,7 +64,7 @@ class SplitUnitTest {
     @Test
     fun threeDigitSpaceTest() {
         val str="191 Name Surname"
-        val actualArray=TextUtils.splitNumbers(str)
+        val actualArray= TextUtils.splitNumbers(str)
 
         val expectedArray= listOf("191","Name Surname")
         assertEquals(expectedArray[0],actualArray[0])
@@ -72,7 +73,7 @@ class SplitUnitTest {
     @Test
     fun oneDigitSpaceSpaceTest() {
         val str="1  Name Surname"
-        val actualArray=TextUtils.splitNumbers(str)
+        val actualArray= TextUtils.splitNumbers(str)
 
         val expectedArray= listOf("1","Name Surname")
         assertEquals(expectedArray[0],actualArray[0])
@@ -81,7 +82,7 @@ class SplitUnitTest {
     @Test
     fun twoDigitSpaceSpaceTest() {
         val str="19  Name Surname"
-        val actualArray=TextUtils.splitNumbers(str)
+        val actualArray= TextUtils.splitNumbers(str)
 
         val expectedArray= listOf("19","Name Surname")
         assertEquals(expectedArray[0],actualArray[0])
@@ -91,7 +92,7 @@ class SplitUnitTest {
     @Test
     fun threeDigitSpaceSpaceTest() {
         val str="191  Name Surname"
-        val actualArray=TextUtils.splitNumbers(str)
+        val actualArray= TextUtils.splitNumbers(str)
 
         val expectedArray= listOf("191","Name Surname")
         assertEquals(expectedArray[0],actualArray[0])
@@ -100,7 +101,7 @@ class SplitUnitTest {
     @Test
     fun spaceOneDigitSpaceTest() {
         val str=" 1 Name Surname"
-        val actualArray=TextUtils.splitNumbers(str)
+        val actualArray= TextUtils.splitNumbers(str)
 
         val expectedArray= listOf("1","Name Surname")
         assertEquals(expectedArray[0],actualArray[0])
@@ -109,7 +110,7 @@ class SplitUnitTest {
     @Test
     fun spaceTwoDigitSpaceTest() {
         val str=" 19 Name Surname"
-        val actualArray=TextUtils.splitNumbers(str)
+        val actualArray= TextUtils.splitNumbers(str)
 
         val expectedArray= listOf("19","Name Surname")
         assertEquals(expectedArray[0],actualArray[0])
@@ -119,7 +120,7 @@ class SplitUnitTest {
     @Test
     fun spaceThreeDigitSpaceNameSpaceTest() {
         val str=" 191 Name  Surname"
-        val actualArray=TextUtils.splitNumbers(str)
+        val actualArray= TextUtils.splitNumbers(str)
 
         val expectedArray= listOf("191","Name Surname")
         assertEquals(expectedArray[0],actualArray[0])
@@ -128,7 +129,7 @@ class SplitUnitTest {
     @Test
     fun spaceOneDigitSpaceNameSpaceTest() {
         val str=" 1 Name  Surname"
-        val actualArray=TextUtils.splitNumbers(str)
+        val actualArray= TextUtils.splitNumbers(str)
 
         val expectedArray= listOf("1","Name Surname")
         assertEquals(expectedArray[0],actualArray[0])
@@ -137,7 +138,7 @@ class SplitUnitTest {
     @Test
     fun spaceTwoDigitSpaceNameSpaceTest() {
         val str=" 19 Name  Surname"
-        val actualArray=TextUtils.splitNumbers(str)
+        val actualArray= TextUtils.splitNumbers(str)
 
         val expectedArray= listOf("19","Name Surname")
         assertEquals(expectedArray[0],actualArray[0])
@@ -147,7 +148,7 @@ class SplitUnitTest {
     @Test
     fun spaceThreeDigitSpaceTest() {
         val str=" 191 Name Surname"
-        val actualArray=TextUtils.splitNumbers(str)
+        val actualArray= TextUtils.splitNumbers(str)
 
         val expectedArray= listOf("191","Name Surname")
         assertEquals(expectedArray[0],actualArray[0])
@@ -156,7 +157,7 @@ class SplitUnitTest {
     @Test
     fun spaceOneDigitSpaceLastSpaceTest() {
         val str=" 1 Name Surname "
-        val actualArray=TextUtils.splitNumbers(str)
+        val actualArray= TextUtils.splitNumbers(str)
 
         val expectedArray= listOf("1","Name Surname")
         assertEquals(expectedArray[0],actualArray[0])
@@ -165,7 +166,7 @@ class SplitUnitTest {
     @Test
     fun spaceTwoDigitSpaceLastSpaceTest() {
         val str=" 19 Name Surname "
-        val actualArray=TextUtils.splitNumbers(str)
+        val actualArray= TextUtils.splitNumbers(str)
 
         val expectedArray= listOf("19","Name Surname")
         assertEquals(expectedArray[0],actualArray[0])
@@ -175,7 +176,7 @@ class SplitUnitTest {
     @Test
     fun spaceThreeDigitSpaceLastSpaceTest() {
         val str=" 191 Name Surname "
-        val actualArray=TextUtils.splitNumbers(str)
+        val actualArray= TextUtils.splitNumbers(str)
 
         val expectedArray= listOf("191","Name Surname")
         assertEquals(expectedArray[0],actualArray[0])

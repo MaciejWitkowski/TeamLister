@@ -1,6 +1,8 @@
 package maciej_witkowski.teamlister
 
 
+import maciej_witkowski.teamlister.utils.CaseFormat
+import maciej_witkowski.teamlister.utils.TextUtils
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -16,7 +18,7 @@ class CaseFormatUnitTest {
     fun abcdDefaultTest(){
         val input ="abcd"
         val expected="abcd"
-        val actual=TextUtils.caseFormatting(input,CaseFormat.DEFAULT)
+        val actual= TextUtils.caseFormatting(input, CaseFormat.DEFAULT)
         assertEquals(expected, actual)
     }
 
@@ -24,7 +26,7 @@ class CaseFormatUnitTest {
     fun abcdUpperLowerTest(){
         val input ="abcd"
         val expected="Abcd"
-        val actual=TextUtils.caseFormatting(input,CaseFormat.UPPERLOWER)
+        val actual= TextUtils.caseFormatting(input, CaseFormat.UPPER_LOWER)
         assertEquals(expected, actual)
     }
 
@@ -32,7 +34,7 @@ class CaseFormatUnitTest {
     fun abcdUpperTest(){
         val input ="abcd"
         val expected="ABCD"
-        val actual=TextUtils.caseFormatting(input,CaseFormat.UPPER)
+        val actual= TextUtils.caseFormatting(input, CaseFormat.UPPER)
         assertEquals(expected, actual)
     }
 
@@ -40,7 +42,7 @@ class CaseFormatUnitTest {
     fun abcdLowerTest(){
         val input ="abcd"
         val expected="abcd"
-        val actual=TextUtils.caseFormatting(input,CaseFormat.LOWER)
+        val actual= TextUtils.caseFormatting(input, CaseFormat.LOWER)
         assertEquals(expected, actual)
     }
 
@@ -48,7 +50,7 @@ class CaseFormatUnitTest {
     fun nameSurnameDefaultTest(){
         val input ="name SURNAME"
         val expected="name SURNAME"
-        val actual=TextUtils.caseFormatting(input,CaseFormat.DEFAULT)
+        val actual= TextUtils.caseFormatting(input, CaseFormat.DEFAULT)
         assertEquals(expected, actual)
     }
 
@@ -56,21 +58,21 @@ class CaseFormatUnitTest {
     fun nameSurnameUpperLowerTest(){
         val input ="name SURNAME"
         val expected="Name Surname"
-        val actual=TextUtils.caseFormatting(input,CaseFormat.UPPERLOWER)
+        val actual= TextUtils.caseFormatting(input, CaseFormat.UPPER_LOWER)
         assertEquals(expected, actual)
     }
     @Test
     fun nameSurnameUpperTest(){
         val input ="name SURNAME"
         val expected="NAME SURNAME"
-        val actual=TextUtils.caseFormatting(input,CaseFormat.UPPER)
+        val actual= TextUtils.caseFormatting(input, CaseFormat.UPPER)
         assertEquals(expected, actual)
     }
     @Test
     fun nameSurnameLowerTest(){
         val input ="name SURNAME"
         val expected="name surname"
-        val actual=TextUtils.caseFormatting(input,CaseFormat.LOWER)
+        val actual= TextUtils.caseFormatting(input, CaseFormat.LOWER)
         assertEquals(expected, actual)
     }
 }
