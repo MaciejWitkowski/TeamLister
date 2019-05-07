@@ -23,7 +23,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.fragment_camera.*
 
 import maciej_witkowski.teamlister.R
-import maciej_witkowski.teamlister.utils.TextRecognitionModel
+import maciej_witkowski.teamlister.model.TextRecognitionModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
