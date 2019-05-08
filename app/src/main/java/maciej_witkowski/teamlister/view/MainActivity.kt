@@ -1,4 +1,4 @@
-package maciej_witkowski.teamlister
+package maciej_witkowski.teamlister.view
 
 import android.Manifest
 import android.os.Bundle
@@ -13,14 +13,14 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.google.firebase.FirebaseApp
 import maciej_witkowski.remoterelease.SettingsFragment
-import maciej_witkowski.teamlister.view.CameraFragment
-import maciej_witkowski.teamlister.view.PickResultFragment
+import maciej_witkowski.teamlister.R
 
 private const val TAG = "FIREBASE"
 private const val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
 
 class MainActivity : AppCompatActivity() {
-
+    //lateinit var bundle:Bundle
+    var bundle : Bundle? = null
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_list -> {
@@ -29,10 +29,12 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.navigation_camera -> {
                 loadFragment(CameraFragment())
+
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_gallery -> {
-                getGalleryPermissions()
+                //getGalleryPermissions()
+                loadFragment(ListResultFragment())
                 return@OnNavigationItemSelectedListener true
             }
         }
@@ -40,12 +42,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadFragment(fragment: Fragment){
-       // if (savedInstanceState == null) {//to avoid fragment recreation
+        if (bundle == null) {//to avoid fragment recreation
             supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.contentFrame, fragment)
                 .commit()
-        //}
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -67,6 +69,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         //setSupportActionBar(toolbar)
+        bundle=savedInstanceState
         FirebaseApp.initializeApp(this)
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
     }
