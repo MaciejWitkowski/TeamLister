@@ -8,10 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
 import android.content.Intent
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.google.firebase.FirebaseApp
+import kotlinx.android.synthetic.main.content_main.*
 import maciej_witkowski.remoterelease.SettingsFragment
 import maciej_witkowski.teamlister.R
 
@@ -24,12 +26,13 @@ class MainActivity : AppCompatActivity() {
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_list -> {
-                loadFragment(PickResultFragment())
+                Log.d(TAG, "list fragment should be loaded")
+                loadFragment(ListFragment())
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_camera -> {
-                loadFragment(CameraFragment())
-
+                Log.d(TAG, "View Pager should be loaded")
+                loadFragment(ViewPagerFragment())
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_gallery -> {
@@ -42,12 +45,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadFragment(fragment: Fragment){
-        if (bundle == null) {//to avoid fragment recreation
+       // if (bundle == null) {//to avoid fragment recreation
             supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.contentFrame, fragment)
                 .commit()
-        }
+     //   }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

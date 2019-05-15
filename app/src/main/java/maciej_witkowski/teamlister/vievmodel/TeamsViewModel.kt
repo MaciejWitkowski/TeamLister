@@ -9,30 +9,31 @@ import androidx.lifecycle.*
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.text.FirebaseVisionText
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import maciej_witkowski.teamlister.model.FirebaseTextRecognition
-import maciej_witkowski.teamlister.model.RawDataModel
-import maciej_witkowski.teamlister.model.TextRecognitionModel
+import maciej_witkowski.teamlister.model.TextLineLight
+import maciej_witkowski.teamlister.utils.CaseFormat
+import maciej_witkowski.teamlister.utils.TextUtils
 
-private const val TAG = "TeamsVievModel"
+private const val TAG = "TeamsViewModel"
 
 class TeamsViewModel(handle: SavedStateHandle) : ViewModel(), LifecycleObserver {
 
-    private val imageHandle: MutableLiveData<Bitmap> = handle.getLiveData<Bitmap>("Image")
+    private val imageHandle: MutableLiveData<Bitmap> = handle.getLiveData<Bitmap>("Image")//TODO image is too big for parcel
     val image: LiveData<Bitmap> = imageHandle
 
-    private val rawTeam1Handle: MutableLiveData<MutableList<RawDataModel>> =
-        handle.getLiveData<MutableList<RawDataModel>>("RawTeam1")
-    val rawTeam1: LiveData<MutableList<RawDataModel>> = rawTeam1Handle
+    private val textLinesHandle: MutableLiveData<MutableList<TextLineLight>> =
+        handle.getLiveData<MutableList<TextLineLight>>("TextLines")
+    val textLines: LiveData<MutableList<TextLineLight>> = textLinesHandle
+
+    private val rawTeam1Handle: MutableLiveData<MutableList<TextLineLight>> =
+        handle.getLiveData<MutableList<TextLineLight>>("RawTeam1")
+    val rawTeam1: LiveData<MutableList<TextLineLight>> = rawTeam1Handle
+
+    private val rawTeam2Handle: MutableLiveData<MutableList<TextLineLight>> =
+        handle.getLiveData<MutableList<TextLineLight>>("RawTeam2")
+    val rawTeam2: LiveData<MutableList<TextLineLight>> = rawTeam2Handle
 
     private val team1Handle: MutableLiveData<String> = handle.getLiveData<String>("Team1")
     val team1: LiveData<String> = team1Handle
-
-    private val rawTeam2Handle: MutableLiveData<MutableList<RawDataModel>> =
-        handle.getLiveData<MutableList<RawDataModel>>("RawTeam2")
-    val rawTeam2: LiveData<MutableList<RawDataModel>> = rawTeam1Handle
 
     private val team2Handle: MutableLiveData<String> = handle.getLiveData<String>("Team2")
     val team2: LiveData<String> = team2Handle
@@ -43,39 +44,37 @@ class TeamsViewModel(handle: SavedStateHandle) : ViewModel(), LifecycleObserver 
         analyzeImage(bitmap)
     }
 
-    fun analyze(bitmap: Bitmap?) {
 
-        if (bitmap != null) {
+    private fun rawToTeam(data: MutableList<TextLineLight>?, team: Int) {
+        val newSb = StringBuilder()
+        if (data != null) {
+            for (line in data) {
+                var tmp = line.text
+                tmp = TextUtils.fixWrongT(tmp)
+                tmp = TextUtils.caseFormatting(tmp, CaseFormat.UPPER_LOWER)
+                tmp = TextUtils.replaceNonAsciiChars(tmp)
+                newSb.append(tmp + "\n")
+            }
         }
-    }
-
-    fun tmp() {
-        Single.fromCallable { analyze(imageHandle.value) }
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
+        if (team == 1)
+            team1Handle.value = newSb.toString()
+        else if (team == 2)
+            team2Handle.value = newSb.toString()
     }
 
 
-    //private fun appendTeam(){}   raw team to team
+//    private var imageHeight = 0
+//    private var imageWidth = 0
 
-
-    private val textRecognitionModels = ArrayList<TextRecognitionModel>()
-    private var imageHeight = 0
-    private var imageWidth = 0
-    private var teamFirst = mutableListOf<FirebaseVisionText.Line>()
-    private var teamSecond = mutableListOf<FirebaseVisionText.Line>()
 
     private fun analyzeImage(image: Bitmap) {
-        textRecognitionModels.clear()
         val firebaseVisionImage = FirebaseVisionImage.fromBitmap(image)
         val textRecognizer = FirebaseVision.getInstance().onDeviceTextRecognizer
         textRecognizer.processImage(firebaseVisionImage)
             .addOnSuccessListener {
                 val mutableImage = image.copy(Bitmap.Config.ARGB_8888, true)
                 Log.d(TAG, "Success")
-                var data=recognizeText(it, mutableImage)
-                //sortLines(data)
+                recognizeText(it, mutableImage)
                 imageHandle.value = mutableImage
             }
             .addOnFailureListener {
@@ -83,76 +82,106 @@ class TeamsViewModel(handle: SavedStateHandle) : ViewModel(), LifecycleObserver 
             }
     }
 
-    private fun recognizeText(result: FirebaseVisionText?, image: Bitmap?): MutableList<FirebaseVisionText.Line>? {
-        if (result == null || image == null) {
-            // Toast.makeText(requireContext(), "There was some error", Toast.LENGTH_SHORT).show()
-            return null
-        }
-        imageHeight = image.height
-        imageWidth = image.width
-        val canvas = Canvas(image)
-        val rectPaint = Paint()
-        rectPaint.color = Color.RED
-        rectPaint.style = Paint.Style.STROKE
-        rectPaint.strokeWidth = 4F
-        val textPaint = Paint()
-        textPaint.color = Color.RED
-        textPaint.textSize = 40F
-
-        var index = 0
-        val sb = StringBuilder()
-        var data = mutableListOf<FirebaseVisionText.Line>()
+    private fun recognizeText(result: FirebaseVisionText, image: Bitmap) {
+        val data = mutableListOf<FirebaseVisionText.Line>()
+        val tmp = mutableListOf<TextLineLight>()
         for (block in result.textBlocks) {
             for (line in block.lines) {
-                if (isValidLine(line)) {
-                    canvas.drawRect(line.boundingBox, rectPaint)
-                    sb.append(line.text +"\n")
-                    //val lineData = NameData(text = line.text, cord = line.getCornerPoints()!![0].y.toFloat())
+                val rect = line.boundingBox
+                if (TextUtils.isValidLine(line.text) && rect != null) {
                     data.add(line)
+                    tmp.add(TextLineLight(line.text, rect))
                 }
-                textRecognitionModels.add(TextRecognitionModel(index++, line.text))
             }
         }
-        sortLines(data)//TODO out
-        return data
+        textLinesHandle.value = tmp
+        splitAuto(tmp, image)
     }
 
-
-    private fun sortLines(data: MutableList<FirebaseVisionText.Line>) {
-        Log.d(TAG, data.size.toString())
+    private fun splitAuto(data: MutableList<TextLineLight>, image: Bitmap) {
+        val imageHeight = image.height
+        val imageWidth = image.width
+        val canvas = Canvas(image)
+        val team1Paint = Paint()
+        team1Paint.color = Color.parseColor("#80DEEA")
+        team1Paint.style = Paint.Style.STROKE
+        team1Paint.strokeWidth = 4F
+        val team2Paint = Paint()
+        team2Paint.color = Color.parseColor("#CE93D8")
+        team2Paint.style = Paint.Style.STROKE
+        team2Paint.strokeWidth = 4F
+        val teamFirst = mutableListOf<TextLineLight>()
+        val teamSecond = mutableListOf<TextLineLight>()
         if (data.size > 0) {
-            val min = data.minBy { it.cornerPoints!![0].x }
-            Log.d(TAG, "Min: "+min?.cornerPoints!![0].x)
-            data.sortBy { it.cornerPoints!![0].y.toFloat() }
-            val newSb = StringBuilder()
+            val min = data.minBy { it.boundingBox.left }
+            data.sortBy { it.boundingBox.top }
             for (line in data) {
-                if (line.cornerPoints!![0].x < (min.cornerPoints!![0].x + (imageHeight * 0.25))) {
+                if (line.boundingBox.left < (min!!.boundingBox.left + (imageWidth * 0.25))) {
+                    canvas.drawRect(line.boundingBox, team1Paint)
                     teamFirst.add(line)
-                    newSb.append(line.text + "\n")
                 } else {
+                    canvas.drawRect(line.boundingBox, team2Paint)
                     teamSecond.add(line)
                 }
             }
         }
+        rawTeam1Handle.value = teamFirst
+        rawTeam2Handle.value = teamSecond
     }
 
+    fun allTeam1(){
+        splitToTeam1(textLinesHandle.value,imageHandle.value)
+    }
 
+    fun allTeam2(){
+        splitToTeam2(textLinesHandle.value,imageHandle.value)
+    }
 
-    private fun teamToLogD(data: MutableList<FirebaseVisionText.Line>) {
-        for (line in data) {
-            Log.d(TAG, line.text + " " + line.getCornerPoints()!![0].toString())
-            Log.d(TAG, line.cornerPoints!![1].toString())
-            Log.d(TAG, line.getCornerPoints()!![2].toString())
-            Log.d(TAG, line.getCornerPoints()!![3].toString())
+    fun auto(){
+        splitAuto(textLinesHandle.value!!,imageHandle.value!!)//TODO NEED NULL CHECKS
+    }
+
+    private fun splitToTeam1(data: MutableList<TextLineLight>?, image: Bitmap?){
+        val canvas = Canvas(image)
+        val paint = Paint()
+        paint.color = Color.parseColor("#80DEEA")
+        paint.style = Paint.Style.STROKE
+        paint.strokeWidth = 4F
+        val teamFirst = mutableListOf<TextLineLight>()
+        val teamSecond = mutableListOf<TextLineLight>()
+        if (data!=null) {
+            for (line in data) {
+                    canvas.drawRect(line.boundingBox, paint)
+                    teamFirst.add(line)
+                }
         }
+        rawTeam1Handle.value = teamFirst
+        rawTeam2Handle.value = teamSecond
     }
-
-
-    private fun isValidLine(line: FirebaseVisionText.Line): Boolean {
-        var isValid = false
-        if (line.text[0].isDigit() && line.text.length > 5)
-            isValid = true
-        return isValid
+    private fun splitToTeam2(data: MutableList<TextLineLight>?, image: Bitmap?){
+        val canvas = Canvas(image)
+        val paint = Paint()
+        paint.color = Color.parseColor("#CE93D8")
+        paint.style = Paint.Style.STROKE
+        paint.strokeWidth = 4F
+        val teamFirst = mutableListOf<TextLineLight>()
+        val teamSecond = mutableListOf<TextLineLight>()
+        if (data!=null) {
+            for (line in data) {
+                canvas.drawRect(line.boundingBox, paint)
+                teamSecond.add(line)
+            }
+        }
+        rawTeam1Handle.value = teamFirst
+        rawTeam2Handle.value = teamSecond
+    }
+    
+    fun acceptResult() {
+        rawToTeam(rawTeam1Handle.value, 1)
+        rawToTeam(rawTeam2Handle.value, 2)
+        //Raw team1 clean
+        //Raw team2 clean
+        //Bitmap clean
     }
 
 }

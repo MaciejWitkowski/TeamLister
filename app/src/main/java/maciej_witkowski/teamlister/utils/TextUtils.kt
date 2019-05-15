@@ -7,6 +7,14 @@ private val REGEX_UNACCENTED = "\\p{InCombiningDiacriticalMarks}+".toRegex()
 
 class TextUtils {
     companion object {
+
+        fun isValidLine(line: String): Boolean {//TODO needs to be improved, need UT
+            var isValid = false
+            if (line[0].isDigit() && line.length > 5)
+                isValid = true
+            return isValid
+        }
+
         fun splitNumbers(str: String): List<String> {//split text into number + name
             var needle = ""
             var result = str.replace("[0-9]{1,3}".toRegex()) { needle = it.value; "" }
@@ -22,6 +30,7 @@ class TextUtils {
 
         fun replaceNonAsciiChars(input: String): String {
             var str = input
+            //Chars not replaced by normalize
             str = str.replace("ł", "l")
             str = str.replace("Ł", "L")
             str = str.replace("Ø", "O")
