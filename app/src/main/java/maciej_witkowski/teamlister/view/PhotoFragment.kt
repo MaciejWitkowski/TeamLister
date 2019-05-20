@@ -38,6 +38,7 @@ class PickResultFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        var app = requireActivity().getApplication()
         viewModel = ViewModelProviders.of(requireActivity(), SavedStateVMFactory(requireActivity()))
             .get(TeamsViewModel::class.java)
     }

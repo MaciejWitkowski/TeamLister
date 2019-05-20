@@ -2,8 +2,6 @@ package maciej_witkowski.remoterelease
 import androidx.preference.PreferenceFragmentCompat
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.WindowManager
-import android.widget.Toast
 import maciej_witkowski.teamlister.R
 
 

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
 import android.content.Intent
+import android.os.Environment
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -16,6 +17,10 @@ import com.google.firebase.FirebaseApp
 import kotlinx.android.synthetic.main.content_main.*
 import maciej_witkowski.remoterelease.SettingsFragment
 import maciej_witkowski.teamlister.R
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+
 
 private const val TAG = "FIREBASE"
 private const val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
@@ -75,6 +80,39 @@ class MainActivity : AppCompatActivity() {
         bundle=savedInstanceState
         FirebaseApp.initializeApp(this)
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        File("/storage/emulated/0").walk().forEach {
+            Log.d("PATH",it.toString())
+        }
+
+
+        /*
+        ///data/user/0/maciej_witkowski.teamlister/files/pics
+        //val path="data/user/0/maciej_witkowski.teamlister/files/pics"
+        //val listOfFiles = getFilesDir().list()
+
+        File("/data/user/0/maciej_witkowski.teamlister/files").walk().forEach {
+            Log.d("files",it.toString())
+        }
+
+        val filepath = Environment.getExternalStorageDirectory().getAbsolutePath().toString()
+        Log.d("PATH",filepath)
+        val fileName="name.txt"
+        val fileContent="test"
+        //var myExternalFile:File = File(getExternalFilesDir(filepath),fileName)
+        var myExternalFile:File = File(filepath,fileName)
+        try {
+            Log.e("PATH","final path: "+myExternalFile.absolutePath)
+            val fileOutPutStream = FileOutputStream(myExternalFile)
+            fileOutPutStream.write(fileContent.toByteArray())
+            fileOutPutStream.close()
+            Log.d("PATH","ok")
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Log.d("PATH","error")
+        }
+        File("/storage/emulated/0").walk().forEach {
+            Log.d("PATH",it.toString())
+        }*/
     }
 
 
@@ -86,9 +124,6 @@ class MainActivity : AppCompatActivity() {
                 if (granted) {
                     Toast.makeText(this, "Granted", Toast.LENGTH_LONG).show()
                     selectFromGallery()
-                    //startCamera()
-                    // Always true pre-M
-                    // I can control the camera now
                 } else {
                     Toast.makeText(this, "Not Granted", Toast.LENGTH_LONG).show()
                     // permission denied

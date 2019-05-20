@@ -59,6 +59,8 @@ class ListFragment : Fragment() {
         btnTeam2.setOnClickListener {
             viewModel.team1.removeObserver(teamObserver)
             viewModel.team2.observe(this,teamObserver) }
+        btnSave.setOnClickListener { viewModel.saveToFiles() }
     }
+
 
 }

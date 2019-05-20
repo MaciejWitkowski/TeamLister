@@ -1,9 +1,12 @@
 package maciej_witkowski.teamlister.vievmodel
 
+import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.media.MediaScannerConnection
+import android.os.Environment
 import android.util.Log
 import androidx.lifecycle.*
 import com.google.firebase.ml.vision.FirebaseVision
@@ -12,12 +15,16 @@ import com.google.firebase.ml.vision.text.FirebaseVisionText
 import maciej_witkowski.teamlister.model.TextLineLight
 import maciej_witkowski.teamlister.utils.CaseFormat
 import maciej_witkowski.teamlister.utils.TextUtils
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 private const val TAG = "TeamsViewModel"
 
 class TeamsViewModel(handle: SavedStateHandle) : ViewModel(), LifecycleObserver {
 
-    private val imageHandle: MutableLiveData<Bitmap> = handle.getLiveData<Bitmap>("Image")//TODO image is too big for parcel
+    private val imageHandle: MutableLiveData<Bitmap> =
+        handle.getLiveData<Bitmap>("Image")//TODO image is too big for parcel, also some kind of history can be implemented
     val image: LiveData<Bitmap> = imageHandle
 
     private val textLinesHandle: MutableLiveData<MutableList<TextLineLight>> =
@@ -44,27 +51,6 @@ class TeamsViewModel(handle: SavedStateHandle) : ViewModel(), LifecycleObserver 
         analyzeImage(bitmap)
     }
 
-
-    private fun rawToTeam(data: MutableList<TextLineLight>?, team: Int) {
-        val newSb = StringBuilder()
-        if (data != null) {
-            for (line in data) {
-                var tmp = line.text
-                tmp = TextUtils.fixWrongT(tmp)
-                tmp = TextUtils.caseFormatting(tmp, CaseFormat.UPPER_LOWER)
-                tmp = TextUtils.replaceNonAsciiChars(tmp)
-                newSb.append(tmp + "\n")
-            }
-        }
-        if (team == 1)
-            team1Handle.value = newSb.toString()
-        else if (team == 2)
-            team2Handle.value = newSb.toString()
-    }
-
-
-//    private var imageHeight = 0
-//    private var imageWidth = 0
 
 
     private fun analyzeImage(image: Bitmap) {
@@ -129,19 +115,19 @@ class TeamsViewModel(handle: SavedStateHandle) : ViewModel(), LifecycleObserver 
         rawTeam2Handle.value = teamSecond
     }
 
-    fun allTeam1(){
-        splitToTeam1(textLinesHandle.value,imageHandle.value)
+    fun allTeam1() {
+        splitToTeam1(textLinesHandle.value, imageHandle.value)
     }
 
-    fun allTeam2(){
-        splitToTeam2(textLinesHandle.value,imageHandle.value)
+    fun allTeam2() {
+        splitToTeam2(textLinesHandle.value, imageHandle.value)
     }
 
-    fun auto(){
-        splitAuto(textLinesHandle.value!!,imageHandle.value!!)//TODO NEED NULL CHECKS
+    fun auto() {
+        splitAuto(textLinesHandle.value!!, imageHandle.value!!)//TODO NEED NULL CHECKS
     }
 
-    private fun splitToTeam1(data: MutableList<TextLineLight>?, image: Bitmap?){
+    private fun splitToTeam1(data: MutableList<TextLineLight>?, image: Bitmap?) {
         val canvas = Canvas(image)
         val paint = Paint()
         paint.color = Color.parseColor("#80DEEA")
@@ -149,16 +135,17 @@ class TeamsViewModel(handle: SavedStateHandle) : ViewModel(), LifecycleObserver 
         paint.strokeWidth = 4F
         val teamFirst = mutableListOf<TextLineLight>()
         val teamSecond = mutableListOf<TextLineLight>()
-        if (data!=null) {
+        if (data != null) {
             for (line in data) {
-                    canvas.drawRect(line.boundingBox, paint)
-                    teamFirst.add(line)
-                }
+                canvas.drawRect(line.boundingBox, paint)
+                teamFirst.add(line)
+            }
         }
         rawTeam1Handle.value = teamFirst
         rawTeam2Handle.value = teamSecond
     }
-    private fun splitToTeam2(data: MutableList<TextLineLight>?, image: Bitmap?){
+
+    private fun splitToTeam2(data: MutableList<TextLineLight>?, image: Bitmap?) {
         val canvas = Canvas(image)
         val paint = Paint()
         paint.color = Color.parseColor("#CE93D8")
@@ -166,7 +153,7 @@ class TeamsViewModel(handle: SavedStateHandle) : ViewModel(), LifecycleObserver 
         paint.strokeWidth = 4F
         val teamFirst = mutableListOf<TextLineLight>()
         val teamSecond = mutableListOf<TextLineLight>()
-        if (data!=null) {
+        if (data != null) {
             for (line in data) {
                 canvas.drawRect(line.boundingBox, paint)
                 teamSecond.add(line)
@@ -175,13 +162,58 @@ class TeamsViewModel(handle: SavedStateHandle) : ViewModel(), LifecycleObserver 
         rawTeam1Handle.value = teamFirst
         rawTeam2Handle.value = teamSecond
     }
-    
+
     fun acceptResult() {
-        rawToTeam(rawTeam1Handle.value, 1)
-        rawToTeam(rawTeam2Handle.value, 2)
-        //Raw team1 clean
+        rawToTeam(rawTeam1Handle.value, team1Handle)
+        rawToTeam(rawTeam2Handle.value, team2Handle)
+        //Raw team1 clean //TODO
         //Raw team2 clean
         //Bitmap clean
     }
 
+    private fun rawToTeam(data:MutableList<TextLineLight>?, output: MutableLiveData<String>){
+        val newSb = StringBuilder()
+        if (data != null) {
+            for (line in data) {
+                var tmp = line.text
+                tmp = TextUtils.fixWrongT(tmp)
+                tmp = TextUtils.caseFormatting(tmp, CaseFormat.UPPER_LOWER)
+                tmp = TextUtils.replaceNonAsciiChars(tmp)
+                newSb.append(tmp + "\r\n")
+                Log.d(TAG, tmp)
+            }
+        }
+        output.value=newSb.toString()
+    }
+
+
+
+    fun saveToFiles() {
+        saveTeam(team1Handle.value, "team1.txt")
+        saveTeam(team2Handle.value, "team2.txt")
+    }
+
+    private fun saveTeam(team: String?, filename: String) {
+        if (!team.isNullOrEmpty()) {
+            val filepath = Environment.getExternalStorageDirectory().absolutePath.toString()
+            val myExternalFile: File = File(filepath, filename)
+            try {
+                Log.e("PATH", "final path: " + myExternalFile.absolutePath)
+                val fileOutPutStream = FileOutputStream(myExternalFile,false)
+                fileOutPutStream.write(team.toByteArray())
+                fileOutPutStream.flush()
+                fileOutPutStream.close()
+
+                myExternalFile.setExecutable(true)
+                myExternalFile.setReadable(true)
+                myExternalFile.setWritable(true)
+                //MediaScannerConnection.scanFile(this,  String[] {myExternalFile.toString()}, null, null); //TODO VM->AVM with app context
+                Log.d("PATH", "ok")
+            } catch (e: IOException) {
+                e.printStackTrace()
+                Log.d("PATH", "error")
+            }
+        }
+
+    }
 }
