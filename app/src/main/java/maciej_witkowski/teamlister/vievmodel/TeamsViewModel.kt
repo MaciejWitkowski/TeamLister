@@ -21,7 +21,7 @@ import java.io.IOException
 
 private const val TAG = "TeamsViewModel"
 
-class TeamsViewModel(handle: SavedStateHandle) : ViewModel(), LifecycleObserver {
+class TeamsViewModel(handle: SavedStateHandle,app: Application) : AndroidViewModel(app), LifecycleObserver {
 
     private val imageHandle: MutableLiveData<Bitmap> =
         handle.getLiveData<Bitmap>("Image")//TODO image is too big for parcel, also some kind of history can be implemented
@@ -185,7 +185,6 @@ class TeamsViewModel(handle: SavedStateHandle) : ViewModel(), LifecycleObserver 
         }
         output.value=newSb.toString()
     }
-
 
 
     fun saveToFiles() {
