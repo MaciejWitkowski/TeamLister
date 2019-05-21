@@ -6,8 +6,10 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Environment
 import android.util.Log
+import androidx.annotation.NonNull
 import androidx.lifecycle.*
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
@@ -21,7 +23,14 @@ import java.io.IOException
 
 private const val TAG = "TeamsViewModel"
 
-class TeamsViewModel(handle: SavedStateHandle) : ViewModel(), LifecycleObserver {
+class TeamsViewModel(app: Application,handle: SavedStateHandle) : AndroidViewModel(app){
+  //  override fun <T : Application?> getApplication(): T {
+   //     return super.getApplication()
+    //}
+    @NonNull
+    override fun <T : Application> getApplication(): T{
+      return super.getApplication()
+    }
 
     private val imageHandle: MutableLiveData<Bitmap> =
         handle.getLiveData<Bitmap>("Image")//TODO image is too big for parcel, also some kind of history can be implemented
@@ -49,6 +58,7 @@ class TeamsViewModel(handle: SavedStateHandle) : ViewModel(), LifecycleObserver 
     fun setBitmap(bitmap: Bitmap) {
         imageHandle.value = bitmap
         analyzeImage(bitmap)
+
     }
 
 
@@ -124,7 +134,7 @@ class TeamsViewModel(handle: SavedStateHandle) : ViewModel(), LifecycleObserver 
     }
 
     fun auto() {
-        splitAuto(textLinesHandle.value!!, imageHandle.value!!)//TODO NEED NULL CHECKS
+        splitAuto(textLinesHandle.value!!, imageHandle.value!!)
     }
 
     private fun splitToTeam1(data: MutableList<TextLineLight>?, image: Bitmap?) {
@@ -202,11 +212,10 @@ class TeamsViewModel(handle: SavedStateHandle) : ViewModel(), LifecycleObserver 
                 fileOutPutStream.write(team.toByteArray())
                 fileOutPutStream.flush()
                 fileOutPutStream.close()
-
                 myExternalFile.setExecutable(true)
                 myExternalFile.setReadable(true)
                 myExternalFile.setWritable(true)
-                //MediaScannerConnection.scanFile(this,  String[] {myExternalFile.toString()}, null, null); //TODO VM->AVM with app context
+                MediaScannerConnection.scanFile(getApplication<Application>().applicationContext,  arrayOf(myExternalFile.toString()), null, null)
                 Log.d("PATH", "ok")
             } catch (e: IOException) {
                 e.printStackTrace()
