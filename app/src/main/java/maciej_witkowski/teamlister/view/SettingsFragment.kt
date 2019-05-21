@@ -1,4 +1,4 @@
-package maciej_witkowski.remoterelease
+package maciej_witkowski.teamlister.view
 import androidx.preference.PreferenceFragmentCompat
 import android.content.SharedPreferences
 import android.os.Bundle

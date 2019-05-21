@@ -12,11 +12,10 @@ class MyPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
                 PickResultFragment()
             }
             else -> {
-                return ListResultFragment()
+                return RawTeamFragment()
             }
         }
     }
-
     override fun getCount(): Int {
         return 2
 

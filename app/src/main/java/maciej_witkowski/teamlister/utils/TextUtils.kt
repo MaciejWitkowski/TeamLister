@@ -1,6 +1,5 @@
 package maciej_witkowski.teamlister.utils
 
-import android.util.Log
 import java.text.Normalizer
 
 private val REGEX_UNACCENTED = "\\p{InCombiningDiacriticalMarks}+".toRegex()
@@ -64,32 +63,29 @@ class TextUtils {
 
 
 private fun splitKeepDelims(s: String, rx: Regex, keep_empty: Boolean = true): MutableList<String> {
-    val rx = "[A-Z][t][A-Z]".toRegex()
-    val res = mutableListOf<String>() // Declare the mutable list var
-    var start = 0                     // Define var for substring start pos
+    val res = mutableListOf<String>()
+    var start = 0
     rx.findAll(s).forEach {
-        // Looking for matches
-        val subStrBefore = s.substring(start, it.range.first()) // // Substring before match start
-        if (subStrBefore.length > 0 || keep_empty) {
-            res.add(subStrBefore)      // Adding substring before match start
+        val subStrBefore = s.substring(start, it.range.first())
+        if (subStrBefore.isNotEmpty() || keep_empty) {
+            res.add(subStrBefore)
         }
-        res.add(it.value)               // Adding match
-        start = it.range.last() + 1       // Updating start pos of next substring before match
+        res.add(it.value)
+        start = it.range.last() + 1
     }
-    if (start != s.length) res.add(s.substring(start))  // Adding text after last match if any
-    Log.e("TAG", res.toString())
+    if (start != s.length) res.add(s.substring(start))
     return res
 }
 
 
 private fun replaceT(input: String, regex: Regex): String {
-    val splited = splitKeepDelims(input, regex)
+    val split = splitKeepDelims(input, regex)
     var result = ""
-    for (i: Int in 0 until splited.size) {
-        if (regex.containsMatchIn(splited[i])) {
-            splited[i] = splited[i].replace('t', 'Ł')
+    for (i: Int in 0 until split.size) {
+        if (regex.containsMatchIn(split[i])) {
+            split[i] = split[i].replace('t', 'Ł')
         }
-        result += splited[i]
+        result += split[i]
     }
     return result
 }

@@ -17,13 +17,6 @@ import androidx.lifecycle.ViewModelProviders
 import com.mindorks.paracamera.Camera
 import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
 
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-
 class PickResultFragment : Fragment() {
     private lateinit var viewModel: TeamsViewModel
     private lateinit var camera: Camera
@@ -38,7 +31,7 @@ class PickResultFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var app = requireActivity().getApplication()
+        var app = requireActivity().getApplication()//TODO pass to AndroidViewModel
         viewModel = ViewModelProviders.of(requireActivity(), SavedStateVMFactory(requireActivity()))
             .get(TeamsViewModel::class.java)
     }
