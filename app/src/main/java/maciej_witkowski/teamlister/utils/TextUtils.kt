@@ -1,5 +1,6 @@
 package maciej_witkowski.teamlister.utils
 
+import maciej_witkowski.teamlister.model.PlayerData
 import java.text.Normalizer
 
 private val REGEX_UNACCENTED = "\\p{InCombiningDiacriticalMarks}+".toRegex()
@@ -14,7 +15,7 @@ class TextUtils {
             return isValid
         }
 
-        fun splitNumbers(str: String): List<String> {//split text into number + name
+        fun splitNumbers(str: String): PlayerData {//split text into number + name
             var needle = ""
             var result = str.replace("[0-9]{1,3}".toRegex()) { needle = it.value; "" }
             result = result.replace("\\s+".toRegex(), " ")
@@ -24,7 +25,7 @@ class TextUtils {
             while (result.endsWith(" ")) {
                 result = result.removeSuffix(" ")
             }
-            return listOf(needle, result)
+            return PlayerData(needle,result)
         }
 
         fun replaceNonAsciiChars(input: String): String {

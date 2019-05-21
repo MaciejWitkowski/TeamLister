@@ -7,10 +7,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.simple_tv_row.view.*
 import maciej_witkowski.teamlister.R
+import maciej_witkowski.teamlister.model.PlayerData
 import maciej_witkowski.teamlister.model.TextLineLight
 
 
-class RawTeamAdapter(private var items : MutableList<TextLineLight>?, private val context: Context) : RecyclerView.Adapter<ViewHolder>() {
+class RawTeamAdapter(private var items : MutableList<PlayerData>?, private val context: Context) : RecyclerView.Adapter<ViewHolder>() {
 
     override fun getItemCount(): Int {
         return if (items==null){
@@ -24,7 +25,7 @@ class RawTeamAdapter(private var items : MutableList<TextLineLight>?, private va
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.tvNumber.text = items?.get(position)?.text
+        holder.tvNumber.text = items?.get(position)?.number+" "+ items?.get(position)?.name
     }
 
 }

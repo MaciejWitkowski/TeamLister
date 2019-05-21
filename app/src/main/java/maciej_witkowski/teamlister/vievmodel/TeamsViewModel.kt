@@ -6,7 +6,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.media.MediaScannerConnection
-import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import androidx.annotation.NonNull
@@ -14,6 +13,7 @@ import androidx.lifecycle.*
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.text.FirebaseVisionText
+import maciej_witkowski.teamlister.model.PlayerData
 import maciej_witkowski.teamlister.model.TextLineLight
 import maciej_witkowski.teamlister.utils.CaseFormat
 import maciej_witkowski.teamlister.utils.TextUtils
@@ -24,9 +24,6 @@ import java.io.IOException
 private const val TAG = "TeamsViewModel"
 
 class TeamsViewModel(app: Application,handle: SavedStateHandle) : AndroidViewModel(app){
-  //  override fun <T : Application?> getApplication(): T {
-   //     return super.getApplication()
-    //}
     @NonNull
     override fun <T : Application> getApplication(): T{
       return super.getApplication()
@@ -40,13 +37,13 @@ class TeamsViewModel(app: Application,handle: SavedStateHandle) : AndroidViewMod
         handle.getLiveData<MutableList<TextLineLight>>("TextLines")
     val textLines: LiveData<MutableList<TextLineLight>> = textLinesHandle
 
-    private val rawTeam1Handle: MutableLiveData<MutableList<TextLineLight>> =
-        handle.getLiveData<MutableList<TextLineLight>>("RawTeam1")
-    val rawTeam1: LiveData<MutableList<TextLineLight>> = rawTeam1Handle
+    private val rawTeam1Handle: MutableLiveData<MutableList<PlayerData>> =
+        handle.getLiveData<MutableList<PlayerData>>("RawTeam1")
+    val rawTeam1: LiveData<MutableList<PlayerData>> = rawTeam1Handle
 
-    private val rawTeam2Handle: MutableLiveData<MutableList<TextLineLight>> =
-        handle.getLiveData<MutableList<TextLineLight>>("RawTeam2")
-    val rawTeam2: LiveData<MutableList<TextLineLight>> = rawTeam2Handle
+    private val rawTeam2Handle: MutableLiveData<MutableList<PlayerData>> =
+        handle.getLiveData<MutableList<PlayerData>>("RawTeam2")
+    val rawTeam2: LiveData<MutableList<PlayerData>> = rawTeam2Handle
 
     private val team1Handle: MutableLiveData<String> = handle.getLiveData<String>("Team1")
     val team1: LiveData<String> = team1Handle
@@ -60,6 +57,7 @@ class TeamsViewModel(app: Application,handle: SavedStateHandle) : AndroidViewMod
         analyzeImage(bitmap)
 
     }
+
 
 
 
@@ -79,18 +77,16 @@ class TeamsViewModel(app: Application,handle: SavedStateHandle) : AndroidViewMod
     }
 
     private fun recognizeText(result: FirebaseVisionText, image: Bitmap) {
-        val data = mutableListOf<FirebaseVisionText.Line>()
         val tmp = mutableListOf<TextLineLight>()
         for (block in result.textBlocks) {
             for (line in block.lines) {
                 val rect = line.boundingBox
                 if (TextUtils.isValidLine(line.text) && rect != null) {
-                    data.add(line)
-                    tmp.add(TextLineLight(line.text, rect))
+                    tmp.add(TextLineLight(TextUtils.splitNumbers(line.text), rect))
                 }
             }
         }
-        textLinesHandle.value = tmp
+        textLinesHandle.value = tmp //TODO replace with PlayerData
         splitAuto(tmp, image)
     }
 
@@ -106,18 +102,18 @@ class TeamsViewModel(app: Application,handle: SavedStateHandle) : AndroidViewMod
         team2Paint.color = Color.parseColor("#CE93D8")
         team2Paint.style = Paint.Style.STROKE
         team2Paint.strokeWidth = 4F
-        val teamFirst = mutableListOf<TextLineLight>()
-        val teamSecond = mutableListOf<TextLineLight>()
+        val teamFirst = mutableListOf<PlayerData>()
+        val teamSecond = mutableListOf<PlayerData>()
         if (data.size > 0) {
             val min = data.minBy { it.boundingBox.left }
             data.sortBy { it.boundingBox.top }
             for (line in data) {
                 if (line.boundingBox.left < (min!!.boundingBox.left + (imageWidth * 0.25))) {
                     canvas.drawRect(line.boundingBox, team1Paint)
-                    teamFirst.add(line)
+                    teamFirst.add(line.data)
                 } else {
                     canvas.drawRect(line.boundingBox, team2Paint)
-                    teamSecond.add(line)
+                    teamSecond.add(line.data)
                 }
             }
         }
@@ -143,12 +139,12 @@ class TeamsViewModel(app: Application,handle: SavedStateHandle) : AndroidViewMod
         paint.color = Color.parseColor("#80DEEA")
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 4F
-        val teamFirst = mutableListOf<TextLineLight>()
-        val teamSecond = mutableListOf<TextLineLight>()
+        val teamFirst = mutableListOf<PlayerData>()
+        val teamSecond = mutableListOf<PlayerData>()
         if (data != null) {
             for (line in data) {
                 canvas.drawRect(line.boundingBox, paint)
-                teamFirst.add(line)
+                teamFirst.add(line.data)
             }
         }
         rawTeam1Handle.value = teamFirst
@@ -161,12 +157,12 @@ class TeamsViewModel(app: Application,handle: SavedStateHandle) : AndroidViewMod
         paint.color = Color.parseColor("#CE93D8")
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 4F
-        val teamFirst = mutableListOf<TextLineLight>()
-        val teamSecond = mutableListOf<TextLineLight>()
+        val teamFirst = mutableListOf<PlayerData>()
+        val teamSecond = mutableListOf<PlayerData>()
         if (data != null) {
             for (line in data) {
                 canvas.drawRect(line.boundingBox, paint)
-                teamSecond.add(line)
+                teamSecond.add(line.data)
             }
         }
         rawTeam1Handle.value = teamFirst
@@ -181,15 +177,15 @@ class TeamsViewModel(app: Application,handle: SavedStateHandle) : AndroidViewMod
         //Bitmap clean
     }
 
-    private fun rawToTeam(data:MutableList<TextLineLight>?, output: MutableLiveData<String>){
+    private fun rawToTeam(data:MutableList<PlayerData>?, output: MutableLiveData<String>){
         val newSb = StringBuilder()
         if (data != null) {
             for (line in data) {
-                var tmp = line.text
+                var tmp = line.name
                 tmp = TextUtils.fixWrongT(tmp)
                 tmp = TextUtils.caseFormatting(tmp, CaseFormat.UPPER_LOWER)
                 tmp = TextUtils.replaceNonAsciiChars(tmp)
-                newSb.append(tmp + "\r\n")
+                newSb.append(line.number+" "+tmp + "\r\n")
                 Log.d(TAG, tmp)
             }
         }
@@ -205,7 +201,7 @@ class TeamsViewModel(app: Application,handle: SavedStateHandle) : AndroidViewMod
     private fun saveTeam(team: String?, filename: String) {
         if (!team.isNullOrEmpty()) {
             val filepath = Environment.getExternalStorageDirectory().absolutePath.toString()
-            val myExternalFile: File = File(filepath, filename)
+            val myExternalFile = File(filepath, filename)
             try {
                 Log.e("PATH", "final path: " + myExternalFile.absolutePath)
                 val fileOutPutStream = FileOutputStream(myExternalFile,false)
@@ -221,6 +217,15 @@ class TeamsViewModel(app: Application,handle: SavedStateHandle) : AndroidViewMod
                 e.printStackTrace()
                 Log.d("PATH", "error")
             }
+        }
+    }
+
+    fun updateProcessedTeam(text: String,team: Int ){
+        if (team==1){
+            team1Handle.value=text
+        }
+        else if(team==2){
+            team2Handle.value=text
         }
 
     }
