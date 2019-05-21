@@ -86,7 +86,7 @@ class TeamsViewModel(app: Application,handle: SavedStateHandle) : AndroidViewMod
                 }
             }
         }
-        textLinesHandle.value = tmp //TODO replace with PlayerData
+        textLinesHandle.value = tmp
         splitAuto(tmp, image)
     }
 
