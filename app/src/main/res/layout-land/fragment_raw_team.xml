@@ -5,7 +5,7 @@
                                                    android:layout_width="match_parent"
                                                    android:layout_height="match_parent"
                                                    android:background="@color/grey_300"
-                                                   tools:context=".view.ListResultFragment"
+                                                   tools:context=".view.RawTeamFragment"
                                                    android:id="@+id/frameLayout2">
     <TextView
             android:text="@string/tvTeam1"
