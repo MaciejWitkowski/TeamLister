@@ -9,6 +9,10 @@
                 app:title="Pref"
                 app:iconSpaceReserved="false"/>
 
+        <EditTextPreference
+                app:title="ET"
+                app:iconSpaceReserved="false"/>
+
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>
 

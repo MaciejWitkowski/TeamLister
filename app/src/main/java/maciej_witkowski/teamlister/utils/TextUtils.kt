@@ -8,12 +8,56 @@ private val REGEX_UNACCENTED = "\\p{InCombiningDiacriticalMarks}+".toRegex()
 class TextUtils {
     companion object {
 
-        fun isValidLine(line: String): Boolean {//TODO needs to be improved, need UT
+
+        fun isValidLine(line: String): Boolean {
             var isValid = false
-            if (line[0].isDigit() && line.length > 5)
+            if (line.length == 3) {
+                isValid= threeCharsValidation(line)
+            }
+            else if(line.length==4){
+                isValid=fourCharsValidation(line)
+            }
+            else if (line.length in 5..29){
+                isValid=defaultValidation(line)
+            }
+            else{
+                isValid=false
+            }
+
+            return isValid
+        }
+
+        private fun threeCharsValidation(line: String): Boolean {
+            var isValid = false
+            if (line[0].isDigit() && line[1].isLetter() && !line[2].isDigit())
                 isValid = true
             return isValid
         }
+        private fun fourCharsValidation(line: String): Boolean {
+            var isValid = false
+            if (line[0].isDigit() && !line[2].isDigit() && !line[3].isDigit())
+                isValid = true
+            return isValid
+        }
+
+        private fun defaultValidation(line: String):Boolean{
+            var isValid = false
+            if (!line[0].isDigit()){
+                isValid=false
+            }
+            else{
+                var digitCount=0
+                for (i in 2 until line.length){
+                    if (line[i].isDigit()){
+                        digitCount++
+                    }
+                }
+                if (digitCount<2)
+                    isValid=true
+            }
+            return isValid
+        }
+
 
         fun splitNumbers(str: String): PlayerData {//split text into number + name
             var needle = ""
@@ -25,7 +69,7 @@ class TextUtils {
             while (result.endsWith(" ")) {
                 result = result.removeSuffix(" ")
             }
-            return PlayerData(needle,result)
+            return PlayerData(needle, result)
         }
 
         fun replaceNonAsciiChars(input: String): String {
