@@ -11,6 +11,7 @@ import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import com.google.firebase.FirebaseApp
 import maciej_witkowski.teamlister.R
 
@@ -62,6 +63,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
         FirebaseApp.initializeApp(this)
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
     }

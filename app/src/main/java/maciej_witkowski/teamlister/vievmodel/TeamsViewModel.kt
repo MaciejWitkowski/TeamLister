@@ -10,6 +10,7 @@ import android.os.Environment
 import android.util.Log
 import androidx.annotation.NonNull
 import androidx.lifecycle.*
+import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.text.FirebaseVisionText
@@ -21,12 +22,13 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
+
 private const val TAG = "TeamsViewModel"
 
-class TeamsViewModel(app: Application,handle: SavedStateHandle) : AndroidViewModel(app){
+class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewModel(app) {
     @NonNull
-    override fun <T : Application> getApplication(): T{
-      return super.getApplication()
+    override fun <T : Application> getApplication(): T {
+        return super.getApplication()
     }
 
     private val imageHandle: MutableLiveData<Bitmap> =
@@ -57,8 +59,6 @@ class TeamsViewModel(app: Application,handle: SavedStateHandle) : AndroidViewMod
         analyzeImage(bitmap)
 
     }
-
-
 
 
     private fun analyzeImage(image: Bitmap) {
@@ -170,48 +170,131 @@ class TeamsViewModel(app: Application,handle: SavedStateHandle) : AndroidViewMod
     }
 
     fun acceptResult() {
-        rawToTeam(rawTeam1Handle.value, team1Handle)
-        rawToTeam(rawTeam2Handle.value, team2Handle)
+        rawToTeam1(rawTeam1Handle.value, team1Handle)
+        rawToTeam2(rawTeam2Handle.value, team2Handle)
+        //rawToTeam(rawTeam1Handle.value, team1Handle)
+        //rawToTeam(rawTeam2Handle.value, team2Handle)
         //Raw team1 clean //TODO
         //Raw team2 clean
         //Bitmap clean
     }
 
-    private fun rawToTeam(data:MutableList<PlayerData>?, output: MutableLiveData<String>){
+    private fun rawToTeam1(data: MutableList<PlayerData>?, output: MutableLiveData<String>) {
+        val sharedPref = getDefaultSharedPreferences(getApplication<Application>().applicationContext)
+        val append = sharedPref.getString("append_t1", null)
+        val prepend = sharedPref.getString("prepend_t1", null)
+        val numberPosition = sharedPref.getString("number", "start")
+        rawTT(data, output, append, prepend, numberPosition)
+    }
+
+
+    private fun rawToTeam2(data: MutableList<PlayerData>?, output: MutableLiveData<String>) {
+        val sharedPref = getDefaultSharedPreferences(getApplication<Application>().applicationContext)
+        val append = sharedPref.getString("append_t2", null)
+        val prepend = sharedPref.getString("prepend_t2", null)
+        val numberPosition = sharedPref.getString("number", "start")
+        rawTT(data, output, append, prepend, numberPosition)
+    }
+
+
+    private fun rawTT(
+        data: MutableList<PlayerData>?,
+        output: MutableLiveData<String>,
+        append: String?,
+        prepend: String?,
+        numberPosition: String?
+    ) {
         val newSb = StringBuilder()
         if (data != null) {
             for (line in data) {
                 var tmp = line.name
-                tmp = TextUtils.fixWrongT(tmp)
+                tmp = TextUtils.fixWrongT(tmp)  //TODO to builder based on settings
                 tmp = TextUtils.caseFormatting(tmp, CaseFormat.UPPER_LOWER)
                 tmp = TextUtils.replaceNonAsciiChars(tmp)
-                newSb.append(line.number+" "+tmp + "\r\n")
+                //tmp =TextUtils.removeBrackets(tmp, brackets)
+                if (numberPosition.equals("start")) {
+                    newSb.append(append + line.number + prepend + " " + tmp + "\r\n")
+                } else if (numberPosition.equals("end")) {
+                    newSb.append(tmp + " " + append + line.number + prepend + "\r\n")
+                }
                 Log.d(TAG, tmp)
             }
         }
-        output.value=newSb.toString()
+        output.value = newSb.toString()
+
+    }
+
+    private fun rawToTeam(data: MutableList<PlayerData>?, output: MutableLiveData<String>) {
+        val newSb = StringBuilder()
+        if (data != null) {
+            for (line in data) {
+                var tmp = line.name
+                tmp = TextUtils.fixWrongT(tmp)  //TODO to builder
+                tmp = TextUtils.caseFormatting(tmp, CaseFormat.UPPER_LOWER)
+                tmp = TextUtils.replaceNonAsciiChars(tmp)
+                newSb.append(line.number + " " + tmp + "\r\n") //TODO based on settings
+                //TODO number append/preppend
+                Log.d(TAG, tmp)
+            }
+        }
+        output.value = newSb.toString()
     }
 
 
     fun saveToFiles() {
-        saveTeam(team1Handle.value, "team1.txt")
-        saveTeam(team2Handle.value, "team2.txt")
+        val sharedPref = getDefaultSharedPreferences(getApplication<Application>().applicationContext)
+        val twoFiles = sharedPref.getBoolean("saveto2", true)
+        val folder = sharedPref.getString("folder", "team_lister")
+        if (twoFiles) {
+            var name1 = sharedPref.getString("name_t1", "team1")
+            if (!name1.isNullOrEmpty())
+                name1 += ".txt"
+            else
+                name1 = "team1.txt"
+            var name2 = sharedPref.getString("name_t2", "team1")
+            if (!name2.isNullOrEmpty())
+                name2 += ".txt"
+            else
+                name2 = "team2.txt"
+            saveTeam(team1Handle.value, name1, folder)
+            saveTeam(team2Handle.value, name2, folder)
+        } else {
+            var name = sharedPref.getString("name_t1", "team1")
+            if (!name.isNullOrEmpty())
+                name += ".txt"
+            else
+                name = "team1.txt"
+            saveTeam(team1Handle.value + team2Handle.value, name, folder)
+        }
     }
 
-    private fun saveTeam(team: String?, filename: String) {
+    private fun saveTeam(team: String?, filename: String, folderName: String?) {
         if (!team.isNullOrEmpty()) {
-            val filepath = Environment.getExternalStorageDirectory().absolutePath.toString()
+            var filepath = Environment.getExternalStorageDirectory().absolutePath.toString()
+            if (!folderName.isNullOrEmpty()) {
+                filepath = filepath + "/" + folderName
+                val folder = File((Environment.getExternalStorageDirectory()).toString() + File.separator + folderName)
+                if (!folder.exists()) {
+                    folder.mkdir()
+                }
+            }
+            Log.d("PATH", "first path: " + filepath)
             val myExternalFile = File(filepath, filename)
             try {
                 Log.e("PATH", "final path: " + myExternalFile.absolutePath)
-                val fileOutPutStream = FileOutputStream(myExternalFile,false)
+                val fileOutPutStream = FileOutputStream(myExternalFile, false)
                 fileOutPutStream.write(team.toByteArray())
                 fileOutPutStream.flush()
                 fileOutPutStream.close()
                 myExternalFile.setExecutable(true)
                 myExternalFile.setReadable(true)
                 myExternalFile.setWritable(true)
-                MediaScannerConnection.scanFile(getApplication<Application>().applicationContext,  arrayOf(myExternalFile.toString()), null, null)
+                MediaScannerConnection.scanFile(
+                    getApplication<Application>().applicationContext,
+                    arrayOf(myExternalFile.toString()),
+                    null,
+                    null
+                )
                 Log.d("PATH", "ok")
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -220,12 +303,11 @@ class TeamsViewModel(app: Application,handle: SavedStateHandle) : AndroidViewMod
         }
     }
 
-    fun updateProcessedTeam(text: String,team: Int ){
-        if (team==1){
-            team1Handle.value=text
-        }
-        else if(team==2){
-            team2Handle.value=text
+    fun updateProcessedTeam(text: String, team: Int) {
+        if (team == 1) {
+            team1Handle.value = text
+        } else if (team == 2) {
+            team2Handle.value = text
         }
 
     }
