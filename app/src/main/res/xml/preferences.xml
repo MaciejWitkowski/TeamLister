@@ -2,17 +2,94 @@
 <androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
                                       xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-            android:title="Category name"
+            android:title="General settings:"
             app:iconSpaceReserved="false">
 
+
         <ListPreference
-                app:title="Pref"
+                app:key="Number"
+                app:title="Number Location"
+                app:entries="@array/number_location"
+                app:entryValues="@array/number_location_values"
                 app:iconSpaceReserved="false"/>
 
+        <SwitchPreference
+                app:key="saveto2"
+                app:title="Save to 2 team files"
+                app:iconSpaceReserved="false"
+        />
         <EditTextPreference
-                app:title="ET"
+                app:key="folder"
+                app:title="Folder"
+                app:summary="If empty, files will be saved in default directory"
                 app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>
+    <PreferenceCategory
+            android:title="Team 1 options:"
+            app:iconSpaceReserved="false">
+        <EditTextPreference
+                app:key="append_t1"
+                app:title="Number append"
+                app:iconSpaceReserved="false"/>
+        <EditTextPreference
+                app:key="prepend_t1"
+                app:title="Number prepend"
+                app:iconSpaceReserved="false"/>
+
+        <!-- @NotNull-->
+        <EditTextPreference
+                app:key="name_t1"
+                app:title="Team 1 filename"
+                app:iconSpaceReserved="false"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            android:title="Team 2 options:"
+            app:iconSpaceReserved="false">
+        <EditTextPreference
+                app:key="append_t2"
+                app:title="Number append"
+                app:iconSpaceReserved="false"/>
+        <EditTextPreference
+                app:key="prepend_t2"
+                app:title="Number prepend"
+                app:iconSpaceReserved="false"/>
+
+        <!-- @NotNull-->
+        <EditTextPreference
+                app:key="name_t2"
+                app:title="Team 2 filename"
+                app:iconSpaceReserved="false"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            android:title="Text formatting:"
+            app:iconSpaceReserved="false">
+
+        <ListPreference
+                app:key="Case"
+                app:title="Case Format"
+                app:entries="@array/case_format"
+                app:entryValues="@array/case_format_values"
+                app:iconSpaceReserved="false"/>
+        <SwitchPreference
+                app:key="replace_ascii"
+                app:title="Replace non ASCII chars"
+                app:iconSpaceReserved="false"
+        />
+        <SwitchPreference
+                app:key="fixt"
+                app:title="Fix wrong t letter"
+                app:iconSpaceReserved="false"
+        />
+        <ListPreference
+                app:key="brackets"
+                app:title="Remove brackets"
+                app:entries="@array/brackets"
+                app:entryValues="@array/brackets_values"
+                app:iconSpaceReserved="false"/>
+    </PreferenceCategory>
+
 </androidx.preference.PreferenceScreen>
 

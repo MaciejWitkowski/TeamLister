@@ -81,7 +81,6 @@ class TeamsViewModel(app: Application,handle: SavedStateHandle) : AndroidViewMod
         for (block in result.textBlocks) {
             for (line in block.lines) {
                 val rect = line.boundingBox
-                Log.d("TEMPLOG", line.text)
                 if (TextUtils.isValidLine(line.text) && rect != null) {
                     tmp.add(TextLineLight(TextUtils.splitNumbers(line.text), rect))
                 }

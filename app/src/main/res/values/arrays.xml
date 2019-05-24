@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <string-array name="case_format">
+        <item>Default</item>
+        <item>Upper start</item>
+        <item>Uppercase</item>
+        <item>Lowercase</item>
+    </string-array>
+
+    <string-array name="case_format_values">
+        <item>DEFAULT</item>
+        <item>UPPER_LOWER</item>
+        <item>UPPER</item>
+        <item>LOWER</item>
+    </string-array>
+
+    <string-array name="number_location">
+        <item>At start</item>
+        <item>At end</item>
+    </string-array>
+
+    <string-array name="number_location_values">
+        <item>start</item>
+        <item>end</item>
+    </string-array>
+
+    <string-array name="brackets">
+        <item>None</item>
+        <item>All</item>
+        <item>Not closed</item>
+    </string-array>
+    <string-array name="brackets_values">
+        <item>none</item>
+        <item>all</item>
+        <item>not_closed</item>
+    </string-array>
+
+
+
+</resources>

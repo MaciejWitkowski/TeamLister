@@ -8,28 +8,23 @@ import androidx.appcompat.app.AppCompatActivity
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
 import android.content.Intent
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.google.firebase.FirebaseApp
 import maciej_witkowski.teamlister.R
-import java.io.File
 
 
-private const val TAG = "FIREBASE"
 private const val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
 
 class MainActivity : AppCompatActivity() {
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_list -> {
-                Log.d(TAG, "list fragment should be loaded")
                 loadFragment(ListFragment())
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_camera -> {
-                Log.d(TAG, "View Pager should be loaded")
                 loadFragment(ViewPagerFragment())
                 return@OnNavigationItemSelectedListener true
             }
@@ -69,9 +64,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         FirebaseApp.initializeApp(this)
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-        File("/storage/emulated/0").walk().forEach {
-            Log.d("PATH",it.toString())
-        }
     }
 
 
