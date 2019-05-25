@@ -25,16 +25,18 @@
         <item>start</item>
         <item>end</item>
     </string-array>
-
+    NONE,
+    ALL,
+    NOT_CLOSED
     <string-array name="brackets">
         <item>None</item>
         <item>All</item>
         <item>Not closed</item>
     </string-array>
     <string-array name="brackets_values">
-        <item>none</item>
-        <item>all</item>
-        <item>not_closed</item>
+        <item>NONE</item>
+        <item>ALL</item>
+        <item>NOT_CLOSED</item>
     </string-array>
 
 

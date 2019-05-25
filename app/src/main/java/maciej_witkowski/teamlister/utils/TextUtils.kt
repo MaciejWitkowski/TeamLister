@@ -27,16 +27,12 @@ class TextUtils {
         }
 
         fun splitNumbers(str: String): PlayerData {//split text into number + name
-            var needle = ""
-            var result = str.replace("[0-9]{1,3}".toRegex()) { needle = it.value; "" }
+            var number = ""
+            var result = str.replace("[0-9]{1,3}".toRegex()) { number = it.value; "" }
             result = result.replace("\\s+".toRegex(), " ")
-            while (result.startsWith(" ")) {
-                result = result.removePrefix(" ")
-            }
-            while (result.endsWith(" ")) {
-                result = result.removeSuffix(" ")
-            }
-            return PlayerData(needle, result)
+            result = result.replace(".", "")
+            result = result.trim()
+            return PlayerData(number, result)
         }
 
         fun replaceNonAsciiChars(input: String): String {
@@ -121,7 +117,7 @@ private fun removeNotClosedBrackets(line: String): String {
     return result
 }
 
-private fun splitKeepDelims(s: String, rx: Regex, keep_empty: Boolean = true): MutableList<String> {
+private fun splitKeepDelimiters(s: String, rx: Regex, keep_empty: Boolean = true): MutableList<String> {
     val res = mutableListOf<String>()
     var start = 0
     rx.findAll(s).forEach {
@@ -138,7 +134,7 @@ private fun splitKeepDelims(s: String, rx: Regex, keep_empty: Boolean = true): M
 
 
 private fun replaceT(input: String, regex: Regex): String {
-    val split = splitKeepDelims(input, regex)
+    val split = splitKeepDelimiters(input, regex)
     var result = ""
     for (i: Int in 0 until split.size) {
         if (regex.containsMatchIn(split[i])) {

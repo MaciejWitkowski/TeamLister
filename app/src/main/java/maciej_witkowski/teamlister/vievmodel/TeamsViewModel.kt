@@ -185,7 +185,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         val append = sharedPref.getString("append_t1", null)
         val prepend = sharedPref.getString("prepend_t1", null)
         val numberPosition = sharedPref.getString("number", "start")
-        rawTT(data, output, append, prepend, numberPosition)
+        rawToTeam(data, output, append, prepend, numberPosition)
     }
 
 
@@ -194,11 +194,11 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         val append = sharedPref.getString("append_t2", null)
         val prepend = sharedPref.getString("prepend_t2", null)
         val numberPosition = sharedPref.getString("number", "start")
-        rawTT(data, output, append, prepend, numberPosition)
+        rawToTeam(data, output, append, prepend, numberPosition)
     }
 
 
-    private fun rawTT(
+    private fun rawToTeam(
         data: MutableList<PlayerData>?,
         output: MutableLiveData<String>,
         append: String?,
@@ -206,13 +206,34 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         numberPosition: String?
     ) {
         val newSb = StringBuilder()
+        val sharedPref = getDefaultSharedPreferences(getApplication<Application>().applicationContext)
+        val fixT=sharedPref.getBoolean("fixt", true)
+        val case=sharedPref.getString("case", "UPPER_LOWER")
+        val replaceAscii=sharedPref.getBoolean("replace_ascii", true)
+        val brackets=sharedPref.getString("brackets", "NONE")
+        var caseEnum:CaseFormat
+        caseEnum = try {
+            CaseFormat.valueOf(case!!)
+        } catch(e: IllegalArgumentException) {
+            Log.d(TAG, "INVALID CaseFormat value: $case $e")
+            CaseFormat.UPPER_LOWER
+        }
+        var bracketsEnum:RemoveBracketFormat
+        bracketsEnum = try {
+            RemoveBracketFormat.valueOf(brackets!!)
+        } catch(e: IllegalArgumentException) {
+            Log.d(TAG, "INVALID RemoveBracketFormat value: $case $e")
+            RemoveBracketFormat.NONE
+        }
         if (data != null) {
             for (line in data) {
                 var tmp = line.name
-                tmp = TextUtils.fixWrongT(tmp)  //TODO to builder based on settings
-                tmp = TextUtils.caseFormatting(tmp, CaseFormat.UPPER_LOWER)
+                if (fixT)
+                tmp = TextUtils.fixWrongT(tmp)  //TODO to builder, now needs to be called in particular order
+                tmp = TextUtils.caseFormatting(tmp, caseEnum)
+                if(replaceAscii)
                 tmp = TextUtils.replaceNonAsciiChars(tmp)
-                tmp = TextUtils.removeBrackets(tmp, RemoveBracketFormat.ALL)
+                tmp = TextUtils.removeBrackets(tmp, bracketsEnum)
                 if (numberPosition.equals("start")) {
                     newSb.append(append + line.number + prepend + " " + tmp + "\r\n")
                 } else if (numberPosition.equals("end")) {
@@ -224,23 +245,6 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         output.value = newSb.toString()
 
     }
-
-    private fun rawToTeam(data: MutableList<PlayerData>?, output: MutableLiveData<String>) {
-        val newSb = StringBuilder()
-        if (data != null) {
-            for (line in data) {
-                var tmp = line.name
-                tmp = TextUtils.fixWrongT(tmp)  //TODO to builder
-                tmp = TextUtils.caseFormatting(tmp, CaseFormat.UPPER_LOWER)
-                tmp = TextUtils.replaceNonAsciiChars(tmp)
-                newSb.append(line.number + " " + tmp + "\r\n") //TODO based on settings
-                //TODO number append/preppend
-                Log.d(TAG, tmp)
-            }
-        }
-        output.value = newSb.toString()
-    }
-
 
     fun saveToFiles() {
         val sharedPref = getDefaultSharedPreferences(getApplication<Application>().applicationContext)

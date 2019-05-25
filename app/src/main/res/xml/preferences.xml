@@ -84,7 +84,7 @@
             app:iconSpaceReserved="false">
 
         <ListPreference
-                app:key="Case"
+                app:key="case"
                 app:title="Case Format"
                 app:entries="@array/case_format"
                 app:entryValues="@array/case_format_values"
@@ -108,7 +108,7 @@
                 app:title="Remove brackets"
                 app:entries="@array/brackets"
                 app:entryValues="@array/brackets_values"
-                app:defaultValue="none"
+                app:defaultValue="NONE"
                 app:useSimpleSummaryProvider="true"
                 app:iconSpaceReserved="false"/>
     </PreferenceCategory>

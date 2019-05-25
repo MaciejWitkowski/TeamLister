@@ -149,4 +149,27 @@ class SplitUnitTest {
         assertEquals(expected,actual)
     }
 
+    @Test
+    fun oneDigitDotSpaceTest() {
+        val str="1. Name Surname"
+        val actual= TextUtils.splitNumbers(str)
+        val expected= PlayerData("1","Name Surname")
+        assertEquals(expected,actual)
+    }
+    @Test
+    fun twoDigitDotSpaceTest() {
+        val str="19. Name Surname"
+        val actual= TextUtils.splitNumbers(str)
+        val expected= PlayerData("19","Name Surname")
+        assertEquals(expected,actual)
+    }
+
+    @Test
+    fun threeDigitDotSpaceTest() {
+        val str="191. Name Surname"
+        val actual= TextUtils.splitNumbers(str)
+        val expected= PlayerData("191","Name Surname")
+        assertEquals(expected,actual)
+    }
+
 }
