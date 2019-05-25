@@ -17,6 +17,7 @@ import com.google.firebase.ml.vision.text.FirebaseVisionText
 import maciej_witkowski.teamlister.model.PlayerData
 import maciej_witkowski.teamlister.model.TextLineLight
 import maciej_witkowski.teamlister.utils.CaseFormat
+import maciej_witkowski.teamlister.utils.RemoveBracketFormat
 import maciej_witkowski.teamlister.utils.TextUtils
 import java.io.File
 import java.io.FileOutputStream
@@ -211,7 +212,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
                 tmp = TextUtils.fixWrongT(tmp)  //TODO to builder based on settings
                 tmp = TextUtils.caseFormatting(tmp, CaseFormat.UPPER_LOWER)
                 tmp = TextUtils.replaceNonAsciiChars(tmp)
-                //tmp =TextUtils.removeBrackets(tmp, brackets)
+                tmp = TextUtils.removeBrackets(tmp, RemoveBracketFormat.ALL)
                 if (numberPosition.equals("start")) {
                     newSb.append(append + line.number + prepend + " " + tmp + "\r\n")
                 } else if (numberPosition.equals("end")) {

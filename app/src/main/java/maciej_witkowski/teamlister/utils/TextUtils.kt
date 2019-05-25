@@ -10,54 +10,21 @@ class TextUtils {
 
 
         fun isValidLine(line: String): Boolean {
-            var isValid = false
-            if (line.length == 3) {
-                isValid= threeCharsValidation(line)
+            return when {
+                line.length == 3 -> threeCharsValidation(line)
+                line.length == 4 -> fourCharsValidation(line)
+                line.length in 5..29 -> defaultValidation(line)
+                else -> false
             }
-            else if(line.length==4){
-                isValid=fourCharsValidation(line)
-            }
-            else if (line.length in 5..29){
-                isValid=defaultValidation(line)
-            }
-            else{
-                isValid=false
-            }
-
-            return isValid
         }
 
-        private fun threeCharsValidation(line: String): Boolean {
-            var isValid = false
-            if (line[0].isDigit() && line[1].isLetter() && !line[2].isDigit())
-                isValid = true
-            return isValid
-        }
-        private fun fourCharsValidation(line: String): Boolean {
-            var isValid = false
-            if (line[0].isDigit() && !line[2].isDigit() && !line[3].isDigit())
-                isValid = true
-            return isValid
-        }
-
-        private fun defaultValidation(line: String):Boolean{
-            var isValid = false
-            if (!line[0].isDigit()){
-                isValid=false
+        fun removeBrackets(input: String, format: RemoveBracketFormat): String {
+            return when (format) {
+                RemoveBracketFormat.NONE -> input
+                RemoveBracketFormat.ALL -> removeAllBrackets(input)
+                RemoveBracketFormat.NOT_CLOSED -> removeNotClosedBrackets(input)
             }
-            else{
-                var digitCount=0
-                for (i in 2 until line.length){
-                    if (line[i].isDigit()){
-                        digitCount++
-                    }
-                }
-                if (digitCount<2)
-                    isValid=true
-            }
-            return isValid
         }
-
 
         fun splitNumbers(str: String): PlayerData {//split text into number + name
             var needle = ""
@@ -106,6 +73,53 @@ class TextUtils {
     }
 }
 
+private fun threeCharsValidation(line: String): Boolean {
+    var isValid = false
+    if (line[0].isDigit() && line[1].isLetter() && !line[2].isDigit())
+        isValid = true
+    return isValid
+}
+
+private fun fourCharsValidation(line: String): Boolean {
+    var isValid = false
+    if (line[0].isDigit() && !line[2].isDigit() && !line[3].isDigit())
+        isValid = true
+    return isValid
+}
+
+private fun defaultValidation(line: String): Boolean {
+    var isValid = false
+    if (!line[0].isDigit()) {
+        isValid = false
+    } else {
+        var digitCount = 0
+        for (i in 2 until line.length) {
+            if (line[i].isDigit()) {
+                digitCount++
+            }
+        }
+        if (digitCount < 2)
+            isValid = true
+    }
+    return isValid
+}
+
+private fun removeAllBrackets(line: String): String {
+    var result = line.replace("\\(([^]]+)\\)".toRegex(), "")
+    result = removeNotClosedBrackets(result)
+    result = result.trimEnd()
+    return result
+}
+
+private fun removeNotClosedBrackets(line: String): String {
+    val regexClosedBracket = "\\(([^]]+)\\)".toRegex()
+    var result = line
+    if (!regexClosedBracket.containsMatchIn(line)) {
+        result = line.replace("\\((.*)".toRegex(), "")
+        result = result.trimEnd()
+    }
+    return result
+}
 
 private fun splitKeepDelims(s: String, rx: Regex, keep_empty: Boolean = true): MutableList<String> {
     val res = mutableListOf<String>()
