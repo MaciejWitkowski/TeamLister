@@ -28,7 +28,6 @@ class PickResultFragment : Fragment() {
             }
         }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(requireActivity(), SavedStateVMFactory(requireActivity()))
@@ -47,6 +46,11 @@ class PickResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.image.observe(this, imageObserver)
+        viewModel.toastMessage.observe(this, Observer {
+            it.getContentIfNotHandled()?.let { // Only proceed if the event has never been handled
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            }
+        })
         cameraInit()
         fabRetry.setOnClickListener { takePicture() }
         fabAccept.setOnClickListener { acceptResult() }

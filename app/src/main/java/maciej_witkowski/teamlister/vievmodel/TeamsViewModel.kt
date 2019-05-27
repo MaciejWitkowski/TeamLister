@@ -17,6 +17,7 @@ import com.google.firebase.ml.vision.text.FirebaseVisionText
 import maciej_witkowski.teamlister.model.PlayerData
 import maciej_witkowski.teamlister.model.TextLineLight
 import maciej_witkowski.teamlister.utils.CaseFormat
+import maciej_witkowski.teamlister.utils.Event
 import maciej_witkowski.teamlister.utils.RemoveBracketFormat
 import maciej_witkowski.teamlister.utils.TextUtils
 import java.io.File
@@ -31,7 +32,6 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
     override fun <T : Application> getApplication(): T {
         return super.getApplication()
     }
-
     private val imageHandle: MutableLiveData<Bitmap> =
         handle.getLiveData<Bitmap>("Image")//TODO image is too big for parcel, also some kind of history can be implemented
     val image: LiveData<Bitmap> = imageHandle
@@ -54,11 +54,14 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
     private val team2Handle: MutableLiveData<String> = handle.getLiveData<String>("Team2")
     val team2: LiveData<String> = team2Handle
 
+    private val _toastMessage = MutableLiveData<Event<String>>()
+
+    val toastMessage: LiveData<Event<String>>
+        get() = _toastMessage
 
     fun setBitmap(bitmap: Bitmap) {
         imageHandle.value = bitmap
         analyzeImage(bitmap)
-
     }
 
 
@@ -71,8 +74,10 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
                 Log.d(TAG, "Success")
                 recognizeText(it, mutableImage)
                 imageHandle.value = mutableImage
+                _toastMessage.value = Event("Image analyzed")
             }
             .addOnFailureListener {
+                _toastMessage.value = Event("Error, cannot analyze image")
                 Log.d(TAG, "failure")
             }
     }
@@ -90,6 +95,41 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         textLinesHandle.value = tmp
         splitAuto(tmp, image)
     }
+
+
+
+    fun allTeam1() {
+        if (isDataAvailable())
+        splitToTeam1(textLinesHandle.value, imageHandle.value)
+    }
+
+    fun allTeam2() {
+        if (isDataAvailable())
+        splitToTeam2(textLinesHandle.value, imageHandle.value)
+    }
+
+    fun auto() {
+        if (isDataAvailable())
+            splitAuto(textLinesHandle.value!!, imageHandle.value!!)
+    }
+
+
+    private fun isDataAvailable():Boolean{
+        val isValid:Boolean
+        if (!textLinesHandle.value.isNullOrEmpty() && imageHandle.value != null) {
+            isValid=true
+        }
+        else if (imageHandle.value == null) {
+            isValid =false
+            _toastMessage.value = Event("Take image first")
+        }
+        else{
+            isValid=false
+            _toastMessage.value = Event("Text lines not found")
+        }
+        return isValid
+    }
+
 
     private fun splitAuto(data: MutableList<TextLineLight>, image: Bitmap) {
         val imageHeight = image.height
@@ -120,18 +160,6 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         }
         rawTeam1Handle.value = teamFirst
         rawTeam2Handle.value = teamSecond
-    }
-
-    fun allTeam1() {
-        splitToTeam1(textLinesHandle.value, imageHandle.value)
-    }
-
-    fun allTeam2() {
-        splitToTeam2(textLinesHandle.value, imageHandle.value)
-    }
-
-    fun auto() {
-        splitAuto(textLinesHandle.value!!, imageHandle.value!!)
     }
 
     private fun splitToTeam1(data: MutableList<TextLineLight>?, image: Bitmap?) {
@@ -207,21 +235,21 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
     ) {
         val newSb = StringBuilder()
         val sharedPref = getDefaultSharedPreferences(getApplication<Application>().applicationContext)
-        val fixT=sharedPref.getBoolean("fixt", true)
-        val case=sharedPref.getString("case", "UPPER_LOWER")
-        val replaceAscii=sharedPref.getBoolean("replace_ascii", true)
-        val brackets=sharedPref.getString("brackets", "NONE")
-        var caseEnum:CaseFormat
+        val fixT = sharedPref.getBoolean("fixt", true)
+        val case = sharedPref.getString("case", "UPPER_LOWER")
+        val replaceAscii = sharedPref.getBoolean("replace_ascii", true)
+        val brackets = sharedPref.getString("brackets", "NONE")
+        val caseEnum: CaseFormat
         caseEnum = try {
             CaseFormat.valueOf(case!!)
-        } catch(e: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException) {
             Log.d(TAG, "INVALID CaseFormat value: $case $e")
             CaseFormat.UPPER_LOWER
         }
-        var bracketsEnum:RemoveBracketFormat
+        val bracketsEnum: RemoveBracketFormat
         bracketsEnum = try {
             RemoveBracketFormat.valueOf(brackets!!)
-        } catch(e: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException) {
             Log.d(TAG, "INVALID RemoveBracketFormat value: $case $e")
             RemoveBracketFormat.NONE
         }
@@ -229,17 +257,17 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
             for (line in data) {
                 var tmp = line.name
                 if (fixT)
-                tmp = TextUtils.fixWrongT(tmp)  //TODO to builder, now needs to be called in particular order
+                    tmp = TextUtils.fixWrongT(tmp)  //TODO to builder, now needs to be called in particular order
                 tmp = TextUtils.caseFormatting(tmp, caseEnum)
-                if(replaceAscii)
-                tmp = TextUtils.replaceNonAsciiChars(tmp)
+                if (replaceAscii)
+                    tmp = TextUtils.replaceNonAsciiChars(tmp)
                 tmp = TextUtils.removeBrackets(tmp, bracketsEnum)
                 if (numberPosition.equals("start")) {
                     newSb.append(append + line.number + prepend + " " + tmp + "\r\n")
                 } else if (numberPosition.equals("end")) {
                     newSb.append(tmp + " " + append + line.number + prepend + "\r\n")
                 }
-                Log.d(TAG, tmp)
+
             }
         }
         output.value = newSb.toString()
@@ -277,7 +305,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         if (!team.isNullOrEmpty()) {
             var filepath = Environment.getExternalStorageDirectory().absolutePath.toString()
             if (!folderName.isNullOrEmpty()) {
-                filepath = filepath + "/" + folderName
+                filepath = "$filepath/$folderName"
                 val folder = File((Environment.getExternalStorageDirectory()).toString() + File.separator + folderName)
                 if (!folder.exists()) {
                     folder.mkdir()
@@ -303,6 +331,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
                 Log.d("PATH", "ok")
             } catch (e: IOException) {
                 e.printStackTrace()
+                _toastMessage.value = Event("Error, file not saved")
                 Log.d("PATH", "error")
             }
         }
