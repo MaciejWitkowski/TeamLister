@@ -3,8 +3,10 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="team1">#4DD0E1</color><!--cyan300-->
+    <color name="team2">#CE93D8</color><!--purple200-->
 
-<!-- Material Design - Color Palette -->
+    <!-- Material Design - Color Palette -->
 <!-- Date: 1/15/2015 -->
 <!-- http://www.google.com/design/spec/style/color.html#color-color-palette -->
 

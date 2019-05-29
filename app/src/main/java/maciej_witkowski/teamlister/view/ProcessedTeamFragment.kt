@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateVMFactory
 import androidx.lifecycle.ViewModelProviders
@@ -51,15 +53,19 @@ class ListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "on view created")
+        (activity as? AppCompatActivity)?.supportActionBar?.title = "Team lists"
         viewModel.team1.observe(this, teamObserver)
+        styleTeam1Button()
         btnTeam1.setOnClickListener {
             viewModel.team2.removeObserver(teamObserver)
             viewModel.team1.observe(this, teamObserver)
+            styleTeam1Button()
             activeTeam = 1
         }
         btnTeam2.setOnClickListener {
             viewModel.team1.removeObserver(teamObserver)
             viewModel.team2.observe(this, teamObserver)
+            styleTeam2Button()
             activeTeam = 2
         }
         btnSave.setOnClickListener {
@@ -70,6 +76,20 @@ class ListFragment : Fragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(textChangeObserver)
     }
+
+    private fun styleTeam1Button(){
+        btnTeam1.textSize=30f
+        btnTeam1.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        btnTeam2.textSize=12f
+        btnTeam2.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey_700))
+    }
+    private fun styleTeam2Button(){
+        btnTeam1.textSize=12f
+        btnTeam1.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey_700))
+        btnTeam2.textSize=30f
+        btnTeam2.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+    }
+
 
     private val textChangeObserver = object : DisposableObserver<CharSequence>() {
         override fun onNext(charSequence: CharSequence) {

@@ -11,6 +11,8 @@
             android:text="@string/tvTeam1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:textColor="@color/team1"
             android:id="@+id/tvRawTeam1"
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
@@ -19,6 +21,8 @@
             android:text="@string/tvTeam2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:textColor="@color/team2"
             android:id="@+id/tvRawTeam2"
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toEndOf="@+id/tvRawTeam1"
@@ -41,4 +45,14 @@
             app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginEnd="8dp" android:layout_marginStart="8dp"/>
+    <TextView
+            android:text="@string/lines_na"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:id="@+id/tvRawTeamNa" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="24dp"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="24dp"
+            app:layout_constraintTop_toTopOf="@+id/tvRawTeam1" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent" android:textSize="72sp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
-            R.id.action_settings ->{Toast.makeText(this.applicationContext, "Settings clicked", Toast.LENGTH_SHORT).show()
+            R.id.action_settings ->{
                 loadFragment(SettingsFragment())
                 return true}
             else -> super.onOptionsItemSelected(item)

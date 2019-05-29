@@ -8,14 +8,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_photo.*
-import maciej_witkowski.teamlister.R
 import android.graphics.Bitmap
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateVMFactory
 import androidx.lifecycle.ViewModelProviders
 import com.mindorks.paracamera.Camera
 import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
+import maciej_witkowski.teamlister.R
+
 
 class PickResultFragment : Fragment() {
     private lateinit var viewModel: TeamsViewModel
@@ -51,16 +53,115 @@ class PickResultFragment : Fragment() {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }
         })
+        (activity as? AppCompatActivity)?.supportActionBar?.title = "Image from camera"
         cameraInit()
         fabRetry.setOnClickListener { takePicture() }
         fabAccept.setOnClickListener { acceptResult() }
         btnTeam1Picker.setOnClickListener { viewModel.allTeam1() }
-        btnSeparator.setOnClickListener { viewModel.auto() }
+        btnAuto.setOnClickListener { viewModel.auto() }
         btnTeam2Picker.setOnClickListener { viewModel.allTeam2() }
-        if (viewModel.image.value==null){
+            if (viewModel.image.value==null){
             takePicture()
         }
+/*
+        val maxX = (viewModel.image.value!!.width / 2 - screenWidth / 2) as Int
+        val maxY = (viewModel.image.value!!.height / 2 - screenHeight / 2) as Int
+
+        // set scroll limits
+        val maxLeft = maxX * -1
+        val maxTop = maxY * -1
+
+        // set touchlistener
+        ivPhoto.setOnTouchListener(object : View.OnTouchListener {
+            internal var downX: Float = 0.toFloat()
+            internal var downY: Float = 0.toFloat()
+            internal var totalX: Int = 0
+            internal var totalY: Int = 0
+            internal var scrollByX: Int = 0
+            internal var scrollByY: Int = 0
+            override fun onTouch(view: View, event: MotionEvent): Boolean {
+                val currentX: Float
+                val currentY: Float
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        downX = event.x
+                        downY = event.y
+                    }
+
+                    MotionEvent.ACTION_MOVE -> {
+                        currentX = event.x
+                        currentY = event.y
+                        scrollByX = (downX - currentX).toInt()
+                        scrollByY = (downY - currentY).toInt()
+
+                        // scrolling to left side of image (pic moving to the right)
+                        if (currentX > downX) {
+                            if (totalX == maxLeft) {
+                                scrollByX = 0
+                            }
+                            if (totalX > maxLeft) {
+                                totalX = totalX + scrollByX
+                            }
+                            if (totalX < maxLeft) {
+                                scrollByX = maxLeft - (totalX - scrollByX)
+                                totalX = maxLeft
+                            }
+                        }
+
+                        // scrolling to right side of image (pic moving to the left)
+                        if (currentX < downX) {
+                            if (totalX == maxX) {
+                                scrollByX = 0
+                            }
+                            if (totalX < maxX) {
+                                totalX = totalX + scrollByX
+                            }
+                            if (totalX > maxX) {
+                                scrollByX = maxX - (totalX - scrollByX)
+                                totalX = maxX
+                            }
+                        }
+
+                        // scrolling to top of image (pic moving to the bottom)
+                        if (currentY > downY) {
+                            if (totalY == maxTop) {
+                                scrollByY = 0
+                            }
+                            if (totalY > maxTop) {
+                                totalY = totalY + scrollByY
+                            }
+                            if (totalY < maxTop) {
+                                scrollByY = maxTop - (totalY - scrollByY)
+                                totalY = maxTop
+                            }
+                        }
+
+                        // scrolling to bottom of image (pic moving to the top)
+                        if (currentY < downY) {
+                            if (totalY == maxY) {
+                                scrollByY = 0
+                            }
+                            if (totalY < maxY) {
+                                totalY = totalY + scrollByY
+                            }
+                            if (totalY > maxY) {
+                                scrollByY = maxY - (totalY - scrollByY)
+                                totalY = maxY
+                            }
+                        }
+
+                        ivPhoto.scrollBy(scrollByX, scrollByY)
+                        downX = currentX
+                        downY = currentY
+                    }
+                }
+
+                return true
+            }
+        })
+*/
     }
+
 
 
     private fun cameraInit() {

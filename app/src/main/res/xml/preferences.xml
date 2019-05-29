@@ -81,6 +81,7 @@
 
     <PreferenceCategory
             android:title="Text formatting:"
+            android:textSize="32sp"
             app:iconSpaceReserved="false">
 
         <ListPreference

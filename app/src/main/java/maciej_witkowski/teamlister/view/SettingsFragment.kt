@@ -2,6 +2,7 @@ package maciej_witkowski.teamlister.view
 import androidx.preference.PreferenceFragmentCompat
 import android.content.SharedPreferences
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import maciej_witkowski.teamlister.R
 
 
@@ -15,7 +16,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
-        activity?.title = "Settings"
+        (activity as? AppCompatActivity)?.supportActionBar?.title = "Settings"
     }
 
     override fun onResume() {
