@@ -23,6 +23,7 @@ import maciej_witkowski.teamlister.utils.TextUtils
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import android.graphics.BitmapFactory
 
 
 private const val TAG = "TeamsViewModel"
@@ -32,13 +33,11 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
     override fun <T : Application> getApplication(): T {
         return super.getApplication()
     }
-    private val imageHandle: MutableLiveData<Bitmap> =
-        handle.getLiveData<Bitmap>("Image")//TODO image is too big for parcel, also some kind of history can be implemented
-    val image: LiveData<Bitmap> = imageHandle
+
+    private val imagePathHandle: MutableLiveData<String> = handle.getLiveData<String>("path")
 
     private val textLinesHandle: MutableLiveData<MutableList<TextLineLight>> =
         handle.getLiveData<MutableList<TextLineLight>>("TextLines")
-    val textLines: LiveData<MutableList<TextLineLight>> = textLinesHandle
 
     private val rawTeam1Handle: MutableLiveData<MutableList<PlayerData>> =
         handle.getLiveData<MutableList<PlayerData>>("RawTeam1")
@@ -59,8 +58,27 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
     val toastMessage: LiveData<Event<String>>
         get() = _toastMessage
 
-    fun setBitmap(bitmap: Bitmap) {
-        imageHandle.value = bitmap
+    val imageNew: MutableLiveData<Bitmap> = getImage(imagePathHandle.value)
+
+    private fun getImage(path: String?): MutableLiveData<Bitmap> {
+        val imageLiveData = MutableLiveData<Bitmap>()
+        if (!path.isNullOrEmpty()) {
+            Log.d("TAG", path)
+            val myBitmap = BitmapFactory.decodeFile(path)
+            val mutableImage = myBitmap.copy(Bitmap.Config.ARGB_8888, true)
+            if (!textLinesHandle.value.isNullOrEmpty()) {
+                splitAuto(textLinesHandle.value!!, mutableImage)
+            }
+            imageLiveData.value = mutableImage
+
+        } else
+            Log.d("TAG", "pathnull")
+        return imageLiveData
+    }
+
+    fun setBitmap(bitmap: Bitmap, path: String) {
+        imageNew.value = bitmap
+        imagePathHandle.value = path
         analyzeImage(bitmap)
     }
 
@@ -73,7 +91,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
                 val mutableImage = image.copy(Bitmap.Config.ARGB_8888, true)
                 Log.d(TAG, "Success")
                 recognizeText(it, mutableImage)
-                imageHandle.value = mutableImage
+                imageNew.value = mutableImage
                 _toastMessage.value = Event("Image analyzed")
             }
             .addOnFailureListener {
@@ -97,34 +115,31 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
     }
 
 
-
     fun allTeam1() {
         if (isDataAvailable())
-        splitToTeam1(textLinesHandle.value, imageHandle.value)
+            splitToTeam1(textLinesHandle.value, imageNew.value)
     }
 
     fun allTeam2() {
         if (isDataAvailable())
-        splitToTeam2(textLinesHandle.value, imageHandle.value)
+            splitToTeam2(textLinesHandle.value, imageNew.value)
     }
 
     fun auto() {
         if (isDataAvailable())
-            splitAuto(textLinesHandle.value!!, imageHandle.value!!)
+            splitAuto(textLinesHandle.value!!, imageNew.value!!)
     }
 
 
-    private fun isDataAvailable():Boolean{
-        val isValid:Boolean
-        if (!textLinesHandle.value.isNullOrEmpty() && imageHandle.value != null) {
-            isValid=true
-        }
-        else if (imageHandle.value == null) {
-            isValid =false
+    private fun isDataAvailable(): Boolean {
+        val isValid: Boolean
+        if (!textLinesHandle.value.isNullOrEmpty() && imageNew.value != null) {
+            isValid = true
+        } else if (imageNew.value == null) {
+            isValid = false
             _toastMessage.value = Event("Take image first")
-        }
-        else{
-            isValid=false
+        } else {
+            isValid = false
             _toastMessage.value = Event("Text lines not found")
         }
         return isValid

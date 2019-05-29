@@ -47,7 +47,7 @@ class PickResultFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.image.observe(this, imageObserver)
+        viewModel.imageNew.observe(this, imageObserver)
         viewModel.toastMessage.observe(this, Observer {
             it.getContentIfNotHandled()?.let { // Only proceed if the event has never been handled
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
@@ -60,106 +60,9 @@ class PickResultFragment : Fragment() {
         btnTeam1Picker.setOnClickListener { viewModel.allTeam1() }
         btnAuto.setOnClickListener { viewModel.auto() }
         btnTeam2Picker.setOnClickListener { viewModel.allTeam2() }
-            if (viewModel.image.value==null){
+            if (viewModel.imageNew.value==null){
             takePicture()
         }
-/*
-        val maxX = (viewModel.image.value!!.width / 2 - screenWidth / 2) as Int
-        val maxY = (viewModel.image.value!!.height / 2 - screenHeight / 2) as Int
-
-        // set scroll limits
-        val maxLeft = maxX * -1
-        val maxTop = maxY * -1
-
-        // set touchlistener
-        ivPhoto.setOnTouchListener(object : View.OnTouchListener {
-            internal var downX: Float = 0.toFloat()
-            internal var downY: Float = 0.toFloat()
-            internal var totalX: Int = 0
-            internal var totalY: Int = 0
-            internal var scrollByX: Int = 0
-            internal var scrollByY: Int = 0
-            override fun onTouch(view: View, event: MotionEvent): Boolean {
-                val currentX: Float
-                val currentY: Float
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        downX = event.x
-                        downY = event.y
-                    }
-
-                    MotionEvent.ACTION_MOVE -> {
-                        currentX = event.x
-                        currentY = event.y
-                        scrollByX = (downX - currentX).toInt()
-                        scrollByY = (downY - currentY).toInt()
-
-                        // scrolling to left side of image (pic moving to the right)
-                        if (currentX > downX) {
-                            if (totalX == maxLeft) {
-                                scrollByX = 0
-                            }
-                            if (totalX > maxLeft) {
-                                totalX = totalX + scrollByX
-                            }
-                            if (totalX < maxLeft) {
-                                scrollByX = maxLeft - (totalX - scrollByX)
-                                totalX = maxLeft
-                            }
-                        }
-
-                        // scrolling to right side of image (pic moving to the left)
-                        if (currentX < downX) {
-                            if (totalX == maxX) {
-                                scrollByX = 0
-                            }
-                            if (totalX < maxX) {
-                                totalX = totalX + scrollByX
-                            }
-                            if (totalX > maxX) {
-                                scrollByX = maxX - (totalX - scrollByX)
-                                totalX = maxX
-                            }
-                        }
-
-                        // scrolling to top of image (pic moving to the bottom)
-                        if (currentY > downY) {
-                            if (totalY == maxTop) {
-                                scrollByY = 0
-                            }
-                            if (totalY > maxTop) {
-                                totalY = totalY + scrollByY
-                            }
-                            if (totalY < maxTop) {
-                                scrollByY = maxTop - (totalY - scrollByY)
-                                totalY = maxTop
-                            }
-                        }
-
-                        // scrolling to bottom of image (pic moving to the top)
-                        if (currentY < downY) {
-                            if (totalY == maxY) {
-                                scrollByY = 0
-                            }
-                            if (totalY < maxY) {
-                                totalY = totalY + scrollByY
-                            }
-                            if (totalY > maxY) {
-                                scrollByY = maxY - (totalY - scrollByY)
-                                totalY = maxY
-                            }
-                        }
-
-                        ivPhoto.scrollBy(scrollByX, scrollByY)
-                        downX = currentX
-                        downY = currentY
-                    }
-                }
-
-                return true
-            }
-        })
-*/
     }
 
 
@@ -192,9 +95,10 @@ class PickResultFragment : Fragment() {
 
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == Camera.REQUEST_TAKE_PHOTO) {
+                val path=camera.cameraBitmapPath
                 val bitmap = camera.cameraBitmap
-                if (bitmap != null) {
-                    viewModel.setBitmap(bitmap)
+                if (bitmap != null&&path!=null) {
+                    viewModel.setBitmap(bitmap,path)
                 } else {
                     Toast.makeText(requireContext(), "picutre not taken", Toast.LENGTH_SHORT).show()
                 }
