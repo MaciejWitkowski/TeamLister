@@ -3,6 +3,7 @@
                                       xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
             android:title="General settings:"
+            android:layout="@layout/preferences_category"
             app:iconSpaceReserved="false">
 
         <ListPreference
@@ -14,48 +15,49 @@
                 app:useSimpleSummaryProvider="true"
                 app:iconSpaceReserved="false"/>
 
+        <maciej_witkowski.teamlister.preferences.FileNamePreference
+                app:key="folder"
+                app:title="Folder"
+                app:defaultValue="team_lister"
+                app:useSimpleSummaryProvider="true"
+                app:dialogMessage="If empty, files will be saved in default directory. Allowed characters: numbers, letters and  underscore"
+                app:iconSpaceReserved="false"/>
         <SwitchPreference
                 app:key="saveto2"
                 app:title="Save to 2 team files"
                 app:defaultValue="true"
                 app:iconSpaceReserved="false"/>
-        <!-- Need check for non valid chars-->
-        <EditTextPreference
-                app:key="folder"
-                app:title="Folder"
-                app:defaultValue="team_lister"
-                app:useSimpleSummaryProvider="true"
-                app:dialogMessage="If empty, files will be saved in default directory"
-                app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>
     <PreferenceCategory
             android:title="Team 1 options:"
-            app:iconSpaceReserved="false">
+            android:layout="@layout/preferences_category">
         <EditTextPreference
                 app:key="append_t1"
                 app:title="Number append"
                 app:defaultValue=""
                 app:useSimpleSummaryProvider="true"
                 app:iconSpaceReserved="false"/>
-        <EditTextPreference
+        <maciej_witkowski.teamlister.preferences.NoHintPreference
                 app:key="prepend_t1"
                 app:title="Number prepend"
                 app:defaultValue=""
                 app:useSimpleSummaryProvider="true"
                 app:iconSpaceReserved="false"/>
 
-        <!-- @NotNull-->
-        <EditTextPreference
+        <maciej_witkowski.teamlister.preferences.FileNamePreference
                 app:key="name_t1"
                 app:title="Team 1 filename"
                 app:defaultValue="team1"
                 app:useSimpleSummaryProvider="true"
+                app:dialogMessage="Allowed characters: numbers, letters and underscore."
                 app:iconSpaceReserved="false"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory
             android:title="Team 2 options:"
+            android:layout="@layout/preferences_category"
             app:iconSpaceReserved="false">
         <EditTextPreference
                 app:key="append_t2"
@@ -63,24 +65,25 @@
                 app:defaultValue=""
                 app:useSimpleSummaryProvider="true"
                 app:iconSpaceReserved="false"/>
-        <EditTextPreference
+        <maciej_witkowski.teamlister.preferences.NoHintPreference
                 app:key="prepend_t2"
                 app:title="Number prepend"
                 app:defaultValue=""
                 app:useSimpleSummaryProvider="true"
                 app:iconSpaceReserved="false"/>
 
-        <!-- @NotNull-->
-        <EditTextPreference
+        <maciej_witkowski.teamlister.preferences.FileNamePreference
                 app:key="name_t2"
                 app:title="Team 2 filename"
                 app:defaultValue="team2"
                 app:useSimpleSummaryProvider="true"
+                app:dialogMessage="Allowed characters: numbers, letters and underscore."
                 app:iconSpaceReserved="false"/>
     </PreferenceCategory>
 
     <PreferenceCategory
             android:title="Text formatting:"
+            android:layout="@layout/preferences_category"
             android:textSize="32sp"
             app:iconSpaceReserved="false">
 

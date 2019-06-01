@@ -10,8 +10,8 @@
     <string name="btnTeam2">Team 2</string>
     <string name="btnSeparator">AUTO</string>
     <string name="btnSave">SAVE</string>
-    <string name="tvTeam1">Team1:</string>
-    <string name="tvTeam2">Team2:</string>
+    <string name="tvTeam1">Team 1:</string>
+    <string name="tvTeam2">Team 2:</string>
     <string name="lines_na">N/A</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

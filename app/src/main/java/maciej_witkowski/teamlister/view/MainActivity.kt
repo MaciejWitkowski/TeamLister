@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.google.firebase.FirebaseApp
 import maciej_witkowski.teamlister.R
+import maciej_witkowski.teamlister.preferences.SettingsFragment
 
 
 private const val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
