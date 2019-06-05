@@ -3,7 +3,6 @@ package maciej_witkowski.teamlister.vievmodel
 import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.media.MediaScannerConnection
 import android.os.Environment
@@ -24,7 +23,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import android.graphics.BitmapFactory
-
+import android.provider.Settings.System.getString
+import androidx.core.content.ContextCompat
 
 private const val TAG = "TeamsViewModel"
 
@@ -72,7 +72,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
             imageLiveData.value = mutableImage
 
         } else
-            Log.d("TAG", "pathnull")
+            Log.d("TAG", "Path Null")
         return imageLiveData
     }
 
@@ -151,11 +151,11 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         val imageWidth = image.width
         val canvas = Canvas(image)
         val team1Paint = Paint()
-        team1Paint.color = Color.parseColor("#80DEEA")
+        team1Paint.color=ContextCompat.getColor(getApplication<Application>().applicationContext, maciej_witkowski.teamlister.R.color.team_1)
         team1Paint.style = Paint.Style.STROKE
         team1Paint.strokeWidth = 4F
         val team2Paint = Paint()
-        team2Paint.color = Color.parseColor("#CE93D8")
+        team2Paint.color =ContextCompat.getColor(getApplication<Application>().applicationContext, maciej_witkowski.teamlister.R.color.team_2)
         team2Paint.style = Paint.Style.STROKE
         team2Paint.strokeWidth = 4F
         val teamFirst = mutableListOf<PlayerData>()
@@ -180,7 +180,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
     private fun splitToTeam1(data: MutableList<TextLineLight>?, image: Bitmap?) {
         val canvas = Canvas(image)
         val paint = Paint()
-        paint.color = Color.parseColor("#80DEEA")
+        paint.color=ContextCompat.getColor(getApplication<Application>().applicationContext, maciej_witkowski.teamlister.R.color.team_1)
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 4F
         val teamFirst = mutableListOf<PlayerData>()
@@ -198,7 +198,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
     private fun splitToTeam2(data: MutableList<TextLineLight>?, image: Bitmap?) {
         val canvas = Canvas(image)
         val paint = Paint()
-        paint.color = Color.parseColor("#CE93D8")
+        paint.color =ContextCompat.getColor(getApplication<Application>().applicationContext, maciej_witkowski.teamlister.R.color.team_2)
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 4F
         val teamFirst = mutableListOf<PlayerData>()

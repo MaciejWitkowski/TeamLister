@@ -12,21 +12,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="30sp"
-            android:textColor="@color/team1"
+            android:textColor="@color/team_1"
             android:id="@+id/tvRawTeam1"
             android:layout_marginTop="8dp"
-            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/tvRawTeam2"/>
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintStart_toStartOf="parent"/>
     <TextView
             android:text="@string/tvTeam2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="30sp"
-            android:textColor="@color/team2"
+            android:textColor="@color/team_2"
             android:id="@+id/tvRawTeam2"
             android:layout_marginTop="8dp"
-            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toEndOf="@+id/tvRawTeam1"
-            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/view"
+            android:layout_marginStart="8dp"/>
     <androidx.recyclerview.widget.RecyclerView
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -45,6 +46,14 @@
             app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginEnd="8dp" android:layout_marginStart="8dp"/>
+    <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/grey_700" app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp" android:id="@+id/view"/>
     <TextView
             android:text="@string/lines_na"
             android:layout_width="0dp"

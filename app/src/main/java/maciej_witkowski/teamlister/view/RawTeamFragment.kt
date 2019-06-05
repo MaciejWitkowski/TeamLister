@@ -37,32 +37,16 @@ class RawTeamFragment : Fragment() {
         rvRawTeam1.layoutManager = LinearLayoutManager(requireContext())
         viewModel.rawTeam1.observe(this, Observer { team1 ->
             rvRawTeam1.adapter = RawTeamAdapter(team1, requireContext())
-            checkTeamAvability()
-            /*  if (team1.isEmpty()){
-                  tvRawTeam1.isVisible=false
-                  rvRawTeam1.isVisible=false
-              }
-              else{
-                  tvRawTeam1.isVisible=true
-                  rvRawTeam1.isVisible=true
-              }*/
+            checkTeamAvailability()
         })
         rvRawTeam2.layoutManager = LinearLayoutManager(requireContext())
         viewModel.rawTeam2.observe(this, Observer { team2 ->
             rvRawTeam2.adapter = RawTeamAdapter(team2, requireContext())
-            checkTeamAvability()
-            /* if (team2.isEmpty()){
-                 tvRawTeam2.isVisible=false
-                 rvRawTeam2.isVisible=false
-             }
-             else{
-                 tvRawTeam2.isVisible=true
-                 rvRawTeam2.isVisible=true
-             }*/
+            checkTeamAvailability()
         })
     }
 
-    private fun checkTeamAvability() {
+    private fun checkTeamAvailability() {
         if (viewModel.rawTeam1.value.isNullOrEmpty() && viewModel.rawTeam2.value.isNullOrEmpty()) {
             tvRawTeam1.isVisible = false
             rvRawTeam1.isVisible = false

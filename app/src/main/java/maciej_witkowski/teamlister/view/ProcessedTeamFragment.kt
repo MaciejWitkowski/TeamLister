@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+//import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateVMFactory
 import androidx.lifecycle.ViewModelProviders
@@ -27,11 +27,11 @@ class ListFragment : Fragment() {
     private var activeTeam = 1
     private var cursor = 0
     private val teamObserver = Observer<String> { value ->
-            value?.let {
-                tvTeam.setText(value)
-                tvTeam.setSelection(cursor)
-            }
+        value?.let {
+            tvTeam.setText(value)
+            tvTeam.setSelection(cursor)
         }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,40 +61,49 @@ class ListFragment : Fragment() {
             viewModel.team1.observe(this, teamObserver)
             styleTeam1Button()
             activeTeam = 1
+            cursor = 0
         }
         btnTeam2.setOnClickListener {
             viewModel.team1.removeObserver(teamObserver)
             viewModel.team2.observe(this, teamObserver)
             styleTeam2Button()
             activeTeam = 2
+            cursor = 0
         }
         btnSave.setOnClickListener {
             viewModel.saveToFiles()
         }
         RxTextView.textChanges(tvTeam)
-            .debounce(1500, TimeUnit.MILLISECONDS)
+            .debounce(1000, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(textChangeObserver)
     }
 
-    private fun styleTeam1Button(){
-        btnTeam1.textSize=30f
-        btnTeam1.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-        btnTeam2.textSize=12f
-        btnTeam2.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey_700))
+    private fun styleTeam1Button() {
+        btnTeam1.textSize = 30f
+        btnTeam2.textSize = 12f
     }
-    private fun styleTeam2Button(){
-        btnTeam1.textSize=12f
-        btnTeam1.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey_700))
-        btnTeam2.textSize=30f
-        btnTeam2.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+
+    private fun styleTeam2Button() {
+        btnTeam1.textSize = 12f
+        btnTeam2.textSize = 30f
     }
 
 
-    private val textChangeObserver = object : DisposableObserver<CharSequence>() {
+    private val textChangeObserver = object : DisposableObserver<CharSequence>() {//TODO keyboard is blinking on text save/reload
         override fun onNext(charSequence: CharSequence) {
-            cursor = tvTeam.selectionStart
-            viewModel.updateProcessedTeam(charSequence.toString(), activeTeam)
+            if (activeTeam == 1 && !charSequence.toString().equals(viewModel.team1.value) && !charSequence.toString().isNullOrEmpty() && !charSequence.toString().equals(
+                    viewModel.team2.value)
+            ) {
+                cursor = tvTeam.selectionStart
+                viewModel.updateProcessedTeam(charSequence.toString(), activeTeam)
+
+            } else if (activeTeam == 2 && !charSequence.toString().equals(viewModel.team2.value) && !charSequence.toString().isNullOrEmpty() && !charSequence.toString().equals(
+                    viewModel.team1.value)
+            ) {
+                cursor = tvTeam.selectionStart
+                viewModel.updateProcessedTeam(charSequence.toString(), activeTeam)
+            }
         }
 
         override fun onError(e: Throwable) {

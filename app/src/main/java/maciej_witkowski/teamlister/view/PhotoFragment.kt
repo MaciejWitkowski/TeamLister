@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_photo.*
 import android.graphics.Bitmap
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -34,6 +35,12 @@ class PickResultFragment : Fragment() {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(requireActivity(), SavedStateVMFactory(requireActivity()))
             .get(TeamsViewModel::class.java)
+        //val test = getString(maciej_witkowski.teamlister.R.string.toastAnalyzed)
+
+        Log.d("ORIENT", requireActivity().getResources().getConfiguration().orientation.toString())//1 land, 2 horizontal
+        if(viewModel.imageNew.value!=null)
+        Log.d( "ORIENT","h: "+ viewModel.imageNew.value?.height.toString()+ " w: "+viewModel.imageNew.value?.width.toString())
+
     }
 
     override fun onCreateView(
@@ -48,7 +55,7 @@ class PickResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.imageNew.observe(this, imageObserver)
-        viewModel.toastMessage.observe(this, Observer {
+        viewModel.toastMessage.observe(this, Observer { it ->
             it.getContentIfNotHandled()?.let { // Only proceed if the event has never been handled
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }
@@ -75,6 +82,7 @@ class PickResultFragment : Fragment() {
             .setName("teamLister_${System.currentTimeMillis()}")
             .setImageFormat(Camera.IMAGE_JPEG)
             .setCompression(75)
+            //.setImageHeight(1500)
             .build(this)
     }
 
@@ -99,8 +107,9 @@ class PickResultFragment : Fragment() {
                 val bitmap = camera.cameraBitmap
                 if (bitmap != null&&path!=null) {
                     viewModel.setBitmap(bitmap,path)
+                    Toast.makeText(requireContext(), "Analyzing image", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(requireContext(), "picutre not taken", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Picture not taken", Toast.LENGTH_SHORT).show()
                 }
             }
         }
