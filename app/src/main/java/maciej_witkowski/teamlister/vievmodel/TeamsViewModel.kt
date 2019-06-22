@@ -1,9 +1,7 @@
 package maciej_witkowski.teamlister.vievmodel
 
 import android.app.Application
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
+import android.graphics.*
 import android.media.MediaScannerConnection
 import android.os.Environment
 import android.util.Log
@@ -22,7 +20,6 @@ import maciej_witkowski.teamlister.utils.TextUtils
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import android.graphics.BitmapFactory
 import android.provider.Settings.System.getString
 import androidx.core.content.ContextCompat
 
@@ -75,6 +72,13 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
             Log.d("TAG", "Path Null")
         return imageLiveData
     }
+    private fun getBitmap(path: String?):Bitmap{
+            Log.d("TAG", path)
+            val myBitmap = BitmapFactory.decodeFile(path)
+           // val mutableImage = myBitmap.copy(Bitmap.Config.ARGB_8888, true)
+        return myBitmap
+    }
+
 
     fun setBitmap(bitmap: Bitmap, path: String) {
         imageNew.value = bitmap
@@ -82,8 +86,19 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         analyzeImage(bitmap)
     }
 
+    fun setBitmap(path: String){
+        Log.d(TAG, "set bitmap")
+        imagePathHandle.value=path
+        val bitmap=getBitmap(path)
+        imageNew.value = bitmap
+        analyzeImage(bitmap)
+    }
 
-    private fun analyzeImage(image: Bitmap) {
+    private fun analyzeImage(imageSource: Bitmap) {
+        val matrix = Matrix()
+        matrix.postRotate(90f)
+        val scaledBitmap = Bitmap.createScaledBitmap(imageSource, imageSource.width, imageSource.height, true)
+        val image = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.width, scaledBitmap.height, matrix, true)
         val firebaseVisionImage = FirebaseVisionImage.fromBitmap(image)
         val textRecognizer = FirebaseVision.getInstance().onDeviceTextRecognizer
         textRecognizer.processImage(firebaseVisionImage)
@@ -106,6 +121,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
             for (line in block.lines) {
                 val rect = line.boundingBox
                 if (TextUtils.isValidLine(line.text) && rect != null) {
+                    Log.d(TAG, line.text)
                     tmp.add(TextLineLight(TextUtils.splitNumbers(line.text), rect))
                 }
             }

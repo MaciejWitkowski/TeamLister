@@ -23,8 +23,9 @@
             android:layout_height="2dp"
             android:background="@color/grey_700" app:layout_constraintBottom_toBottomOf="@+id/rvRawTeam2"
             android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="@+id/tvRawTeam1"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            app:layout_constraintStart_toStartOf="@+id/tvRawTeamNa" android:layout_marginStart="8dp"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/tvRawTeamNa" android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"/>
     <TextView
             android:text="@string/tvTeam2"
             android:layout_width="wrap_content"

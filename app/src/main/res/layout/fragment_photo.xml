@@ -6,27 +6,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/grey_300"
-        tools:context=".view.PickResultFragment" android:id="@+id/frameLayout">
-    <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+        tools:context=".view.PhotoFragment" android:id="@+id/frameLayout">
+
+    <ImageView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/ivPhoto"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:fillViewport="true"
-            app:layout_constraintTop_toBottomOf="@+id/btnAuto" app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintVertical_bias="0.0">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-        <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:src="@tools:sample/backgrounds/scenic"
-                android:id="@+id/ivPhoto"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-        />
 
-    </ScrollView>
     <Button
             android:text="@string/btnTeam1"
             android:layout_width="0dp"

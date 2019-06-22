@@ -17,7 +17,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
-
     <string name="toastAnalyzing">Analyzing image</string>
     <string name="toastError">Error</string>
     <string name="toastNoPicture">Picture not taken</string>

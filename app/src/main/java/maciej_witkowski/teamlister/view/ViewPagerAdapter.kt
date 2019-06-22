@@ -9,7 +9,7 @@ class MyPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> {
-                PickResultFragment()
+                PhotoFragment()
             }
             else -> {
                 return RawTeamFragment()

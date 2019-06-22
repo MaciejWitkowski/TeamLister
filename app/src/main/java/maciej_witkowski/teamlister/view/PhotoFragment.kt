@@ -1,46 +1,50 @@
 package maciej_witkowski.teamlister.view
 
-import android.app.Activity
-import android.content.Intent
+
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_photo.*
 import android.graphics.Bitmap
 import android.util.Log
+import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateVMFactory
 import androidx.lifecycle.ViewModelProviders
-import com.mindorks.paracamera.Camera
+import kotlinx.android.synthetic.main.fragment_photo.*
 import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
 import maciej_witkowski.teamlister.R
 
-
-class PickResultFragment : Fragment() {
+private const val TAG = "PHOTO_FRAGMENT"
+class PhotoFragment : Fragment() {
     private lateinit var viewModel: TeamsViewModel
-    private lateinit var camera: Camera
 
     private val imageObserver =
         Observer<Bitmap> { value ->
             value?.let {
+/*
+                val workingBitmap = Bitmap.createBitmap(it)
+                val mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true)
+                val canvas=Canvas(mutableBitmap)
+                Log.d(TAG, canvas.height.toString())
+                //ivPhoto.setImageBitmap(it)
+                ivPhoto.draw(canvas)*/
                 ivPhoto.setImageBitmap(it)
+                Log.d(TAG, "height: "+it.height+ " Width: "+ it.width)
             }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(requireActivity(), SavedStateVMFactory(requireActivity()))
-            .get(TeamsViewModel::class.java)
-        //val test = getString(maciej_witkowski.teamlister.R.string.toastAnalyzed)
+        viewModel = ViewModelProviders.of(requireActivity(), SavedStateVMFactory(requireActivity())).get(TeamsViewModel::class.java)
+    }
 
-        Log.d("ORIENT", requireActivity().getResources().getConfiguration().orientation.toString())//1 land, 2 horizontal
-        if(viewModel.imageNew.value!=null)
-        Log.d( "ORIENT","h: "+ viewModel.imageNew.value?.height.toString()+ " w: "+viewModel.imageNew.value?.width.toString())
-
+    private fun startCamera(){
+        val fragment=CameraFragment()
+        val ft = fragmentManager!!.beginTransaction()
+        ft.replace(maciej_witkowski.teamlister.R.id.contentFrame, fragment)
+        ft.addToBackStack(null)
+        ft.commit()
     }
 
     override fun onCreateView(
@@ -51,7 +55,6 @@ class PickResultFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_photo, container, false)
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.imageNew.observe(this, imageObserver)
@@ -61,57 +64,20 @@ class PickResultFragment : Fragment() {
             }
         })
         (activity as? AppCompatActivity)?.supportActionBar?.title = "Image from camera"
-        cameraInit()
-        fabRetry.setOnClickListener { takePicture() }
+
+        if(viewModel.imageNew.value==null){
+            startCamera()
+        }
+        fabRetry.setOnClickListener { startCamera()}
         fabAccept.setOnClickListener { acceptResult() }
         btnTeam1Picker.setOnClickListener { viewModel.allTeam1() }
         btnAuto.setOnClickListener { viewModel.auto() }
         btnTeam2Picker.setOnClickListener { viewModel.allTeam2() }
-            if (viewModel.imageNew.value==null){
-            takePicture()
+    }
+        private fun acceptResult() {
+            viewModel.acceptResult()
         }
+
     }
 
 
-
-    private fun cameraInit() {
-        camera = Camera.Builder()
-            .resetToCorrectOrientation(true)
-            .setTakePhotoRequestCode(Camera.REQUEST_TAKE_PHOTO)
-            .setDirectory("pics")
-            .setName("teamLister_${System.currentTimeMillis()}")
-            .setImageFormat(Camera.IMAGE_JPEG)
-            .setCompression(75)
-            //.setImageHeight(1500)
-            .build(this)
-    }
-
-    private fun acceptResult() {
-        viewModel.acceptResult()
-    }
-
-    private fun takePicture() {
-        try {
-            camera.takePicture()
-        } catch (e: Exception) {
-            Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == Camera.REQUEST_TAKE_PHOTO) {
-                val path=camera.cameraBitmapPath
-                val bitmap = camera.cameraBitmap
-                if (bitmap != null&&path!=null) {
-                    viewModel.setBitmap(bitmap,path)
-                    Toast.makeText(requireContext(), "Analyzing image", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(requireContext(), "Picture not taken", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
-}

@@ -6,21 +6,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/grey_300"
-        tools:context=".view.PickResultFragment" android:id="@+id/frameLayout">
+        tools:context=".view.PhotoFragment" android:id="@+id/frameLayout">
     <ScrollView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:fillViewport="true"
-            app:layout_constraintTop_toBottomOf="@+id/btnAuto" app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintVertical_bias="0.0">
+            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.0" app:layout_constraintEnd_toEndOf="parent"
+    >
 
         <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:src="@tools:sample/backgrounds/scenic"
                 android:id="@+id/ivPhoto"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"

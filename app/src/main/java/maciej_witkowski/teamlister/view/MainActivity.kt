@@ -1,6 +1,7 @@
 package maciej_witkowski.teamlister.view
 
 import android.Manifest
+import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -15,6 +16,7 @@ import androidx.preference.PreferenceManager
 import com.google.firebase.FirebaseApp
 import maciej_witkowski.teamlister.R
 import maciej_witkowski.teamlister.preferences.SettingsFragment
+import java.io.File
 
 
 private const val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
@@ -31,15 +33,15 @@ class MainActivity : AppCompatActivity() {
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_gallery -> {
-                //getGalleryPermissions()
-                loadFragment(RawTeamFragment())
+
+                loadFragment(CameraFragment())
                 return@OnNavigationItemSelectedListener true
             }
         }
         false
     }
 
-    private fun loadFragment(fragment: Fragment){
+     private fun loadFragment(fragment: Fragment){
             supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.contentFrame, fragment)
@@ -91,7 +93,17 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
         }
     }
+    companion object {
+        /** Use external media if it is available, our app's file directory otherwise */
+        fun getOutputDirectory(context: Context): File {
+            val appContext = context.applicationContext
+            val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
+                File(it, appContext.resources.getString(R.string.app_name)).apply { mkdirs() } }
+            return if (mediaDir != null && mediaDir.exists())
+                mediaDir else appContext.filesDir
+        }
 
+    }
 
 
 }
