@@ -20,8 +20,9 @@ import maciej_witkowski.teamlister.utils.TextUtils
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import android.provider.Settings.System.getString
 import androidx.core.content.ContextCompat
+import androidx.exifinterface.media.ExifInterface
+import maciej_witkowski.teamlister.R
 
 private const val TAG = "TeamsViewModel"
 
@@ -61,7 +62,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         val imageLiveData = MutableLiveData<Bitmap>()
         if (!path.isNullOrEmpty()) {
             Log.d("TAG", path)
-            val myBitmap = BitmapFactory.decodeFile(path)
+            val myBitmap=getBitmapWithOrient(path)
             val mutableImage = myBitmap.copy(Bitmap.Config.ARGB_8888, true)
             if (!textLinesHandle.value.isNullOrEmpty()) {
                 splitAuto(textLinesHandle.value!!, mutableImage)
@@ -72,33 +73,51 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
             Log.d("TAG", "Path Null")
         return imageLiveData
     }
-    private fun getBitmap(path: String?):Bitmap{
-            Log.d("TAG", path)
-            val myBitmap = BitmapFactory.decodeFile(path)
-           // val mutableImage = myBitmap.copy(Bitmap.Config.ARGB_8888, true)
+
+
+    private fun getBitmapWithOrient(path: String): Bitmap {//check size
+        Log.d("TAG", path)
+        val exif = ExifInterface(path)
+        val rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+        val rotationInDegrees = exifToDegrees(rotation)
+        val myBitmap = BitmapFactory.decodeFile(path)
+        val matrix = Matrix()
+        var height=myBitmap.height
+        var width =myBitmap.width
+        if (height>4096)
+            height=4096
+        if (width>4096)
+            width=4096
+        if (rotation != 0) {
+            matrix.preRotate(rotationInDegrees)
+            return Bitmap.createBitmap(myBitmap, 0, 0, width, height, matrix, true)
+        }
+        else if(myBitmap.height>4096||myBitmap.width>4096){
+            return Bitmap.createBitmap(myBitmap, 0, 0, myBitmap.width, myBitmap.height)
+        }
         return myBitmap
     }
 
 
-    fun setBitmap(bitmap: Bitmap, path: String) {
-        imageNew.value = bitmap
-        imagePathHandle.value = path
-        analyzeImage(bitmap)
+    private fun exifToDegrees(exifOrientation: Int): Float {
+        return when (exifOrientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> 90f
+            ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+            ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+            else -> 0f
+        }
     }
 
-    fun setBitmap(path: String){
+    fun setBitmap(path: String) {
         Log.d(TAG, "set bitmap")
-        imagePathHandle.value=path
-        val bitmap=getBitmap(path)
+        imagePathHandle.value = path
+        val bitmap = getBitmapWithOrient(path)
         imageNew.value = bitmap
         analyzeImage(bitmap)
+
     }
 
-    private fun analyzeImage(imageSource: Bitmap) {
-        val matrix = Matrix()
-        matrix.postRotate(90f)
-        val scaledBitmap = Bitmap.createScaledBitmap(imageSource, imageSource.width, imageSource.height, true)
-        val image = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.width, scaledBitmap.height, matrix, true)
+    private fun analyzeImage(image: Bitmap) {
         val firebaseVisionImage = FirebaseVisionImage.fromBitmap(image)
         val textRecognizer = FirebaseVision.getInstance().onDeviceTextRecognizer
         textRecognizer.processImage(firebaseVisionImage)
@@ -167,11 +186,17 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         val imageWidth = image.width
         val canvas = Canvas(image)
         val team1Paint = Paint()
-        team1Paint.color=ContextCompat.getColor(getApplication<Application>().applicationContext, maciej_witkowski.teamlister.R.color.team_1)
+        team1Paint.color = ContextCompat.getColor(
+            getApplication<Application>().applicationContext,
+            maciej_witkowski.teamlister.R.color.team_1
+        )
         team1Paint.style = Paint.Style.STROKE
         team1Paint.strokeWidth = 4F
         val team2Paint = Paint()
-        team2Paint.color =ContextCompat.getColor(getApplication<Application>().applicationContext, maciej_witkowski.teamlister.R.color.team_2)
+        team2Paint.color = ContextCompat.getColor(
+            getApplication<Application>().applicationContext,
+            maciej_witkowski.teamlister.R.color.team_2
+        )
         team2Paint.style = Paint.Style.STROKE
         team2Paint.strokeWidth = 4F
         val teamFirst = mutableListOf<PlayerData>()
@@ -196,7 +221,10 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
     private fun splitToTeam1(data: MutableList<TextLineLight>?, image: Bitmap?) {
         val canvas = Canvas(image)
         val paint = Paint()
-        paint.color=ContextCompat.getColor(getApplication<Application>().applicationContext, maciej_witkowski.teamlister.R.color.team_1)
+        paint.color = ContextCompat.getColor(
+            getApplication<Application>().applicationContext,
+            maciej_witkowski.teamlister.R.color.team_1
+        )
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 4F
         val teamFirst = mutableListOf<PlayerData>()
@@ -214,7 +242,10 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
     private fun splitToTeam2(data: MutableList<TextLineLight>?, image: Bitmap?) {
         val canvas = Canvas(image)
         val paint = Paint()
-        paint.color =ContextCompat.getColor(getApplication<Application>().applicationContext, maciej_witkowski.teamlister.R.color.team_2)
+        paint.color = ContextCompat.getColor(
+            getApplication<Application>().applicationContext,
+            maciej_witkowski.teamlister.R.color.team_2
+        )
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 4F
         val teamFirst = mutableListOf<PlayerData>()
@@ -285,10 +316,15 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
             RemoveBracketFormat.NONE
         }
         if (data != null) {
+            val names=getApplication<Application>().applicationContext.resources.getStringArray(R.array.names).toList()
+            Log.d(TAG, "Names size: "+ names.size.toString())
             for (line in data) {
                 var tmp = line.name
-                if (fixT)
+                tmp=TextUtils.fixDollarSign(tmp)
+                if (fixT) {
+                    tmp = TextUtils.dictionaryNameFix(tmp,names)
                     tmp = TextUtils.fixWrongT(tmp)  //TODO to builder, now needs to be called in particular order
+                }
                 tmp = TextUtils.caseFormatting(tmp, caseEnum)
                 if (replaceAscii)
                     tmp = TextUtils.replaceNonAsciiChars(tmp)

@@ -66,6 +66,41 @@ class TextUtils {
                 else -> input
             }
         }
+
+        fun fixDollarSign(input: String): String {
+            return input.replace("$", "S")
+        }
+
+        /** "t"  surrounded by uppercase letters are fixed in @fixWrongT method **/
+        fun dictionaryNameFix(input: String, names: List<String>): String {
+            //var current = input
+            var corrected = ""
+            val split = input.split(" ").toMutableList()
+            split.forEachIndexed {index, string ->
+                names.forEach { dictName ->
+                    if (string.contains(dictName, true)) {
+                        if (dictName.equals("tomistaw", true))
+                            split[index]= split[index].replaceRange(5, 6, "ł")
+                        else if (dictName.equals("barttomiej", true)) {
+                            split[index] =  split[index].replaceRange(4, 5, "ł")
+                        } else {
+                            if (dictName[0].equals('t'))
+                                split[index] =  split[index].replaceRange(0, 1, "Ł")
+                            else
+                                split[index] =  split[index].replace("t", "ł")
+
+                        }
+
+                    }
+                }
+            }
+
+            split.forEach{
+                corrected=corrected+" "+it
+            }
+            return corrected.trim()
+        }
+
     }
 }
 
@@ -86,7 +121,7 @@ private fun fourCharsValidation(line: String): Boolean {
 private fun defaultValidation(line: String): Boolean {
     var isValid = false
     if (!line[0].isDigit()) {
-        isValid = false
+        return false
     } else {
         var digitCount = 0
         for (i in 2 until line.length) {
@@ -96,6 +131,8 @@ private fun defaultValidation(line: String): Boolean {
         }
         if (digitCount < 2)
             isValid = true
+        if (line.contains("lotto eks", true))
+            isValid = false
     }
     return isValid
 }

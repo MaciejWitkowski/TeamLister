@@ -22,8 +22,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-
-
 private const val TAG = "CAMERA_FRAGMENT"
 private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
 private const val PHOTO_EXTENSION = ".jpg"
@@ -133,10 +131,12 @@ class CameraFragment : Fragment() {
         val imageCaptureConfig = ImageCaptureConfig.Builder().apply {
             setLensFacing(lensFacing)
             setCaptureMode(ImageCapture.CaptureMode.MAX_QUALITY)
-            setTargetResolution(Size(width * 3, height * 3))
+            setTargetResolution(Size(2448, 3264))
             setTargetAspectRatio(aspectRatio)
             setTargetRotation(viewFinder.display.rotation)
         }.build()
+
+
 
         imageCapture = ImageCapture(imageCaptureConfig)
 

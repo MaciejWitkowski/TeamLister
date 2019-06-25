@@ -25,9 +25,6 @@
         <item>start</item>
         <item>end</item>
     </string-array>
-    NONE,
-    ALL,
-    NOT_CLOSED
     <string-array name="brackets">
         <item>None</item>
         <item>All</item>
@@ -39,6 +36,36 @@
         <item>NOT_CLOSED</item>
     </string-array>
 
+    <string-array name="names">
+        <item>Barttomiej</item>
+        <item>Btażej</item>
+        <item>Btazej</item>
+        <item>Bogumit</item>
+        <item>Bogumistaw</item>
+        <item>Bolestaw</item>
+        <item>Bronistaw</item>
+        <item>Czestaw</item>
+        <item>Jarostaw</item>
+        <item>tucjan</item>
+        <item>tukasz</item>
+        <item>Michat</item>
+        <item>Mieczystaw</item>
+        <item>Mikotaj</item>
+        <item>Mirostaw</item>
+        <item>Mitosz</item>
+        <item>Przemystaw</item>
+        <item>Radostaw</item>
+        <item>Rafat</item>
+        <item>Stawomir</item>
+        <item>Tomistaw</item>
+        <item>Wactaw</item>
+        <item>Wiestaw</item>
+        <item>Wtadystaw</item>
+        <item>Władystaw</item>
+        <item>Wtadysław</item>
+        <item>Wtodzimierz</item>
+        <item>Zdzistaw</item>
+    </string-array>
 
 
 </resources>

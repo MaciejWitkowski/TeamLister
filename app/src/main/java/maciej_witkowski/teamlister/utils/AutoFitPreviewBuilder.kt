@@ -1,3 +1,4 @@
+package maciej_witkowski.teamlister.utils
 /*
  * Copyright 2019 Google LLC
  *
@@ -14,7 +15,6 @@
  * limitations under the License.
  */
 
-package maciej_witkowski.teamlister.utils
 
 import android.content.Context
 import android.graphics.Matrix

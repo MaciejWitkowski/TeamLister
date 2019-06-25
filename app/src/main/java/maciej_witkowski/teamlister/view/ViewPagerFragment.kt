@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.SavedStateVMFactory
 import androidx.lifecycle.ViewModelProviders
-import kotlinx.android.synthetic.main.fragment_photo.*
 import kotlinx.android.synthetic.main.fragment_view_pager.*
 
 import maciej_witkowski.teamlister.R
@@ -32,18 +31,7 @@ class ViewPagerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if(viewModel.imageNew.value==null){
-            startCamera()
-        }
         val fragmentAdapter = MyPagerAdapter(childFragmentManager)
         vp_main.adapter = fragmentAdapter
-    }
-
-    private fun startCamera(){
-        val fragment=CameraFragment()
-        val ft = fragmentManager!!.beginTransaction()
-        ft.replace(maciej_witkowski.teamlister.R.id.contentFrame, fragment)
-        ft.addToBackStack(null)
-        ft.commit()
     }
 }

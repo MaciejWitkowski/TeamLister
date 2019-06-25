@@ -12,8 +12,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateVMFactory
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_photo.*
-import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
 import maciej_witkowski.teamlister.R
+import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
 
 private const val TAG = "PHOTO_FRAGMENT"
 class PhotoFragment : Fragment() {
@@ -22,15 +22,7 @@ class PhotoFragment : Fragment() {
     private val imageObserver =
         Observer<Bitmap> { value ->
             value?.let {
-/*
-                val workingBitmap = Bitmap.createBitmap(it)
-                val mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true)
-                val canvas=Canvas(mutableBitmap)
-                Log.d(TAG, canvas.height.toString())
-                //ivPhoto.setImageBitmap(it)
-                ivPhoto.draw(canvas)*/
                 ivPhoto.setImageBitmap(it)
-                Log.d(TAG, "height: "+it.height+ " Width: "+ it.width)
             }
         }
 
@@ -40,11 +32,7 @@ class PhotoFragment : Fragment() {
     }
 
     private fun startCamera(){
-        val fragment=CameraFragment()
-        val ft = fragmentManager!!.beginTransaction()
-        ft.replace(maciej_witkowski.teamlister.R.id.contentFrame, fragment)
-        ft.addToBackStack(null)
-        ft.commit()
+        (activity as MainActivity).loadFragment(CameraFragment())
     }
 
     override fun onCreateView(
@@ -77,7 +65,6 @@ class PhotoFragment : Fragment() {
         private fun acceptResult() {
             viewModel.acceptResult()
         }
-
     }
 
 

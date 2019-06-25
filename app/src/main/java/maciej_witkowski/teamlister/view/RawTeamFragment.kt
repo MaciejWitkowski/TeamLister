@@ -53,12 +53,14 @@ class RawTeamFragment : Fragment() {
             tvRawTeam2.isVisible = false
             rvRawTeam2.isVisible = false
             tvRawTeamNa.isVisible = true
+            divider.isVisible=false
         } else {
             tvRawTeam1.isVisible = !viewModel.rawTeam1.value.isNullOrEmpty()
             rvRawTeam1.isVisible = !viewModel.rawTeam1.value.isNullOrEmpty()
             tvRawTeam2.isVisible = !viewModel.rawTeam2.value.isNullOrEmpty()
             rvRawTeam2.isVisible = !viewModel.rawTeam2.value.isNullOrEmpty()
             tvRawTeamNa.isVisible = false
+            divider.isVisible=!viewModel.rawTeam2.value.isNullOrEmpty()&&!viewModel.rawTeam1.value.isNullOrEmpty()
         }
     }
 

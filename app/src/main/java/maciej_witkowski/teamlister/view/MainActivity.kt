@@ -41,12 +41,14 @@ class MainActivity : AppCompatActivity() {
         false
     }
 
-     private fun loadFragment(fragment: Fragment){
+        fun loadFragment(fragment: Fragment){
             supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.contentFrame, fragment)
                 .commit()
     }
+
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -92,17 +94,6 @@ class MainActivity : AppCompatActivity() {
         if (intent.resolveActivity(packageManager) != null) {
             startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
         }
-    }
-    companion object {
-        /** Use external media if it is available, our app's file directory otherwise */
-        fun getOutputDirectory(context: Context): File {
-            val appContext = context.applicationContext
-            val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
-                File(it, appContext.resources.getString(R.string.app_name)).apply { mkdirs() } }
-            return if (mediaDir != null && mediaDir.exists())
-                mediaDir else appContext.filesDir
-        }
-
     }
 
 

@@ -155,5 +155,13 @@ class ValidLineUnitTest {
         val expected= false
         assertEquals(expected,actual)
     }
+
+    @Test
+    fun lottoEkstraklasaTest(){
+        val str="11. kolejka lotto ekstraklasy"
+        val actual= TextUtils.isValidLine(str)
+        val expected= false
+        assertEquals(expected,actual)
+    }
 }
 
