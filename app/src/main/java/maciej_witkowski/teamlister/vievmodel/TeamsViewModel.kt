@@ -13,16 +13,16 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.text.FirebaseVisionText
 import maciej_witkowski.teamlister.model.PlayerData
 import maciej_witkowski.teamlister.model.TextLineLight
-import maciej_witkowski.teamlister.utils.CaseFormat
-import maciej_witkowski.teamlister.utils.Event
-import maciej_witkowski.teamlister.utils.RemoveBracketFormat
-import maciej_witkowski.teamlister.utils.TextUtils
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.exifinterface.media.ExifInterface
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import maciej_witkowski.teamlister.R
+import maciej_witkowski.teamlister.utils.*
 
 private const val TAG = "TeamsViewModel"
 
@@ -32,7 +32,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         return super.getApplication()
     }
 
-    private val imagePathHandle: MutableLiveData<String> = handle.getLiveData<String>("path")
+    val imagePathHandle: MutableLiveData<String> = handle.getLiveData<String>("path")
 
     private val textLinesHandle: MutableLiveData<MutableList<TextLineLight>> =
         handle.getLiveData<MutableList<TextLineLight>>("TextLines")
@@ -79,7 +79,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         Log.d("TAG", path)
         val exif = ExifInterface(path)
         val rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
-        val rotationInDegrees = exifToDegrees(rotation)
+        val rotationInDegrees = ImageUtils.exifToDegrees(rotation)
         val myBitmap = BitmapFactory.decodeFile(path)
         val matrix = Matrix()
         var height=myBitmap.height
@@ -99,14 +99,6 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
     }
 
 
-    private fun exifToDegrees(exifOrientation: Int): Float {
-        return when (exifOrientation) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> 90f
-            ExifInterface.ORIENTATION_ROTATE_180 -> 180f
-            ExifInterface.ORIENTATION_ROTATE_270 -> 270f
-            else -> 0f
-        }
-    }
 
     fun setBitmap(path: String) {
         Log.d(TAG, "set bitmap")

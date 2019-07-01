@@ -23,7 +23,13 @@ android {
         }
     }
     buildTypes {
+        debug {
+            buildConfigField 'String', "FirebaseBucket", TeamListerFirebaseBucket
+            resValue 'string', "Firebase_bucket", TeamListerFirebaseBucket
+        }
         release {
+            buildConfigField 'String', "FirebaseBucket", TeamListerFirebaseBucket
+            resValue 'string', "Firebase_bucket", TeamListerFirebaseBucket
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -45,9 +51,12 @@ dependencies {
 
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
 
+
+
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-ml-vision:19.0.3'
     implementation 'com.google.firebase:firebase-ml-vision-image-label-model:17.0.2'
+    implementation 'com.google.firebase:firebase-storage:18.0.0'
 
     implementation 'io.reactivex.rxjava2:rxjava:2.2.7'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.3.0'

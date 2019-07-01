@@ -11,8 +11,11 @@ import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.camera.core.*
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateVMFactory
 import androidx.lifecycle.ViewModelProviders
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.fragment_camera.*
 import maciej_witkowski.teamlister.R
 import maciej_witkowski.teamlister.utils.AutoFitPreviewBuilder
@@ -97,6 +100,8 @@ class CameraFragment : Fragment() {
             CameraX.unbindAll()
             val path = photoFile.absolutePath
             viewModel.setBitmap(path)
+
+
 
             val fragment=ViewPagerFragment()
             val ft = fragmentManager!!.beginTransaction()
