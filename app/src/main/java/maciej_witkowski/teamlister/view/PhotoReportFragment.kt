@@ -4,19 +4,17 @@ package maciej_witkowski.teamlister.view
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
+import android.widget.Toast
 import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.SavedStateVMFactory
 import androidx.lifecycle.ViewModelProviders
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
+import androidx.work.*
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.Observer
@@ -24,10 +22,16 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_photo_report.*
-import maciej_witkowski.teamlister.BuildConfig
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 import maciej_witkowski.teamlister.R
 import maciej_witkowski.teamlister.model.BitmapWithExif
+import maciej_witkowski.teamlister.model.PhotoReport
+import maciej_witkowski.teamlister.model.PhotoReportDatabase
+import maciej_witkowski.teamlister.model.UploadWorker
 import maciej_witkowski.teamlister.utils.ImageUtils
 import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
 
@@ -89,9 +93,9 @@ class PhotoReportFragment : Fragment() {
         }
 
         override fun onNext(bitmapWithExif: BitmapWithExif) {
-            ivPhotoReport?.let {ivPhotoReport.setImageBitmap(bitmapWithExif.bitmap)}
-            ivPhotoReport?.let{tvIso.text = getString(R.string.iso, bitmapWithExif.iso)}
-            tvShutter?.let{tvShutter.text = getString(R.string.shutter, bitmapWithExif.shutter)}
+            ivPhotoReport?.let { ivPhotoReport.setImageBitmap(bitmapWithExif.bitmap) }
+            ivPhotoReport?.let { tvIso.text = getString(R.string.iso, bitmapWithExif.iso) }
+            tvShutter?.let { tvShutter.text = getString(R.string.shutter, bitmapWithExif.shutter) }
         }
 
         override fun onError(e: Throwable) {
@@ -138,22 +142,29 @@ class PhotoReportFragment : Fragment() {
     }
 
 
-    private fun sendReport() {//TODO should be moved to external service and logged on device at success
+    private suspend fun updateDb() = withContext(Dispatchers.IO) {
+        val db= PhotoReportDatabase.getInstance(activity!!.applicationContext)
+        db.photoReportDao().insertPhotoReport(PhotoReport(null,path,false))
+        }
+
+
+
+
+private fun sendReport() {//TODO should be moved to external service and logged on device at success
         if (::path.isInitialized) {
-            val bucketUrl= BuildConfig.FirebaseBucket
-            val string = "file://$path"
-            val uri = string.toUri()
-            val storage = FirebaseStorage.getInstance()
-            val storageRef = storage.getReferenceFromUrl(bucketUrl)
-            val imagesRef: StorageReference? = storageRef.child("Photo_reports/${uri.lastPathSegment}")
-            Log.d(TAG, "Uri $uri")
-            val uploadTask = imagesRef?.putFile(uri)
-            uploadTask!!.addOnFailureListener {
-                // Handle unsuccessful uploads
-                Log.d(TAG, "failure$it")
-            }.addOnSuccessListener {
-                Log.d(TAG, "image uploaded$it")
-            }
+            val uploadWork = OneTimeWorkRequest.Builder(UploadWorker::class.java)
+            val data = Data.Builder()
+            val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+            data.putString("file_path", path)
+            uploadWork.setInputData(data.build())
+            uploadWork.setConstraints(constraints)
+            WorkManager.getInstance().enqueue(uploadWork.build())
+            val uiScope = CoroutineScope(Dispatchers.Main)
+            uiScope.launch {updateDb()}
+        } else {
+            Toast.makeText(requireContext(), "There is no image!!", Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -64,6 +64,9 @@ class MainActivity : AppCompatActivity() {
             R.id.action_photo_report ->{
                 loadFragment(PhotoReportFragment())
                 return true}
+            R.id.action_report_summary ->{
+                loadFragment(ReportSummaryFragment())
+                return true}
             else -> super.onOptionsItemSelected(item)
         }
     }
