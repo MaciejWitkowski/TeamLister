@@ -15,6 +15,8 @@ import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.report_row_portrait.view.*
 import maciej_witkowski.teamlister.R
 import maciej_witkowski.teamlister.model.PhotoReport
+import java.util.*
+
 private const val LANDSCAPE =0
 private const val PORTRAIT =1
 private const val TAG ="RSRVA"
@@ -60,9 +62,17 @@ class ReportSummaryRecyclerViewAdapter(private var items: List<PhotoReport>?, pr
     }
 
     override fun onBindViewHolder(holder: ViewHolderReportPortrait, position: Int) {
+        val path = items!![position].filePath
+        val exif = ExifInterface(path)
+        val dateTaken=exif.getAttribute(ExifInterface.TAG_DATETIME)
+        dateTaken?.let { holder.tvDateTaken.text=context.getString(R.string.report_taken, dateTaken) }
+        //val dateSend =items!![position].dateSend
+      // holder.tvDateSend.text=dateSend.toString()
+        val string = "file://$path"
+        val uri = string.toUri()
 
-        if (holder.itemViewType == PORTRAIT) {//portrait
-            //holder.tvPath.text = items?.get(position)?.filePath
+        holder.tvNumber.text = context.getString(R.string.report_number, position)
+        if (holder.itemViewType == PORTRAIT) {
             if (items?.get(position)?.isSend==true){
                 Glide.with(holder.ivState.context)
                     .load(R.drawable.ic_cloud_done_green_24dp)
@@ -73,23 +83,17 @@ class ReportSummaryRecyclerViewAdapter(private var items: List<PhotoReport>?, pr
                     .load(R.drawable.ic_cloud_upload_yellow_24dp)
                     .into(holder.ivState)
             }
-            val path = items?.get(position)?.filePath
-            val string = "file://$path"
-            val uri = string.toUri()
             val width=(screenWidth*0.75).toInt()
             Log.d(TAG,width.toString())
 
             val requestOptions = RequestOptions().transform( RoundedCorners(100), FitCenter()).override(width, screenWidth)
-           // requestOptions.transformations( RoundedCorners(20))
 
             Glide.with(holder.ivPhoto.context)
                 .load(uri)
-                //.transforms(RoundedCorners(20))
                 .apply(requestOptions)
                 .into(holder.ivPhoto)
         }
         else{//landscape
-            //holder.tvPath.text = items?.get(position)?.filePath
             if (items?.get(position)?.isSend==true){
                 Glide.with(holder.ivState.context)
                     .load(R.drawable.ic_cloud_done_green_24dp)
@@ -100,9 +104,6 @@ class ReportSummaryRecyclerViewAdapter(private var items: List<PhotoReport>?, pr
                     .load(R.drawable.ic_cloud_upload_yellow_24dp)
                     .into(holder.ivState)
             }
-            val path = items?.get(position)?.filePath
-            val string = "file://$path"
-            val uri = string.toUri()
             val requestOptions = RequestOptions().transform( RoundedCorners(100), FitCenter()).override(screenWidth, screenWidth*0.75.toInt())
             Glide.with(holder.ivPhoto.context)
                 .load(uri)
@@ -115,7 +116,9 @@ class ReportSummaryRecyclerViewAdapter(private var items: List<PhotoReport>?, pr
 }
 
 class ViewHolderReportPortrait(view: View) : RecyclerView.ViewHolder(view) {
-    //val tvPath = view.tv_report_path!!
+    val tvNumber =view.tv_report_number!!
     val ivState = view.iv_report_state!!
     val ivPhoto = view.iv_report_photo!!
+    val tvDateTaken = view.tv_date_taken!!
+    val tvDateSend= view.tv_date_reported!!
 }

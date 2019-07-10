@@ -14,9 +14,15 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.google.firebase.FirebaseApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import maciej_witkowski.teamlister.R
+import maciej_witkowski.teamlister.model.PhotoReportDatabase
 import maciej_witkowski.teamlister.preferences.SettingsFragment
 import java.io.File
+import java.util.concurrent.CountDownLatch
 
 
 private const val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
@@ -77,8 +83,14 @@ class MainActivity : AppCompatActivity() {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
         FirebaseApp.initializeApp(this)
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        CoroutineScope(Dispatchers.Main).launch {updateDb()}
     }
 
+
+    private suspend fun updateDb() = withContext(Dispatchers.IO) {
+        val db= PhotoReportDatabase.getInstance(applicationContext)
+        db.photoReportDao().deleteAll()
+    }
 
     private fun getGalleryPermissions(){ //TODO should be moved to Gallery Fragment
         val rxPermissions = RxPermissions(this)

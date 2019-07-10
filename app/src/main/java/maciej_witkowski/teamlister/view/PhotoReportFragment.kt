@@ -91,7 +91,6 @@ class PhotoReportFragment : Fragment() {
                 .load(path)
                 .apply( RequestOptions().override(width, (width*4/3)))
                 .into(ivPhotoReport);
-            //bitmapObservable.subscribe(bitmapObserver)
         }
     }
 
@@ -119,6 +118,7 @@ class PhotoReportFragment : Fragment() {
 
     private suspend fun updateDb() = withContext(Dispatchers.IO) {
         val db= PhotoReportDatabase.getInstance(activity!!.applicationContext)
+        //db.photoReportDao().insertPhotoReport(PhotoReport(null,path,false,null))
         db.photoReportDao().insertPhotoReport(PhotoReport(null,path,false))
         }
 

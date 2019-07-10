@@ -4,7 +4,6 @@ package maciej_witkowski.teamlister.model
 import android.content.Context
 import android.util.Log
 import androidx.core.net.toUri
-import androidx.room.Room
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.google.firebase.storage.FirebaseStorage
@@ -15,6 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import maciej_witkowski.teamlister.BuildConfig
 import java.util.concurrent.CountDownLatch
+import java.util.*
 
 
 class UploadWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
@@ -49,8 +49,11 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) : Worker
 
     private suspend fun updateDb(path: String, latch: CountDownLatch) = withContext(Dispatchers.IO) {
         val db= PhotoReportDatabase.getInstance(applicationContext)
+        val currentTime = Calendar.getInstance().time
+        //db.photoReportDao().update(path,true,currentTime )
         db.photoReportDao().update(path,true)
         latch.countDown()
     }
+
 
 }

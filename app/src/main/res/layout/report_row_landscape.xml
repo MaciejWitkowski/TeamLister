@@ -10,32 +10,56 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content" tools:srcCompat="@tools:sample/backgrounds/scenic"
             android:id="@+id/iv_report_photo"
-            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintBottom_toTopOf="@+id/tv_report_path"
-            android:layout_marginTop="8dp"/>
+            app:layout_constraintTop_toBottomOf="@+id/tv_report_number"/>
     <TextView
             android:text="STATE:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tv_report_path" android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/tv_report_path"
+            app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintEnd_toStartOf="@+id/iv_report_state" android:textSize="48sp"
-            app:layout_constraintTop_toBottomOf="@+id/iv_report_photo" android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/iv_report_photo"
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/tv_date_taken"/>
     <ImageView
-            android:layout_width="72dp"
-            android:layout_height="72dp" tools:srcCompat="@tools:sample/backgrounds/scenic"
+            android:layout_width="48dp"
+            android:layout_height="48dp" tools:srcCompat="@tools:sample/backgrounds/scenic"
             android:id="@+id/iv_report_state" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tv_report_path" android:layout_marginStart="8dp"
-            android:layout_marginBottom="8dp"
             android:adjustViewBounds="true"
             app:layout_constraintHorizontal_bias="0.5" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/iv_report_photo" app:layout_constraintDimensionRatio="h,1:1"/>
+            app:layout_constraintTop_toBottomOf="@+id/iv_report_photo" app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintBottom_toTopOf="@+id/tv_date_taken"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_report_number" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="parent" android:textSize="28sp"
+            android:textAlignment="center"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_date_taken"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            app:layout_constraintHorizontal_bias="1.0" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_date_reported"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_date_reported" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+    />
 </androidx.constraintlayout.widget.ConstraintLayout>

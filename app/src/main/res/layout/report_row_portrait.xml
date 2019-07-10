@@ -9,25 +9,59 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" tools:srcCompat="@tools:sample/backgrounds/scenic"
             android:id="@+id/iv_report_photo"
-            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="0.0" android:layout_marginTop="8dp"
-            app:layout_constraintDimensionRatio="H,4:3" android:layout_marginBottom="8dp"/>
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintDimensionRatio="H,4:3"
+            android:layout_marginStart="8dp" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/tv_report_number"/>
     <TextView
             android:text="STATE"
             android:layout_width="30dp"
             android:layout_height="wrap_content"
             android:id="@+id/tv_report_path" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
             app:layout_constraintStart_toEndOf="@+id/iv_report_photo" android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintBottom_toTopOf="@+id/iv_report_state"
-            android:textSize="40sp"/>
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintVertical_chainStyle="packed"
+            android:textSize="36sp"
+            app:layout_constraintBottom_toTopOf="@+id/iv_report_state"
+            app:layout_constraintTop_toBottomOf="@+id/tv_report_number"
+    />
     <ImageView
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:id="@+id/iv_report_state" app:layout_constraintStart_toEndOf="@+id/iv_report_photo"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintVertical_chainStyle="packed"
+            android:layout_marginEnd="8dp" android:layout_marginStart="8dp" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/tv_report_path"
+            app:layout_constraintBottom_toTopOf="@+id/tv_date_taken"
+            app:layout_constraintDimensionRatio="1:1"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_date_taken"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"
+            android:textSize="14sp" app:layout_constraintHorizontal_bias="1.0" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/iv_report_photo"/>
+    <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_report_number" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" android:textSize="28sp" android:textAlignment="center"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_date_reported"
+            app:layout_constraintTop_toBottomOf="@+id/tv_date_taken" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_report_path" app:layout_constraintHorizontal_bias="0.5"
-            android:layout_marginEnd="8dp" android:layout_marginStart="8dp"/>
+            android:layout_marginTop="8dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

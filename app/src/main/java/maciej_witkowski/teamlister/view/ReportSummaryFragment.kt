@@ -39,14 +39,15 @@ class ReportSummaryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val metrics = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
-        val width = metrics.widthPixels-rvPhotoReports.marginLeft-rvPhotoReports.marginRight
+        val width = metrics.widthPixels-rv_photo_reports.marginLeft-rv_photo_reports.marginRight
         Log.d(TAG, width.toString())
-        rvPhotoReports.layoutManager = LinearLayoutManager(requireContext())
+        //rvPhotoReports.layoutManager = LinearLayoutManager(requireContext())
         viewModel.reports.observe(this, Observer { reports ->
-            rvPhotoReports.adapter = ReportSummaryRecyclerViewAdapter(reports, requireContext(), width)
-            rvPhotoReports.addItemDecoration(
+            rv_photo_reports.layoutManager = LinearLayoutManager(requireContext())
+            rv_photo_reports.adapter = ReportSummaryRecyclerViewAdapter(reports, requireContext(), width)
+            rv_photo_reports.addItemDecoration(
                 DividerItemDecoration(
-                    rvPhotoReports.context,
+                    rv_photo_reports.context,
                     DividerItemDecoration.VERTICAL
                 )
             )

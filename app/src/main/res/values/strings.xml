@@ -29,6 +29,10 @@
     <string name="sw2">Photo is taken parallel and frame is filled with teamsheet</string>
     <string name="sw3">Photo is taken in good quality (low ISO and non blurry), under even lighting</string>
 
+
+    <string name="report_number">Report: %1$d</string>
+    <string name="report_taken">Photo taken: %1$s</string>
+
     <string name="toastAnalyzing">Analyzing image</string>
     <string name="toastError">Error</string>
     <string name="toastNoPicture">Picture not taken</string>

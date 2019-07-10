@@ -23,6 +23,8 @@ class PhotoFragment : Fragment() {
         Observer<Bitmap> { value ->
             value?.let {
                 ivPhoto.setImageBitmap(it)
+
+
             }
         }
 

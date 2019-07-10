@@ -1,6 +1,7 @@
 package maciej_witkowski.teamlister
 
 
+import maciej_witkowski.teamlister.utils.TextUtils
 import org.junit.Test
 
 import org.junit.Assert.*

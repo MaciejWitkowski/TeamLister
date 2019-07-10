@@ -9,11 +9,13 @@
     <!-- TODO: Update blank fragment layout -->
 
     <TextureView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/texturevCamera"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/textureview_camera"
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
             app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintVertical_bias="1.0"/>
 
@@ -23,8 +25,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:id="@+id/fabShutter"
-            android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="@+id/texturevCamera"
-            android:layout_marginBottom="32dp" app:layout_constraintBottom_toBottomOf="@+id/texturevCamera"
+            android:id="@+id/fab_shutter"
+            android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="@+id/textureview_camera"
+            android:layout_marginBottom="32dp" app:layout_constraintBottom_toBottomOf="@+id/textureview_camera"
             android:layout_marginStart="8dp" app:layout_constraintStart_toStartOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

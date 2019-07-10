@@ -54,14 +54,14 @@ class CameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         container = view as ConstraintLayout
-        viewFinder = container.findViewById(R.id.texturevCamera)
+        viewFinder = container.findViewById(R.id.textureview_camera)
 
         viewFinder.post {
             displayId = viewFinder.display.displayId
             bindCameraUseCases()
         }
 
-        fabShutter.setOnClickListener {
+        fab_shutter.setOnClickListener {
             imageCapture?.let { imageCapture ->
                 val path = Environment.getExternalStorageDirectory()
                 Log.d(TAG, "Path ext $path")
@@ -122,16 +122,20 @@ class CameraFragment : Fragment() {
             Rational(4, 3)
 
         val screenSize = Size(width, height)
+        Log.d(TAG, "Screen size: $screenSize")
         //val aspectRatio = Rational(300, 400) TODO bug report https://groups.google.com/a/android.com/forum/#!forum/camerax-developers corrupted exif when aspect ratio is portrait and camera orient landscape
         val previewAspectRatio = Rational(height, width)
+        //val previewAspectRatio = Rational(1,1)
         Log.d(TAG, width.toString())
         Log.d(TAG, previewAspectRatio.toString())
         val viewFinderConfig = PreviewConfig.Builder().apply {
             setLensFacing(lensFacing)
             setTargetResolution(screenSize)
-            setTargetAspectRatio(aspectRatio)
+            setTargetAspectRatio(previewAspectRatio)
             setTargetRotation(viewFinder.display.rotation)
         }.build()
+
+        Log.d(TAG, "Target Res: "+viewFinderConfig.targetResolution.toString())
 
         // Use the auto-fit preview builder to automatically handle size and orientation changes
         val preview = AutoFitPreviewBuilder.build(viewFinderConfig, viewFinder)

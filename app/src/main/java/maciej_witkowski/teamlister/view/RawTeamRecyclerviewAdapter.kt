@@ -29,5 +29,5 @@ class RawTeamAdapter(private var items : MutableList<PlayerData>?, private val c
 }
 
 class ViewHolder (view: View) : RecyclerView.ViewHolder(view) {
-    val tvNumber = view.textView!!
+    val tvNumber = view.tv_row!!
 }
