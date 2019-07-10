@@ -11,11 +11,8 @@ import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.camera.core.*
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateVMFactory
 import androidx.lifecycle.ViewModelProviders
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.fragment_camera.*
 import maciej_witkowski.teamlister.R
 import maciej_witkowski.teamlister.utils.AutoFitPreviewBuilder
@@ -69,7 +66,6 @@ class CameraFragment : Fragment() {
                 val path = Environment.getExternalStorageDirectory()
                 Log.d(TAG, "Path ext $path")
                 val photoFile = createFile(path, FILENAME, PHOTO_EXTENSION)
-                //val photoFile = createFile(outputDirectory, FILENAME, PHOTO_EXTENSION)
                 val metadata = ImageCapture.Metadata().apply {
                     // Mirror image when using the front camera
                     isReversedHorizontal = lensFacing == CameraX.LensFacing.FRONT
@@ -102,8 +98,7 @@ class CameraFragment : Fragment() {
             viewModel.setBitmap(path)
 
 
-
-            val fragment=ViewPagerFragment()
+            val fragment = ViewPagerFragment()
             val ft = fragmentManager!!.beginTransaction()
             ft.replace(R.id.contentFrame, fragment)
             ft.addToBackStack(null)
@@ -117,11 +112,20 @@ class CameraFragment : Fragment() {
         CameraX.unbindAll()
         val height = viewFinder.height
         val width = viewFinder.width
+        val size = if (height > width)
+            Size(2448, 3264)
+        else
+            Size(3264, 2448)
+        val aspectRatio = if (height > width)
+            Rational(3, 4)
+        else
+            Rational(4, 3)
+
         val screenSize = Size(width, height)
-        val aspectRatio = Rational(300, 400)
-        val previewAspectRatio =Rational(height,width)
-        Log.d(TAG,width.toString())
-        Log.d(TAG,previewAspectRatio.toString())
+        //val aspectRatio = Rational(300, 400) TODO bug report https://groups.google.com/a/android.com/forum/#!forum/camerax-developers corrupted exif when aspect ratio is portrait and camera orient landscape
+        val previewAspectRatio = Rational(height, width)
+        Log.d(TAG, width.toString())
+        Log.d(TAG, previewAspectRatio.toString())
         val viewFinderConfig = PreviewConfig.Builder().apply {
             setLensFacing(lensFacing)
             setTargetResolution(screenSize)
@@ -136,7 +140,7 @@ class CameraFragment : Fragment() {
         val imageCaptureConfig = ImageCaptureConfig.Builder().apply {
             setLensFacing(lensFacing)
             setCaptureMode(ImageCapture.CaptureMode.MAX_QUALITY)
-            setTargetResolution(Size(2448, 3264))
+            setTargetResolution(size)
             setTargetAspectRatio(aspectRatio)
             setTargetRotation(viewFinder.display.rotation)
         }.build()

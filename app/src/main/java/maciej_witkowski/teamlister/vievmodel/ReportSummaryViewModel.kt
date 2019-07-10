@@ -13,13 +13,9 @@ class ReportSummaryViewModel(app: Application) : AndroidViewModel(app) {
 
     private val reportRepository: PhotoReportRepository = PhotoReportRepository(app)
     val reports: LiveData<List<PhotoReport>>
-    //val raw: List<PhotoReport>
 
     init {
         reports = reportRepository.getAllReports()
-        //raw=reportRepository.getAllRaw()
-        //Log.d("RSVM", raw.size.toString())
-        //Log.d("RSVM",reports.value!!.size.toString())
     }
 
 

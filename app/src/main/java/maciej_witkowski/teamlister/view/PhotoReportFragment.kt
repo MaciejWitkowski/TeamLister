@@ -15,6 +15,9 @@ import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.SavedStateVMFactory
 import androidx.lifecycle.ViewModelProviders
 import androidx.work.*
+import com.bumptech.glide.Glide
+import android.util.DisplayMetrics
+import com.bumptech.glide.request.RequestOptions
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.Observer
@@ -63,6 +66,7 @@ class PhotoReportFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         btnReport.setOnClickListener {
             sendReport()
+            loadFragment()
         }
 
         swReport1.setOnCheckedChangeListener { _, _ -> checkSwitches() }
@@ -71,65 +75,36 @@ class PhotoReportFragment : Fragment() {
 
         val tmp = viewModel.imagePathHandle.value
         if (tmp != null) {
+            path=tmp
+            Log.d(TAG, tmp)
+            val metrics = DisplayMetrics()
+            activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
+            val exif = ExifInterface(path)
+            val iso = exif.getAttribute(ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY)
+            tvIso.text = getString(R.string.iso, iso)
+            val exposureTime = exif.getAttributeDouble(ExifInterface.TAG_EXPOSURE_TIME, 0.0)
+            tvShutter.text = getString(R.string.shutter, timeToFraction(exposureTime))
+
+            val width = metrics.widthPixels
             path = tmp
-            bitmapObservable.subscribe(bitmapObserver)
+            Glide.with(requireContext())
+                .load(path)
+                .apply( RequestOptions().override(width, (width*4/3)))
+                .into(ivPhotoReport);
+            //bitmapObservable.subscribe(bitmapObserver)
         }
+    }
+
+    private fun loadFragment(){
+        val fragment=ReportSummaryFragment()
+        val ft = fragmentManager!!.beginTransaction()
+        ft.replace(R.id.contentFrame, fragment)
+        ft.addToBackStack(null)
+        ft.commit()
     }
 
     private fun checkSwitches() {
         btnReport.isEnabled = swReport1.isChecked == true && swReport2.isChecked == true && swReport3.isChecked == true
-    }
-
-    private var bitmapObservable = Observable.create(ObservableOnSubscribe<BitmapWithExif> { emitter ->
-        emitter.onNext(getBitmapWithExif(path))
-        emitter.onComplete()
-    }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-
-    private var bitmapObserver: io.reactivex.Observer<BitmapWithExif> = object :
-        Observer<BitmapWithExif> {
-
-        override fun onSubscribe(d: Disposable) {
-            Log.e(TAG, "onSubscribe" + Thread.currentThread().name)
-        }
-
-        override fun onNext(bitmapWithExif: BitmapWithExif) {
-            ivPhotoReport?.let { ivPhotoReport.setImageBitmap(bitmapWithExif.bitmap) }
-            ivPhotoReport?.let { tvIso.text = getString(R.string.iso, bitmapWithExif.iso) }
-            tvShutter?.let { tvShutter.text = getString(R.string.shutter, bitmapWithExif.shutter) }
-        }
-
-        override fun onError(e: Throwable) {
-            Log.e(TAG, "onError complete: ")
-        }
-
-        override fun onComplete() {}
-    }
-
-
-    private fun getBitmapWithExif(path: String): BitmapWithExif {
-        val exif = ExifInterface(path)
-        val rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
-        val rotationInDegrees = ImageUtils.exifToDegrees(rotation)
-        var myBitmap = BitmapFactory.decodeFile(path)
-        val matrix = Matrix()
-        var height = myBitmap.height
-        var width = myBitmap.width
-        if (height > 4096)
-            height = 4096
-        if (width > 4096)
-            width = 4096
-        if (rotation != 0) {
-            matrix.preRotate(rotationInDegrees)
-            myBitmap = Bitmap.createBitmap(myBitmap, 0, 0, width, height, matrix, true)
-        } else if (myBitmap.height > 4096 || myBitmap.width > 4096) {
-            myBitmap = Bitmap.createBitmap(myBitmap, 0, 0, myBitmap.width, myBitmap.height)
-        }
-        val iso = exif.getAttribute(ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY)
-        val exposureTime = exif.getAttributeDouble(ExifInterface.TAG_EXPOSURE_TIME, 0.0)
-        return if (iso != null)
-            BitmapWithExif(myBitmap, iso, timeToFraction(exposureTime))
-        else
-            BitmapWithExif(myBitmap, "error", timeToFraction(exposureTime))
     }
 
     private fun timeToFraction(time: Double): String {
@@ -147,10 +122,7 @@ class PhotoReportFragment : Fragment() {
         db.photoReportDao().insertPhotoReport(PhotoReport(null,path,false))
         }
 
-
-
-
-private fun sendReport() {//TODO should be moved to external service and logged on device at success
+private fun sendReport() {
         if (::path.isInitialized) {
             val uploadWork = OneTimeWorkRequest.Builder(UploadWorker::class.java)
             val data = Data.Builder()
