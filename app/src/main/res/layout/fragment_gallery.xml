@@ -3,9 +3,12 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:id="@+id/vp_frame"
-             tools:context=".view.PhotoViewPagerFragment">
-    <androidx.viewpager.widget.ViewPager
+             tools:context=".view.GalleryFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent" android:id="@+id/vp_main"/>
+            android:layout_height="match_parent"
+            android:text="@string/hello_blank_fragment"/>
+
 </FrameLayout>

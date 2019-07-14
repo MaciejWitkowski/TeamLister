@@ -27,15 +27,15 @@
             android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/iv_report_photo"
             android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/tv_date_taken"/>
     <ImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp" tools:srcCompat="@tools:sample/backgrounds/scenic"
+            android:layout_width="64dp"
+            android:layout_height="64dp" tools:srcCompat="@tools:sample/backgrounds/scenic"
             android:id="@+id/iv_report_state" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="8dp"
             app:layout_constraintStart_toEndOf="@+id/tv_report_path" android:layout_marginStart="8dp"
             android:adjustViewBounds="true"
             app:layout_constraintHorizontal_bias="0.5" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/iv_report_photo" app:layout_constraintDimensionRatio="h,1:1"
-            app:layout_constraintBottom_toTopOf="@+id/tv_date_taken"/>
+            app:layout_constraintTop_toBottomOf="@+id/iv_report_photo"
+            app:layout_constraintBottom_toTopOf="@+id/tv_date_taken" android:layout_marginBottom="8dp"/>
     <TextView
             android:text="TextView"
             android:layout_width="0dp"

@@ -33,32 +33,32 @@ class RawTeamFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rvRawTeam1.layoutManager = LinearLayoutManager(requireContext())
+        rw_team_raw_1.layoutManager = LinearLayoutManager(requireContext())
         viewModel.rawTeam1.observe(this, Observer { team1 ->
-            rvRawTeam1.adapter = RawTeamAdapter(team1, requireContext())
+            rw_team_raw_1.adapter = RawTeamRecyclerViewAdapter(team1, requireContext())
             checkTeamAvailability()
         })
-        rvRawTeam2.layoutManager = LinearLayoutManager(requireContext())
+        rw_team_raw_2.layoutManager = LinearLayoutManager(requireContext())
         viewModel.rawTeam2.observe(this, Observer { team2 ->
-            rvRawTeam2.adapter = RawTeamAdapter(team2, requireContext())
+            rw_team_raw_2.adapter = RawTeamRecyclerViewAdapter(team2, requireContext())
             checkTeamAvailability()
         })
     }
 
     private fun checkTeamAvailability() {
         if (viewModel.rawTeam1.value.isNullOrEmpty() && viewModel.rawTeam2.value.isNullOrEmpty()) {
-            tvRawTeam1.isVisible = false
-            rvRawTeam1.isVisible = false
-            tvRawTeam2.isVisible = false
-            rvRawTeam2.isVisible = false
-            tvRawTeamNa.isVisible = true
+            tv_team_raw_1.isVisible = false
+            rw_team_raw_1.isVisible = false
+            tv_team_raw_2.isVisible = false
+            rw_team_raw_2.isVisible = false
+            tv_team_raw_na.isVisible = true
             divider.isVisible=false
         } else {
-            tvRawTeam1.isVisible = !viewModel.rawTeam1.value.isNullOrEmpty()
-            rvRawTeam1.isVisible = !viewModel.rawTeam1.value.isNullOrEmpty()
-            tvRawTeam2.isVisible = !viewModel.rawTeam2.value.isNullOrEmpty()
-            rvRawTeam2.isVisible = !viewModel.rawTeam2.value.isNullOrEmpty()
-            tvRawTeamNa.isVisible = false
+            tv_team_raw_1.isVisible = !viewModel.rawTeam1.value.isNullOrEmpty()
+            rw_team_raw_1.isVisible = !viewModel.rawTeam1.value.isNullOrEmpty()
+            tv_team_raw_2.isVisible = !viewModel.rawTeam2.value.isNullOrEmpty()
+            rw_team_raw_2.isVisible = !viewModel.rawTeam2.value.isNullOrEmpty()
+            tv_team_raw_na.isVisible = false
             divider.isVisible=!viewModel.rawTeam2.value.isNullOrEmpty()&&!viewModel.rawTeam1.value.isNullOrEmpty()
         }
     }

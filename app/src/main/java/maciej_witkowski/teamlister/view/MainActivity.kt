@@ -1,7 +1,6 @@
 package maciej_witkowski.teamlister.view
 
 import android.Manifest
-import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -14,15 +13,8 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.google.firebase.FirebaseApp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import maciej_witkowski.teamlister.R
-import maciej_witkowski.teamlister.model.PhotoReportDatabase
 import maciej_witkowski.teamlister.preferences.SettingsFragment
-import java.io.File
-import java.util.concurrent.CountDownLatch
 
 
 private const val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
@@ -31,16 +23,15 @@ class MainActivity : AppCompatActivity() {
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_list -> {
-                loadFragment(ListFragment())
+                loadFragment(ProcessedTeamFragment())
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_camera -> {
-                loadFragment(ViewPagerFragment())
+                loadFragment(PhotoViewPagerFragment())
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_gallery -> {
-
-                loadFragment(CameraFragment())
+                loadFragment(GalleryViewPagerFragment())
                 return@OnNavigationItemSelectedListener true
             }
         }
@@ -50,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         fun loadFragment(fragment: Fragment){
             supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.contentFrame, fragment)
+                .replace(R.id.content_frame, fragment)
                 .commit()
     }
 
@@ -83,14 +74,8 @@ class MainActivity : AppCompatActivity() {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
         FirebaseApp.initializeApp(this)
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-        CoroutineScope(Dispatchers.Main).launch {updateDb()}
     }
 
-
-    private suspend fun updateDb() = withContext(Dispatchers.IO) {
-        val db= PhotoReportDatabase.getInstance(applicationContext)
-        db.photoReportDao().deleteAll()
-    }
 
     private fun getGalleryPermissions(){ //TODO should be moved to Gallery Fragment
         val rxPermissions = RxPermissions(this)

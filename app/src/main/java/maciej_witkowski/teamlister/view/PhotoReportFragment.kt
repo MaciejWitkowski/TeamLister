@@ -1,55 +1,56 @@
 package maciej_witkowski.teamlister.view
 
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.SavedStateVMFactory
 import androidx.lifecycle.ViewModelProviders
-import androidx.work.*
-import com.bumptech.glide.Glide
 import android.util.DisplayMetrics
-import com.bumptech.glide.request.RequestOptions
-import io.reactivex.Observable
-import io.reactivex.ObservableOnSubscribe
-import io.reactivex.Observer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_photo_report.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 import maciej_witkowski.teamlister.R
-import maciej_witkowski.teamlister.model.BitmapWithExif
-import maciej_witkowski.teamlister.model.PhotoReport
-import maciej_witkowski.teamlister.model.PhotoReportDatabase
-import maciej_witkowski.teamlister.model.UploadWorker
 import maciej_witkowski.teamlister.utils.ImageUtils
+import maciej_witkowski.teamlister.vievmodel.PhotoReportViewModel
 import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
 
 
-private const val TAG = "PHOTO_REPORT_FRAGMENT"
-
+private val TAG  = PhotoReportFragment::class.java.simpleName
 
 class PhotoReportFragment : Fragment() {
     //TODO photo from gallery/files etc
-    private lateinit var viewModel: TeamsViewModel
-    private lateinit var path: String
+    private lateinit var mainViewModel: TeamsViewModel
+    private lateinit var viewModel: PhotoReportViewModel
+
+    private val pathObserver = Observer<String> { path ->
+        val metrics = DisplayMetrics()
+        activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
+        ImageUtils.glideToWidth43(path,metrics,iv_photo_report,requireContext())
+    }
+
+
+    private val isoObserver = Observer<String> { iso ->
+        tv_iso.text = getString(R.string.tv_iso, iso)
+    }
+    private val shutterObserver = Observer<String> { shutter ->
+        tv_shutter.text = getString(R.string.tv_shutter, shutter)
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel = ViewModelProviders.of(requireActivity(), SavedStateVMFactory(requireActivity()))
-            .get(TeamsViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, SavedStateVMFactory(this)).get(PhotoReportViewModel::class.java)
+        if (viewModel.path.value == null) {
+
+            mainViewModel = ViewModelProviders.of(requireActivity(), SavedStateVMFactory(requireActivity()))
+                .get(TeamsViewModel::class.java)
+            val path = mainViewModel.imagePathHandle.value
+            path?.let { viewModel.setPath(path) }
+        }
         super.onCreate(savedInstanceState)
     }
 
@@ -64,80 +65,32 @@ class PhotoReportFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        btnReport.setOnClickListener {
-            sendReport()
-            loadFragment()
+        (activity as? AppCompatActivity)?.supportActionBar?.title = getString(R.string.app_title_photo_report)
+        btn_report.setOnClickListener {
+            if (viewModel.path.value != null) {
+                viewModel.sendReport()
+                loadFragment()
+            } else
+                Toast.makeText(requireContext(), "There is no image!!", Toast.LENGTH_SHORT).show()
         }
-
-        swReport1.setOnCheckedChangeListener { _, _ -> checkSwitches() }
-        swReport2.setOnCheckedChangeListener { _, _ -> checkSwitches() }
-        swReport3.setOnCheckedChangeListener { _, _ -> checkSwitches() }
-
-        val tmp = viewModel.imagePathHandle.value
-        if (tmp != null) {
-            path=tmp
-            Log.d(TAG, tmp)
-            val metrics = DisplayMetrics()
-            activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
-            val exif = ExifInterface(path)
-            val iso = exif.getAttribute(ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY)
-            tvIso.text = getString(R.string.iso, iso)
-            val exposureTime = exif.getAttributeDouble(ExifInterface.TAG_EXPOSURE_TIME, 0.0)
-            tvShutter.text = getString(R.string.shutter, timeToFraction(exposureTime))
-
-            val width = metrics.widthPixels
-            path = tmp
-            Glide.with(requireContext())
-                .load(path)
-                .apply( RequestOptions().override(width, (width*4/3)))
-                .into(ivPhotoReport);
-        }
+        viewModel.path.observe(this, pathObserver)
+        viewModel.iso.observe(this, isoObserver)
+        viewModel.shutter.observe(this, shutterObserver)
+        sw_report_1.setOnCheckedChangeListener { _, _ -> checkSwitches() }
+        sw_report_2.setOnCheckedChangeListener { _, _ -> checkSwitches() }
+        sw_report_3.setOnCheckedChangeListener { _, _ -> checkSwitches() }
     }
 
-    private fun loadFragment(){
-        val fragment=ReportSummaryFragment()
+    private fun loadFragment() {
+        val fragment = ReportSummaryFragment()
         val ft = fragmentManager!!.beginTransaction()
-        ft.replace(R.id.contentFrame, fragment)
+        ft.replace(R.id.content_frame, fragment)
         ft.addToBackStack(null)
         ft.commit()
     }
 
     private fun checkSwitches() {
-        btnReport.isEnabled = swReport1.isChecked == true && swReport2.isChecked == true && swReport3.isChecked == true
-    }
-
-    private fun timeToFraction(time: Double): String {
-        return if (time > 1)
-            time.toString()
-        else {
-            val denominator = 1 / time
-            "1/$denominator"
-        }
-    }
-
-
-    private suspend fun updateDb() = withContext(Dispatchers.IO) {
-        val db= PhotoReportDatabase.getInstance(activity!!.applicationContext)
-        //db.photoReportDao().insertPhotoReport(PhotoReport(null,path,false,null))
-        db.photoReportDao().insertPhotoReport(PhotoReport(null,path,false))
-        }
-
-private fun sendReport() {
-        if (::path.isInitialized) {
-            val uploadWork = OneTimeWorkRequest.Builder(UploadWorker::class.java)
-            val data = Data.Builder()
-            val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-            data.putString("file_path", path)
-            uploadWork.setInputData(data.build())
-            uploadWork.setConstraints(constraints)
-            WorkManager.getInstance().enqueue(uploadWork.build())
-            val uiScope = CoroutineScope(Dispatchers.Main)
-            uiScope.launch {updateDb()}
-        } else {
-            Toast.makeText(requireContext(), "There is no image!!", Toast.LENGTH_SHORT).show()
-        }
+        btn_report.isEnabled = sw_report_1.isChecked == true && sw_report_2.isChecked == true && sw_report_3.isChecked == true
     }
 
 }

@@ -24,8 +24,8 @@ import com.google.firebase.storage.StorageReference
 import maciej_witkowski.teamlister.R
 import maciej_witkowski.teamlister.utils.*
 
-private const val TAG = "TeamsViewModel"
 
+private val TAG  = TeamsViewModel::class.java.simpleName
 class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewModel(app) {
     @NonNull
     override fun <T : Application> getApplication(): T {
@@ -61,7 +61,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
     private fun getImage(path: String?): MutableLiveData<Bitmap> {
         val imageLiveData = MutableLiveData<Bitmap>()
         if (!path.isNullOrEmpty()) {
-            Log.d("TAG", path)
+            Log.d(TAG, path)
             val myBitmap=getBitmapWithOrient(path)
             val mutableImage = myBitmap.copy(Bitmap.Config.ARGB_8888, true)
             if (!textLinesHandle.value.isNullOrEmpty()) {
@@ -70,13 +70,13 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
             imageLiveData.value = mutableImage
 
         } else
-            Log.d("TAG", "Path Null")
+            Log.d(TAG, "Path Null")
         return imageLiveData
     }
 
 
     private fun getBitmapWithOrient(path: String): Bitmap {//check size
-        Log.d("TAG", path)
+        Log.d(TAG, path)
         val exif = ExifInterface(path)
         val rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
         val rotationInDegrees = ImageUtils.exifToDegrees(rotation)
@@ -143,16 +143,19 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
 
 
     fun allTeam1() {
+        Log.d(TAG, "allTeam1")
         if (isDataAvailable())
             splitToTeam1(textLinesHandle.value, imageNew.value)
     }
 
     fun allTeam2() {
+        Log.d(TAG, "allTeam2")
         if (isDataAvailable())
             splitToTeam2(textLinesHandle.value, imageNew.value)
     }
 
     fun auto() {
+        Log.d(TAG, "auto")
         if (isDataAvailable())
             splitAuto(textLinesHandle.value!!, imageNew.value!!)
     }
@@ -183,14 +186,14 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
             maciej_witkowski.teamlister.R.color.team_1
         )
         team1Paint.style = Paint.Style.STROKE
-        team1Paint.strokeWidth = 4F
+        team1Paint.strokeWidth = 6F
         val team2Paint = Paint()
         team2Paint.color = ContextCompat.getColor(
             getApplication<Application>().applicationContext,
             maciej_witkowski.teamlister.R.color.team_2
         )
         team2Paint.style = Paint.Style.STROKE
-        team2Paint.strokeWidth = 4F
+        team2Paint.strokeWidth = 6F
         val teamFirst = mutableListOf<PlayerData>()
         val teamSecond = mutableListOf<PlayerData>()
         if (data.size > 0) {
@@ -218,11 +221,12 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
             maciej_witkowski.teamlister.R.color.team_1
         )
         paint.style = Paint.Style.STROKE
-        paint.strokeWidth = 4F
+        paint.strokeWidth = 6F
         val teamFirst = mutableListOf<PlayerData>()
         val teamSecond = mutableListOf<PlayerData>()
         if (data != null) {
             for (line in data) {
+                Log.d(TAG, "Team 1 drawing")
                 canvas.drawRect(line.boundingBox, paint)
                 teamFirst.add(line.data)
             }
@@ -239,11 +243,12 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
             maciej_witkowski.teamlister.R.color.team_2
         )
         paint.style = Paint.Style.STROKE
-        paint.strokeWidth = 4F
+        paint.strokeWidth = 6F
         val teamFirst = mutableListOf<PlayerData>()
         val teamSecond = mutableListOf<PlayerData>()
         if (data != null) {
             for (line in data) {
+                Log.d(TAG, "Team 2 drawing")
                 canvas.drawRect(line.boundingBox, paint)
                 teamSecond.add(line.data)
             }
@@ -370,10 +375,10 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
                     folder.mkdir()
                 }
             }
-            Log.d("PATH", "first path: " + filepath)
+            Log.d(TAG, "first path: $filepath")
             val myExternalFile = File(filepath, filename)
             try {
-                Log.e("PATH", "final path: " + myExternalFile.absolutePath)
+                Log.d(TAG, "final path: " + myExternalFile.absolutePath)
                 val fileOutPutStream = FileOutputStream(myExternalFile, false)
                 fileOutPutStream.write(team.toByteArray())
                 fileOutPutStream.flush()
@@ -387,11 +392,11 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
                     null,
                     null
                 )
-                Log.d("PATH", "ok")
+                Log.d(TAG, "ok")
             } catch (e: IOException) {
                 e.printStackTrace()
                 _toastMessage.value = Event("Error, file not saved")
-                Log.d("PATH", "error")
+                Log.d(TAG, "error")
             }
         }
     }

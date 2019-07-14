@@ -16,9 +16,9 @@ import maciej_witkowski.teamlister.BuildConfig
 import java.util.concurrent.CountDownLatch
 import java.util.*
 
+private val TAG  = UploadWorker::class.java.simpleName
 
 class UploadWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
-    val TAG= "UPLOAD_WORKER"
     override fun doWork(): Result {
         val latch = CountDownLatch(1)
         var result =Result.success()
@@ -50,8 +50,8 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) : Worker
     private suspend fun updateDb(path: String, latch: CountDownLatch) = withContext(Dispatchers.IO) {
         val db= PhotoReportDatabase.getInstance(applicationContext)
         val currentTime = Calendar.getInstance().time
-        //db.photoReportDao().update(path,true,currentTime )
-        db.photoReportDao().update(path,true)
+        db.photoReportDao().update(path,true,currentTime )
+       // db.photoReportDao().update(path,true)
         latch.countDown()
     }
 

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.lifecycle.Observer
@@ -17,7 +18,9 @@ import kotlinx.android.synthetic.main.report_summary_fragment.*
 
 import maciej_witkowski.teamlister.R
 import maciej_witkowski.teamlister.vievmodel.ReportSummaryViewModel
-private const val TAG="RSF"
+
+private val TAG  = ReportSummaryFragment::class.java.simpleName
+
 class ReportSummaryFragment : Fragment() {
 
 
@@ -37,6 +40,7 @@ class ReportSummaryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as? AppCompatActivity)?.supportActionBar?.title = getString(R.string.app_title_report_summary)
         val metrics = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
         val width = metrics.widthPixels-rv_photo_reports.marginLeft-rv_photo_reports.marginRight
@@ -52,7 +56,5 @@ class ReportSummaryFragment : Fragment() {
                 )
             )
         })
-
-
     }
 }

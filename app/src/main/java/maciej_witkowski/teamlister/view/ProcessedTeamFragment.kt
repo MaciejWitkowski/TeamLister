@@ -20,16 +20,16 @@ import maciej_witkowski.teamlister.R
 import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
 import java.util.concurrent.TimeUnit
 
-private const val TAG = "ListFragment"
+private val TAG  = ProcessedTeamFragment::class.java.simpleName
 
-class ListFragment : Fragment() {
+class ProcessedTeamFragment : Fragment() {
     private lateinit var viewModel: TeamsViewModel
     private var activeTeam = 1
     private var cursor = 0
     private val teamObserver = Observer<String> { value ->
         value?.let {
-            tvTeam.setText(value)
-            tvTeam.setSelection(cursor)
+            tv_team_processed.setText(value)
+            tv_team_processed.setSelection(cursor)
         }
     }
 
@@ -53,40 +53,40 @@ class ListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "on view created")
-        (activity as? AppCompatActivity)?.supportActionBar?.title = "Team lists"
+        (activity as? AppCompatActivity)?.supportActionBar?.title =getString(R.string.app_title_team_lists)
         viewModel.team1.observe(this, teamObserver)
         styleTeam1Button()
-        btnTeam1.setOnClickListener {
+        btn_team_picker_1.setOnClickListener {
             viewModel.team2.removeObserver(teamObserver)
             viewModel.team1.observe(this, teamObserver)
             styleTeam1Button()
             activeTeam = 1
             cursor = 0
         }
-        btnTeam2.setOnClickListener {
+        btn_team_picker_2.setOnClickListener {
             viewModel.team1.removeObserver(teamObserver)
             viewModel.team2.observe(this, teamObserver)
             styleTeam2Button()
             activeTeam = 2
             cursor = 0
         }
-        btnSave.setOnClickListener {
+        btn_save.setOnClickListener {
             viewModel.saveToFiles()
         }
-        RxTextView.textChanges(tvTeam)
+        RxTextView.textChanges(tv_team_processed)
             .debounce(1000, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(textChangeObserver)
     }
 
     private fun styleTeam1Button() {
-        btnTeam1.textSize = 30f
-        btnTeam2.textSize = 12f
+        btn_team_picker_1.textSize = 30f
+        btn_team_picker_2.textSize = 12f
     }
 
     private fun styleTeam2Button() {
-        btnTeam1.textSize = 12f
-        btnTeam2.textSize = 30f
+        btn_team_picker_1.textSize = 12f
+        btn_team_picker_2.textSize = 30f
     }
 
 
@@ -95,13 +95,13 @@ class ListFragment : Fragment() {
             if (activeTeam == 1 && !charSequence.toString().equals(viewModel.team1.value) && !charSequence.toString().isNullOrEmpty() && !charSequence.toString().equals(
                     viewModel.team2.value)
             ) {
-                cursor = tvTeam.selectionStart
+                cursor = tv_team_processed.selectionStart
                 viewModel.updateProcessedTeam(charSequence.toString(), activeTeam)
 
             } else if (activeTeam == 2 && !charSequence.toString().equals(viewModel.team2.value) && !charSequence.toString().isNullOrEmpty() && !charSequence.toString().equals(
                     viewModel.team1.value)
             ) {
-                cursor = tvTeam.selectionStart
+                cursor = tv_team_processed.selectionStart
                 viewModel.updateProcessedTeam(charSequence.toString(), activeTeam)
             }
         }

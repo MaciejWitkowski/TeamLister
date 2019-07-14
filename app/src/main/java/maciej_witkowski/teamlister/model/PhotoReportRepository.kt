@@ -7,9 +7,7 @@ import androidx.room.Room
 
 class PhotoReportRepository(application: Application) {
 
-  //  private val photoReportDao: PhotoReportDao
     private val reportsLiveData: LiveData<List<PhotoReport>>
-    private var reportsRaw: List<PhotoReport> = arrayListOf()
 
     init {
         val db= PhotoReportDatabase.getInstance(application)
@@ -19,8 +17,4 @@ class PhotoReportRepository(application: Application) {
     fun getAllReports(): LiveData<List<PhotoReport>> {
         return reportsLiveData
     }
-/*
-    fun getAllRaw():List<PhotoReport>{
-        return reportsRaw
-    }*/
 }

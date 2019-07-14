@@ -9,6 +9,6 @@ import java.util.*
 data class PhotoReport(
     @PrimaryKey(autoGenerate = true) val uid: Int?,
     @ColumnInfo(name = "file_path") val filePath: String,
-    @ColumnInfo(name= "is_send") val isSend: Boolean
-    //@ColumnInfo(name= "date_send") val dateSend: Long?
+    @ColumnInfo(name= "is_send") val isSend: Boolean,
+    @ColumnInfo(name= "date_send") val dateSend: Date?
 )

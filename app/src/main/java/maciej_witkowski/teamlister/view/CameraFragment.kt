@@ -9,6 +9,7 @@ import android.util.Size
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.SavedStateVMFactory
@@ -22,7 +23,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-private const val TAG = "CAMERA_FRAGMENT"
+
+
+private val TAG  = CameraFragment::class.java.simpleName
 private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
 private const val PHOTO_EXTENSION = ".jpg"
 
@@ -30,7 +33,6 @@ class CameraFragment : Fragment() {
     private lateinit var container: ConstraintLayout
     private lateinit var viewFinder: TextureView
     private var displayId = -1
-    private var preview: Preview? = null
     private var lensFacing = CameraX.LensFacing.BACK
     private var imageCapture: ImageCapture? = null
     private lateinit var viewModel: TeamsViewModel
@@ -53,6 +55,7 @@ class CameraFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as? AppCompatActivity)?.supportActionBar?.title = getString(R.string.app_title_camera)
         container = view as ConstraintLayout
         viewFinder = container.findViewById(R.id.textureview_camera)
 
@@ -63,7 +66,7 @@ class CameraFragment : Fragment() {
 
         fab_shutter.setOnClickListener {
             imageCapture?.let { imageCapture ->
-                val path = Environment.getExternalStorageDirectory()
+                val path = requireContext().filesDir
                 Log.d(TAG, "Path ext $path")
                 val photoFile = createFile(path, FILENAME, PHOTO_EXTENSION)
                 val metadata = ImageCapture.Metadata().apply {
@@ -96,11 +99,9 @@ class CameraFragment : Fragment() {
             CameraX.unbindAll()
             val path = photoFile.absolutePath
             viewModel.setBitmap(path)
-
-
-            val fragment = ViewPagerFragment()
+            val fragment = PhotoViewPagerFragment()
             val ft = fragmentManager!!.beginTransaction()
-            ft.replace(R.id.contentFrame, fragment)
+            ft.replace(R.id.content_frame, fragment)
             ft.addToBackStack(null)
             ft.commit()
         }

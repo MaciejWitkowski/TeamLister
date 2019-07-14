@@ -10,7 +10,7 @@ import androidx.room.TypeConverters
 
 
 @Database(entities = [PhotoReport::class], version = 1)
-//@TypeConverters(DateConverter::class)
+@TypeConverters(DateConverter::class)
 abstract class PhotoReportDatabase : RoomDatabase() {
 
     abstract fun photoReportDao(): PhotoReportDao
@@ -26,7 +26,7 @@ abstract class PhotoReportDatabase : RoomDatabase() {
             }
         }
         private fun buildDatabase(context: Context): PhotoReportDatabase {
-            return Room.databaseBuilder(context, PhotoReportDatabase::class.java, "db-reports")
+            return Room.databaseBuilder(context, PhotoReportDatabase::class.java, "db_reports")
                 .enableMultiInstanceInvalidation()
                 .build()
         }

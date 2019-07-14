@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.SavedStateVMFactory
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_view_pager.*
@@ -13,7 +14,7 @@ import kotlinx.android.synthetic.main.fragment_view_pager.*
 import maciej_witkowski.teamlister.R
 import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
 
-class ViewPagerFragment : Fragment() {
+class PhotoViewPagerFragment : Fragment() {
     private lateinit var viewModel: TeamsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +32,8 @@ class ViewPagerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val fragmentAdapter = MyPagerAdapter(childFragmentManager)
+        (activity as? AppCompatActivity)?.supportActionBar?.title = getString(R.string.app_title_image_camera)
+        val fragmentAdapter = PhotoViewPagerAdapter(childFragmentManager)
         vp_main.adapter = fragmentAdapter
     }
 }
