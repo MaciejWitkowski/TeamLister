@@ -22,20 +22,26 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_photo.*
 
 import maciej_witkowski.teamlister.R
 import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
 import android.content.Intent
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import kotlinx.android.synthetic.main.fragment_gallery.*
+import kotlinx.android.synthetic.main.fragment_photo.btn_team_1
+import kotlinx.android.synthetic.main.fragment_photo.btn_team_2
+import kotlinx.android.synthetic.main.fragment_photo.btn_team_auto
+import kotlinx.android.synthetic.main.fragment_photo.fab_accept_photo
+import kotlinx.android.synthetic.main.fragment_photo.fab_retry_photo
+import kotlinx.android.synthetic.main.fragment_photo.iv_photo
 
 private const val REQUEST_GET_SINGLE_FILE = 1
 
 
-private val TAG = GalleryFragment::class.java.simpleName
+private val TAG = GalleryPhotoFragment::class.java.simpleName
 
-class GalleryFragment : Fragment() {
+class GalleryPhotoFragment : Fragment() {
     private lateinit var viewModel: TeamsViewModel
     private val compositeDisposable = CompositeDisposable()
 
@@ -50,7 +56,6 @@ class GalleryFragment : Fragment() {
                 bitmapObservable.subscribe(bitmapObserver)
             }
         }
-
 
 
     private var bitmapObserver: io.reactivex.Observer<Bitmap> = object : io.reactivex.Observer<Bitmap> {
@@ -114,7 +119,7 @@ class GalleryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_photo, container, false)
+        return inflater.inflate(R.layout.fragment_gallery, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -131,6 +136,7 @@ class GalleryFragment : Fragment() {
         }
         fab_retry_photo.setOnClickListener { startGallery() }
         fab_accept_photo.setOnClickListener { acceptResult() }
+        fab_internal_gallery.setOnClickListener { startInternalGallery() }
         btn_team_1.setOnClickListener { viewModel.allTeam1() }
         btn_team_auto.setOnClickListener { viewModel.auto() }
         btn_team_2.setOnClickListener { viewModel.allTeam2() }
@@ -143,29 +149,18 @@ class GalleryFragment : Fragment() {
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_GET_SINGLE_FILE)
     }
 
+    private fun startInternalGallery() {
+        (activity as MainActivity).loadFragment(InternalGalleryFragment())
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         try {
             if (resultCode == Activity.RESULT_OK) {
                 if (requestCode == REQUEST_GET_SINGLE_FILE) {
-                    val path=getRealPathFromURI(data)
-                    /*val selectedImage = data?.data
-                    val wholeId = DocumentsContract.getDocumentId(selectedImage)
-                    val id = wholeId.split(":")[1]
-                    val column = arrayOf(MediaStore.Images.Media.DATA)
-                    val sel = MediaStore.Images.Media._ID + "=?"
-
-                    val cursor = requireContext().contentResolver
-                        .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, column, sel, arrayOf(id), null)
-                    var path = ""
-                    val columnIndex = cursor!!.getColumnIndex (column[0])
-                    if (cursor.moveToFirst()) {
-                        path = cursor.getString(columnIndex)
-                    }
-                    cursor.close()*/
-                        Log.d(TAG, path)
-                        viewModel.setBitmap(path)
+                    val path = getRealPathFromURI(data)
+                    Log.d(TAG, path)
+                    viewModel.setImagePath(path)
                 }
             }
         } catch (e: Exception) {
@@ -183,7 +178,7 @@ class GalleryFragment : Fragment() {
         val cursor = requireContext().contentResolver
             .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, column, sel, arrayOf(id), null)
         var path = ""
-        val columnIndex = cursor!!.getColumnIndex (column[0])
+        val columnIndex = cursor!!.getColumnIndex(column[0])
         if (cursor.moveToFirst()) {
             path = cursor.getString(columnIndex)
         }

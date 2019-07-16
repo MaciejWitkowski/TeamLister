@@ -1,9 +1,7 @@
 package maciej_witkowski.teamlister.model
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.room.Room
 
 class PhotoReportRepository(application: Application) {
 

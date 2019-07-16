@@ -51,7 +51,6 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) : Worker
         val db= PhotoReportDatabase.getInstance(applicationContext)
         val currentTime = Calendar.getInstance().time
         db.photoReportDao().update(path,true,currentTime )
-       // db.photoReportDao().update(path,true)
         latch.countDown()
     }
 

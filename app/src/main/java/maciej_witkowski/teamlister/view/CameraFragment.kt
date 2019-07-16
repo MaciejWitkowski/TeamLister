@@ -2,7 +2,6 @@ package maciej_witkowski.teamlister.view
 
 
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.util.Rational
 import android.util.Size
@@ -98,7 +97,7 @@ class CameraFragment : Fragment() {
             Toast.makeText(requireContext(), "it", Toast.LENGTH_SHORT).show()
             CameraX.unbindAll()
             val path = photoFile.absolutePath
-            viewModel.setBitmap(path)
+            viewModel.setImagePath(path)
             val fragment = PhotoViewPagerFragment()
             val ft = fragmentManager!!.beginTransaction()
             ft.replace(R.id.content_frame, fragment)

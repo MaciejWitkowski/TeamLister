@@ -10,7 +10,7 @@ class GalleryViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> {
-                GalleryFragment()
+                GalleryPhotoFragment()
             }
             else -> {
                 return RawTeamFragment()

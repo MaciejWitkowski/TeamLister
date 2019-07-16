@@ -27,7 +27,7 @@ class ReportSummaryRecyclerViewAdapter(
     private val context: Context,
     private val screenWidth: Int
 ) :
-    RecyclerView.Adapter<ViewHolderReportPortrait>() {
+    RecyclerView.Adapter<ViewHolderReport>() {
 
     override fun getItemCount(): Int {
         return if (items != null) {
@@ -36,9 +36,9 @@ class ReportSummaryRecyclerViewAdapter(
             0
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderReportPortrait {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderReport {
         if (viewType == PORTRAIT)
-            return ViewHolderReportPortrait(
+            return ViewHolderReport(
                 LayoutInflater.from(context).inflate(
                     R.layout.report_row_portrait,
                     parent,
@@ -46,7 +46,7 @@ class ReportSummaryRecyclerViewAdapter(
                 )
             )
         else
-            return ViewHolderReportPortrait(
+            return ViewHolderReport(
                 LayoutInflater.from(context).inflate(
                     R.layout.report_row_landscape,
                     parent,
@@ -63,7 +63,7 @@ class ReportSummaryRecyclerViewAdapter(
             LANDSCAPE
     }
 
-    override fun onBindViewHolder(holder: ViewHolderReportPortrait, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolderReport, position: Int) {
         val path = items!![position].filePath
         val exif = ExifInterface(path)
         val dateTaken = exif.getAttribute(ExifInterface.TAG_DATETIME)
@@ -119,7 +119,7 @@ class ReportSummaryRecyclerViewAdapter(
 
 }
 
-class ViewHolderReportPortrait(view: View) : RecyclerView.ViewHolder(view) {
+class ViewHolderReport(view: View) : RecyclerView.ViewHolder(view) {
     val tvNumber = view.tv_report_number!!
     val ivState = view.iv_report_state!!
     val ivPhoto = view.iv_report_photo!!
