@@ -124,7 +124,8 @@ class CameraFragment : Fragment() {
         val screenSize = Size(width, height)
         Log.d(TAG, "Screen size: $screenSize")
         //val aspectRatio = Rational(300, 400) TODO bug report https://groups.google.com/a/android.com/forum/#!forum/camerax-developers corrupted exif when aspect ratio is portrait and camera orient landscape
-        val previewAspectRatio = Rational(height, width)
+        //val previewAspectRatio = Rational(height, width)
+       val previewAspectRatio =aspectRatio
         //val previewAspectRatio = Rational(1,1)
         Log.d(TAG, width.toString())
         Log.d(TAG, previewAspectRatio.toString())

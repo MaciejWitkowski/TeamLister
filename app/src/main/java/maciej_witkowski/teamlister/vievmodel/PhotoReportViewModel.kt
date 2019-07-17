@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import maciej_witkowski.teamlister.model.PhotoReport
 import maciej_witkowski.teamlister.model.PhotoReportDatabase
-import maciej_witkowski.teamlister.model.UploadWorker
+import maciej_witkowski.teamlister.tasks.UploadWorker
 
 class PhotoReportViewModel(app: Application,handle: SavedStateHandle) : AndroidViewModel(app) {
     @NonNull

@@ -27,6 +27,14 @@
                 app:title="Save to 2 team files"
                 app:defaultValue="true"
                 app:iconSpaceReserved="false"/>
+        <ListPreference
+                app:key="cleanup_time"
+                app:title="Clean old files every"
+                app:entries="@array/cleanup_times"
+                app:defaultValue="0"
+                app:entryValues="@array/cleanup_times_values"
+                app:useSimpleSummaryProvider="true"
+                app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>
     <PreferenceCategory

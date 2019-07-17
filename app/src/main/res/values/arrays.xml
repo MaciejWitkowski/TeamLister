@@ -15,6 +15,20 @@
         <item>UPPER</item>
         <item>LOWER</item>
     </string-array>
+    
+    <string-array name="cleanup_times">
+        <item>1 week</item>
+        <item>2 weeks</item>
+        <item>4 weeks</item>
+        <item>Never</item>
+    </string-array>
+
+    <string-array name="cleanup_times_values">
+        <item>7</item>
+        <item>14</item>
+        <item>28</item>
+        <item>0</item>
+    </string-array>
 
     <string-array name="number_location">
         <item>At start</item>

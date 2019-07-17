@@ -78,7 +78,9 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         val exif = ExifInterface(path)
         val rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
         val rotationInDegrees = ImageUtils.exifToDegrees(rotation)
-        val myBitmap = BitmapFactory.decodeFile(path)
+
+       val myBitmap = BitmapFactory.decodeFile(path)//TODO OOM error after few loads
+
         val matrix = Matrix()
         var height = myBitmap.height
         var width = myBitmap.width

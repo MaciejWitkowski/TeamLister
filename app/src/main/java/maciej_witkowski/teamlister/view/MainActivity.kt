@@ -1,6 +1,7 @@
 package maciej_witkowski.teamlister.view
 
 
+import android.content.Intent
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
@@ -12,8 +13,12 @@ import androidx.preference.PreferenceManager
 import com.google.firebase.FirebaseApp
 import maciej_witkowski.teamlister.R
 import maciej_witkowski.teamlister.preferences.SettingsFragment
+import maciej_witkowski.teamlister.tasks.CleaningService
 
 class MainActivity : AppCompatActivity() {
+    companion object{
+        var isFirstLaunch=true
+    }
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_list -> {
@@ -68,6 +73,10 @@ class MainActivity : AppCompatActivity() {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
         FirebaseApp.initializeApp(this)
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        if (isFirstLaunch) {
+            isFirstLaunch=false
+            baseContext.startService(Intent(baseContext, CleaningService::class.java))
+        }
     }
 
 }

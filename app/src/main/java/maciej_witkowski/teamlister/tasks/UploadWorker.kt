@@ -1,4 +1,4 @@
-package maciej_witkowski.teamlister.model
+package maciej_witkowski.teamlister.tasks
 
 
 import android.content.Context
@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import maciej_witkowski.teamlister.BuildConfig
+import maciej_witkowski.teamlister.model.PhotoReportDatabase
 import java.util.concurrent.CountDownLatch
 import java.util.*
 
