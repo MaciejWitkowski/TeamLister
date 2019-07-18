@@ -23,7 +23,6 @@ class CleaningService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         CoroutineScope(Dispatchers.IO).launch {cleanOldFiles()}
         return super.onStartCommand(intent, flags, startId)
-
     }
 
 

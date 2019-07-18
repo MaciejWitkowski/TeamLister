@@ -1,6 +1,8 @@
 package maciej_witkowski.teamlister.view
 
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,6 +13,8 @@ import androidx.lifecycle.ViewModelProviders
 import android.util.DisplayMetrics
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker.checkSelfPermission
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_photo_report.*
 
@@ -20,7 +24,7 @@ import maciej_witkowski.teamlister.vievmodel.PhotoReportViewModel
 import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
 
 
-private val TAG  = PhotoReportFragment::class.java.simpleName
+private val TAG = PhotoReportFragment::class.java.simpleName
 
 class PhotoReportFragment : Fragment() {
     //TODO photo from gallery/files etc
@@ -30,7 +34,7 @@ class PhotoReportFragment : Fragment() {
     private val pathObserver = Observer<String> { path ->
         val metrics = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
-        ImageUtils.glideToWidth43(path,metrics,iv_photo_report,requireContext())
+        ImageUtils.glideToWidth43(path, metrics, iv_photo_report, requireContext())
     }
 
 
@@ -69,7 +73,10 @@ class PhotoReportFragment : Fragment() {
         btn_report.setOnClickListener {
             if (viewModel.path.value != null) {
                 viewModel.sendReport()
-                loadFragment()
+                if (checkSelfPermission(requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    loadFragment()
+                } else
+                    Toast.makeText(requireContext(), "Sending report", Toast.LENGTH_SHORT).show()
             } else
                 Toast.makeText(requireContext(), "There is no image!!", Toast.LENGTH_SHORT).show()
         }
@@ -90,7 +97,8 @@ class PhotoReportFragment : Fragment() {
     }
 
     private fun checkSwitches() {
-        btn_report.isEnabled = sw_report_1.isChecked == true && sw_report_2.isChecked == true && sw_report_3.isChecked == true
+        btn_report.isEnabled =
+            sw_report_1.isChecked == true && sw_report_2.isChecked == true && sw_report_3.isChecked == true
     }
 
 }
