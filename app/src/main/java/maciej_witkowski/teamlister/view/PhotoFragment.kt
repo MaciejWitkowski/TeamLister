@@ -33,7 +33,6 @@ class PhotoFragment : Fragment() {
     private val imageObserver =
         Observer<Bitmap> { value ->
             value?.let {
-
                 val bitmapObservable = Observable.create(ObservableOnSubscribe<Bitmap> { emitter ->
                     emitter.onNext(rescaleBitmap(it))
                     emitter.onComplete()
@@ -63,7 +62,9 @@ class PhotoFragment : Fragment() {
             Log.e(TAG, "onError $e")
         }
 
-        override fun onComplete() {}
+        override fun onComplete() {
+            compositeDisposable.clear()
+        }
     }
 
     fun createPaletteAsync(bitmap: Bitmap) {
@@ -111,22 +112,21 @@ class PhotoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.imageNew.observe(this, imageObserver)
+        viewModel.image.observe(this, imageObserver)
         viewModel.toastMessage.observe(this, Observer { it ->
             it.getContentIfNotHandled()?.let {
-                // Only proceed if the event has never been handled
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }
         })
 
-        if (viewModel.imageNew.value == null) {
+        if (viewModel.image.value == null) {
             startCamera()
         }
         fab_retry_photo.setOnClickListener { startCamera() }
         fab_accept_photo.setOnClickListener { acceptResult() }
-        btn_team_1.setOnClickListener { viewModel.allTeam1() }
-        btn_team_auto.setOnClickListener { viewModel.auto() }
-        btn_team_2.setOnClickListener { viewModel.allTeam2() }
+        btn_team_1.setOnClickListener { viewModel.splitToTeam1() }
+        btn_team_auto.setOnClickListener { viewModel.splitAuto() }
+        btn_team_2.setOnClickListener { viewModel.splitToTeam2() }
     }
 
     private fun acceptResult() {

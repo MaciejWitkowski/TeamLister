@@ -36,8 +36,7 @@ import java.util.Objects
  * [PreviewConfig], then instantiates a [Preview] which automatically
  * resizes and rotates reacting to config changes.
  */
-class AutoFitPreviewBuilder private constructor(config: PreviewConfig,
-                                                viewFinderRef: WeakReference<TextureView>) {
+class AutoFitPreviewBuilder private constructor(config: PreviewConfig, viewFinderRef: WeakReference<TextureView>) {
     /** Public instance of preview use-case which can be used by consumers of this adapter */
     val useCase: Preview
 

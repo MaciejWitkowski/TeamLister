@@ -1,11 +1,8 @@
 package maciej_witkowski.teamlister.vievmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel;
 import maciej_witkowski.teamlister.model.PhotoReport
 import maciej_witkowski.teamlister.model.PhotoReportRepository
 

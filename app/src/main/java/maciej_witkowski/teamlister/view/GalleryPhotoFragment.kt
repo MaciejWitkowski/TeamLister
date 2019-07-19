@@ -124,22 +124,22 @@ class GalleryPhotoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.imageNew.observe(this, imageObserver)
+        viewModel.image.observe(this, imageObserver)
         viewModel.toastMessage.observe(this, Observer { it ->
             it.getContentIfNotHandled()?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }
         })
 
-        if (viewModel.imageNew.value == null) {
+        if (viewModel.image.value == null) {
             startGallery()
         }
         fab_retry_photo.setOnClickListener { startGallery() }
         fab_accept_photo.setOnClickListener { acceptResult() }
         fab_internal_gallery.setOnClickListener { startInternalGallery() }
-        btn_team_1.setOnClickListener { viewModel.allTeam1() }
-        btn_team_auto.setOnClickListener { viewModel.auto() }
-        btn_team_2.setOnClickListener { viewModel.allTeam2() }
+        btn_team_1.setOnClickListener { viewModel.splitToTeam1() }
+        btn_team_auto.setOnClickListener { viewModel.splitAuto() }
+        btn_team_2.setOnClickListener { viewModel.splitToTeam2() }
     }
 
     private fun startGallery() {

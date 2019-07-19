@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 //import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -55,6 +56,11 @@ class ProcessedTeamFragment : Fragment() {
         Log.d(TAG, "on view created")
         (activity as? AppCompatActivity)?.supportActionBar?.title =getString(R.string.app_title_team_lists)
         viewModel.team1.observe(this, teamObserver)
+        viewModel.toastMessage.observe(this, Observer { it ->
+            it.getContentIfNotHandled()?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            }
+        })
         styleTeam1Button()
         btn_team_picker_1.setOnClickListener {
             viewModel.team2.removeObserver(teamObserver)

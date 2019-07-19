@@ -138,7 +138,7 @@ class CameraFragment : Fragment() {
 
         Log.d(TAG, "Target Res: "+viewFinderConfig.targetResolution.toString())
 
-        // Use the auto-fit preview builder to automatically handle size and orientation changes
+        // Use the splitAuto-fit preview builder to automatically handle size and orientation changes
         val preview = AutoFitPreviewBuilder.build(viewFinderConfig, viewFinder)
 
         // Set up the capture use case to allow users to take photos

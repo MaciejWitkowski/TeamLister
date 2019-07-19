@@ -66,7 +66,6 @@ class PhotoReportViewModel(app: Application,handle: SavedStateHandle) : AndroidV
         }
     }
 
-
     private suspend fun updateDb() = withContext(Dispatchers.IO) {
         val db = PhotoReportDatabase.getInstance(getApplication())
         val pathCurrent=pathHandle.value

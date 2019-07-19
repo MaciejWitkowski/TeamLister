@@ -44,6 +44,7 @@ class InternalGalleryFragment : Fragment() {
         val path = requireContext().filesDir
         val fileList: MutableList<String> = ArrayList()
         path.walkBottomUp().forEach {
+            Log.d(TAG, it.toString())
             if (it.toString().endsWith(".jpg")) {
                 fileList.add(it.toString())
             }
