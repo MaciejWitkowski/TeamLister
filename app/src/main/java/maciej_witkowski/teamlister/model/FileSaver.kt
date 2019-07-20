@@ -38,7 +38,7 @@ class FileSaver {
     }
 
 
-    fun saveToFiles(team1: String?, team2: String?,context: Context) {//TODO refactoring needed, totally unreadable code.
+    fun saveToFiles(team1: String?, team2: String?,context: Context) {
         val sharedPref = getDefaultSharedPreferences(context)
         val twoFiles = sharedPref.getBoolean("saveto2", true)
         if (twoFiles)

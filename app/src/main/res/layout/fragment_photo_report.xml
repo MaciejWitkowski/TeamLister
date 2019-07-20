@@ -8,7 +8,6 @@
                                                    tools:context=".view.PhotoReportFragment"
                                                    android:id="@+id/frameLayout5">
 
-    <!-- TODO: Update blank fragment layout -->
     <ScrollView
             android:layout_width="0dp"
             android:layout_height="wrap_content"

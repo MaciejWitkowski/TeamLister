@@ -1,14 +1,17 @@
 package maciej_witkowski.teamlister.view
 
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.graphics.Bitmap
 import android.util.DisplayMetrics
 import android.util.Log
+import android.util.Rational
 import android.view.*
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateVMFactory
 import androidx.lifecycle.ViewModelProviders
@@ -23,11 +26,14 @@ import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
 
 import androidx.palette.graphics.Palette
 import io.reactivex.disposables.CompositeDisposable
+import maciej_witkowski.teamlister.utils.ImageUtils
 
-private val TAG  = PhotoFragment::class.java.simpleName
+private val TAG = CameraPhotoFragment::class.java.simpleName
 
-class PhotoFragment : Fragment() {
+class CameraPhotoFragment : Fragment() {
     private lateinit var viewModel: TeamsViewModel
+    private lateinit var vf: ImageView
+    private lateinit var container: ConstraintLayout
     private val compositeDisposable = CompositeDisposable()
 
     private val imageObserver =
@@ -49,7 +55,7 @@ class PhotoFragment : Fragment() {
         }
 
         override fun onNext(bitmap: Bitmap) {
-            if (bitmap.height > bitmap.width) {
+            if (Rational(bitmap.height, bitmap.width) == Rational(4, 3)){
                 iv_photo.adjustViewBounds = true
                 iv_photo.scaleType = ImageView.ScaleType.CENTER_CROP
             }
@@ -69,26 +75,25 @@ class PhotoFragment : Fragment() {
 
     fun createPaletteAsync(bitmap: Bitmap) {
         Palette.from(bitmap).generate { palette ->
-            // Use generated instance
             val muted = palette?.mutedSwatch
             val backgroundColor = muted?.rgb
-            backgroundColor?.let { iv_photo?.let{iv_photo.setBackgroundColor(backgroundColor)}}
+            backgroundColor?.let { iv_photo?.let { iv_photo.setBackgroundColor(backgroundColor) } }
 
         }
     }
 
 
     private fun rescaleBitmap(bitmap: Bitmap): Bitmap {
-        val metrics = DisplayMetrics()
-        activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
-        val width = metrics.widthPixels
-        val output: Bitmap
-        if (bitmap.height > bitmap.width)//portrait
-            output = Bitmap.createScaledBitmap(bitmap, width, width * 4 / 3, false)
-        else    //landscape
-            output = Bitmap.createScaledBitmap(bitmap, width, width * 3 / 4, false)
-        return output
-
+        return if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            val height = vf.height
+            val width = vf.width
+            ImageUtils.rescaleBitmapToWidthHeight(bitmap, width, height)
+        } else {
+            val metrics = DisplayMetrics()
+            activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
+            val width=metrics.widthPixels
+            ImageUtils.rescaleBitmapToWidth(bitmap, width)
+        }
     }
 
 
@@ -106,13 +111,12 @@ class PhotoFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+// Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_photo, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.image.observe(this, imageObserver)
         viewModel.toastMessage.observe(this, Observer { it ->
             it.getContentIfNotHandled()?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
@@ -122,6 +126,15 @@ class PhotoFragment : Fragment() {
         if (viewModel.image.value == null) {
             startCamera()
         }
+        if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Log.d(TAG, "only portrait")
+            container = view as ConstraintLayout
+            vf = container.findViewById(R.id.iv_photo)
+            vf.post {
+                viewModel.image.observe(this, imageObserver)
+            }
+        } else
+            viewModel.image.observe(this, imageObserver)
         fab_retry_photo.setOnClickListener { startCamera() }
         fab_accept_photo.setOnClickListener { acceptResult() }
         btn_team_1.setOnClickListener { viewModel.splitToTeam1() }

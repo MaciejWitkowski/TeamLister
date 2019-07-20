@@ -34,7 +34,7 @@ internal class FileNamePreference : EditTextPreference, EditTextPreference.OnBin
         })
     }
 
-    override fun getOnBindEditTextListener(): EditTextPreference.OnBindEditTextListener? {
+    override fun getOnBindEditTextListener(): OnBindEditTextListener? {
         return this
     }
 }

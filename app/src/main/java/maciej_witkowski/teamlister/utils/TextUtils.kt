@@ -84,7 +84,7 @@ class TextUtils {
                         else if (dictName.equals("barttomiej", true)) {
                             split[index] =  split[index].replaceRange(4, 5, "ł")
                         } else {
-                            if (dictName[0].equals('t'))
+                            if (dictName[0] == 't')
                                 split[index] =  split[index].replaceRange(0, 1, "Ł")
                             else
                                 split[index] =  split[index].replace("t", "ł")
@@ -96,7 +96,7 @@ class TextUtils {
             }
 
             split.forEach{
-                corrected=corrected+" "+it
+                corrected= "$corrected $it"
             }
             return corrected.trim()
         }

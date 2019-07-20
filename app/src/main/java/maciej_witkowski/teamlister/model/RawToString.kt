@@ -45,9 +45,9 @@ class RawToString {
                 if (replaceAscii)
                     tmp = TextUtils.replaceNonAsciiChars(tmp)
                 tmp = TextUtils.removeBrackets(tmp, bracketsEnum)
-                if (numberPosition.equals("start")) {
+                if (numberPosition == "start") {
                     newSb.append(append + line.number + prepend + " " + tmp + "\r\n")
-                } else if (numberPosition.equals("end")) {
+                } else if (numberPosition=="end") {
                     newSb.append(tmp + " " + append + line.number + prepend + "\r\n")
                 }
             }

@@ -4,7 +4,6 @@ package maciej_witkowski.teamlister.view
 import android.app.Activity
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -26,8 +25,12 @@ import io.reactivex.schedulers.Schedulers
 import maciej_witkowski.teamlister.R
 import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
 import android.content.Intent
+import android.content.res.Configuration
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import android.util.DisplayMetrics
+import android.util.Rational
+import androidx.constraintlayout.widget.ConstraintLayout
 import kotlinx.android.synthetic.main.fragment_gallery.*
 import kotlinx.android.synthetic.main.fragment_photo.btn_team_1
 import kotlinx.android.synthetic.main.fragment_photo.btn_team_2
@@ -35,6 +38,7 @@ import kotlinx.android.synthetic.main.fragment_photo.btn_team_auto
 import kotlinx.android.synthetic.main.fragment_photo.fab_accept_photo
 import kotlinx.android.synthetic.main.fragment_photo.fab_retry_photo
 import kotlinx.android.synthetic.main.fragment_photo.iv_photo
+import maciej_witkowski.teamlister.utils.ImageUtils
 
 private const val REQUEST_GET_SINGLE_FILE = 1
 
@@ -43,6 +47,8 @@ private val TAG = GalleryPhotoFragment::class.java.simpleName
 
 class GalleryPhotoFragment : Fragment() {
     private lateinit var viewModel: TeamsViewModel
+    private lateinit var vf: ImageView
+    private lateinit var container: ConstraintLayout
     private val compositeDisposable = CompositeDisposable()
 
     private val imageObserver =
@@ -66,34 +72,35 @@ class GalleryPhotoFragment : Fragment() {
         }
 
         override fun onNext(bitmap: Bitmap) {
-            if (bitmap.height > bitmap.width) {
+                if (Rational(bitmap.height, bitmap.width) == Rational(4, 3)){
                 iv_photo.adjustViewBounds = true
                 iv_photo.scaleType = ImageView.ScaleType.CENTER_CROP
             }
             createPaletteAsync(bitmap)
             iv_photo.setImageBitmap(bitmap)
-
         }
 
         override fun onError(e: Throwable) {
             Log.e(TAG, "onError $e")
         }
 
-        override fun onComplete() {}
+        override fun onComplete() {
+            compositeDisposable.clear()
+        }
     }
 
 
     private fun rescaleBitmap(bitmap: Bitmap): Bitmap {
-        val metrics = DisplayMetrics()
-        activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
-        val width = metrics.widthPixels
-        val output: Bitmap
-        output = if (bitmap.height > bitmap.width)//portrait
-            Bitmap.createScaledBitmap(bitmap, width, width * 4 / 3, false)
-        else    //landscape
-            Bitmap.createScaledBitmap(bitmap, width, width * 3 / 4, false)
-        return output
-
+        return if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            val height = vf.height
+            val width = vf.width
+            ImageUtils.rescaleBitmapToWidthHeight(bitmap, width, height)
+        } else {
+            val metrics = DisplayMetrics()
+            activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
+            val width=metrics.widthPixels
+            ImageUtils.rescaleBitmapToWidth(bitmap, width)
+        }
     }
 
 
@@ -105,11 +112,9 @@ class GalleryPhotoFragment : Fragment() {
 
     fun createPaletteAsync(bitmap: Bitmap) {
         Palette.from(bitmap).generate { palette ->
-            // Use generated instance
             val muted = palette?.mutedSwatch
             val backgroundColor = muted?.rgb
             backgroundColor?.let { iv_photo?.let { iv_photo.setBackgroundColor(backgroundColor) } }
-
         }
     }
 
@@ -124,7 +129,6 @@ class GalleryPhotoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.image.observe(this, imageObserver)
         viewModel.toastMessage.observe(this, Observer { it ->
             it.getContentIfNotHandled()?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
@@ -134,6 +138,16 @@ class GalleryPhotoFragment : Fragment() {
         if (viewModel.image.value == null) {
             startGallery()
         }
+        if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Log.d(TAG, "only portrait")
+            container = view as ConstraintLayout
+            vf = container.findViewById(R.id.iv_photo)
+            vf.post {
+                viewModel.image.observe(this, imageObserver)
+            }
+        } else
+            viewModel.image.observe(this, imageObserver)
+
         fab_retry_photo.setOnClickListener { startGallery() }
         fab_accept_photo.setOnClickListener { acceptResult() }
         fab_internal_gallery.setOnClickListener { startInternalGallery() }

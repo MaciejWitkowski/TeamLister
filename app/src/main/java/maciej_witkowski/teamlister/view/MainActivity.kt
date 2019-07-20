@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
         when (requestCode) {
             REQUEST_CAMERA_PERMISSION -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(this, "Camera permission granted", Toast.LENGTH_LONG).show()//TODO
+                    Toast.makeText(this, "Camera permission granted", Toast.LENGTH_LONG).show()
                 } else {
                     Toast.makeText(this, "Need permissions for camera", Toast.LENGTH_LONG).show()
                 }
@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity() {
             }
             REQUEST_STORAGE_PERMISSION -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(this, "Storage permission granted", Toast.LENGTH_LONG).show()//TODO
+                    Toast.makeText(this, "Storage permission granted", Toast.LENGTH_LONG).show()
                 } else {
                     Toast.makeText(this, "Need permissions for reading storage", Toast.LENGTH_LONG).show()
                 }
@@ -157,5 +157,4 @@ class MainActivity : AppCompatActivity() {
             baseContext.startService(Intent(baseContext, CleaningService::class.java))
         }
     }
-
 }

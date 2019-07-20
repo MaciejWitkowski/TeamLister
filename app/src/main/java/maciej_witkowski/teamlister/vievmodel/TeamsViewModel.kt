@@ -108,7 +108,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         }
     }
 
-    fun acceptResult() {//TODO incremental adding
+    fun acceptResult() {
         team1Handle.value = RawToString().rawToTeam(rawTeam1Handle.value, getApplication<Application>().applicationContext)
         team2Handle.value = RawToString().rawToTeam(rawTeam2Handle.value, getApplication<Application>().applicationContext)
     }

@@ -5,9 +5,6 @@
                                                    android:layout_width="match_parent"
                                                    android:layout_height="match_parent"
                                                    tools:context=".view.CameraFragment" android:id="@+id/frameLayout4">
-
-    <!-- TODO: Update blank fragment layout -->
-
     <TextureView
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -25,6 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
+            android:focusable="true"
             android:id="@+id/fab_shutter"
             android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="@+id/textureview_camera"
             android:layout_marginBottom="32dp" app:layout_constraintBottom_toBottomOf="@+id/textureview_camera"

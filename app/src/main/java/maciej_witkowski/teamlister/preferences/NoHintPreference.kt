@@ -25,7 +25,7 @@ internal class NoHintPreference : EditTextPreference, EditTextPreference.OnBindE
         editText.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
     }
 
-    override fun getOnBindEditTextListener(): EditTextPreference.OnBindEditTextListener? {
+    override fun getOnBindEditTextListener(): OnBindEditTextListener? {
         return this
     }
 }

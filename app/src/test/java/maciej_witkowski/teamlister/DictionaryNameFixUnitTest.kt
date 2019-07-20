@@ -7,7 +7,7 @@ import org.junit.Test
 import org.junit.Assert.*
 
 class DictionaryNameFixUnitTest {
-    val list = listOf("Barttomiej","Btażej","Btazej","Bogumit","Bogumistaw","Bolestaw","Bronistaw","Czestaw","Jarostaw","tucjan","tukasz","Michat","Mieczystaw",
+    private val list = listOf("Barttomiej","Btażej","Btazej","Bogumit","Bogumistaw","Bolestaw","Bronistaw","Czestaw","Jarostaw","tucjan","tukasz","Michat","Mieczystaw",
         "Mikotaj","Mirostaw","Mitosz","Przemystaw","Radostaw","Rafat","Stawomir","Tomistaw","Wactaw","Wiestaw","Wtadystaw","Władystaw","Wtadysław","Wtodzimierz","Zdzistaw")
     //TODO list should be loaded from resources
 

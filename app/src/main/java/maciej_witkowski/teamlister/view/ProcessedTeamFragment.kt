@@ -98,14 +98,12 @@ class ProcessedTeamFragment : Fragment() {
 
     private val textChangeObserver = object : DisposableObserver<CharSequence>() {//TODO keyboard is blinking on text save/reload
         override fun onNext(charSequence: CharSequence) {
-            if (activeTeam == 1 && !charSequence.toString().equals(viewModel.team1.value) && !charSequence.toString().isNullOrEmpty() && !charSequence.toString().equals(
-                    viewModel.team2.value)
+            if (activeTeam == 1 && charSequence.toString() != viewModel.team1.value && charSequence.toString().isNotEmpty() && charSequence.toString() != viewModel.team2.value
             ) {
                 cursor = tv_team_processed.selectionStart
                 viewModel.updateProcessedTeam(charSequence.toString(), activeTeam)
 
-            } else if (activeTeam == 2 && !charSequence.toString().equals(viewModel.team2.value) && !charSequence.toString().isNullOrEmpty() && !charSequence.toString().equals(
-                    viewModel.team1.value)
+            } else if (activeTeam == 2 && charSequence.toString() != viewModel.team2.value && charSequence.toString().isNotEmpty() && charSequence.toString() != viewModel.team1.value
             ) {
                 cursor = tv_team_processed.selectionStart
                 viewModel.updateProcessedTeam(charSequence.toString(), activeTeam)
