@@ -3,6 +3,7 @@ package maciej_witkowski.teamlister.tasks
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import android.util.Log
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +39,8 @@ class CleaningService : Service() {
                 if (it.toString().endsWith(".jpg")) {
                     if (!protectedPaths.contains(it.absolutePath)) {
                         if (it.lastModified() + olderThan * DAY < unixTime) {
-                            it.delete()
+                         //   it.delete()//TODO temporary check
+                            Log.d(TAG, it.toString())
                         }
                     }
                 }

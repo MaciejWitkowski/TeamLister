@@ -43,7 +43,7 @@ class BitmapLoader {
 */
 
 
-        if (height > MAX_HEIGHT)//TODO Better scaling for big files, always should be mutable
+        if (height > MAX_HEIGHT)//TODO Better scaling for big files
             height = MAX_HEIGHT
         if (width > MAX_WIDTH)
             width = MAX_WIDTH

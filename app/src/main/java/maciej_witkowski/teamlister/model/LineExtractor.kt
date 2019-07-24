@@ -12,7 +12,7 @@ class LineExtractor {
         for (block in result.textBlocks) {
             for (line in block.lines) {
                 val rect = line.boundingBox
-                if (TextUtils.isValidLine(line.text) && rect != null) {
+               if (TextUtils.isValidLine(line.text) && rect != null) {
                     textLines.add(TextLineLight(TextUtils.splitNumbers(line.text), rect))
                 }
             }
