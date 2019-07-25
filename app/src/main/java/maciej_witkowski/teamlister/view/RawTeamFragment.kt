@@ -24,10 +24,7 @@ class RawTeamFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_raw_team, container, false)
     }
 
@@ -52,14 +49,14 @@ class RawTeamFragment : Fragment() {
             tv_team_raw_2.isVisible = false
             rw_team_raw_2.isVisible = false
             tv_team_raw_na.isVisible = true
-            divider.isVisible=false
+            divider.isVisible = false
         } else {
             tv_team_raw_1.isVisible = !viewModel.rawTeam1.value.isNullOrEmpty()
             rw_team_raw_1.isVisible = !viewModel.rawTeam1.value.isNullOrEmpty()
             tv_team_raw_2.isVisible = !viewModel.rawTeam2.value.isNullOrEmpty()
             rw_team_raw_2.isVisible = !viewModel.rawTeam2.value.isNullOrEmpty()
             tv_team_raw_na.isVisible = false
-            divider.isVisible=!viewModel.rawTeam2.value.isNullOrEmpty()&&!viewModel.rawTeam1.value.isNullOrEmpty()
+            divider.isVisible = !viewModel.rawTeam2.value.isNullOrEmpty() && !viewModel.rawTeam1.value.isNullOrEmpty()
         }
     }
 

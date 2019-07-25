@@ -9,93 +9,131 @@
                                                    android:id="@+id/frameLayout5">
 
     <ScrollView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="parent"
-            android:fillViewport="true"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintVertical_bias="0.0">
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/linearLayout">
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
             <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp" tools:src="@tools:sample/backgrounds/scenic"
-                    android:id="@+id/iv_photo_report"
-                    android:scaleType="centerCrop"
-                    android:adjustViewBounds="true"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0" app:layout_constraintTop_toBottomOf="@+id/btn_report"
-                    android:layout_marginTop="8dp"/>
+                android:id="@+id/iv_photo_report"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_report"
+                tools:src="@tools:sample/backgrounds/scenic" />
+
             <TextView
-                    android:text="ISO = ????"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:id="@+id/tv_iso"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginStart="8dp"
-                    app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/tv_shutter"
-                    android:textSize="18sp"
-                    app:layout_constraintTop_toBottomOf="@+id/sw_report_3" android:layout_marginTop="8dp"/>
+                android:id="@+id/tv_iso"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="ISO = ????"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toStartOf="@+id/tv_shutter"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sw_report_3" />
+
             <TextView
-                    android:text="Shutter speed = ????"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:id="@+id/tv_shutter"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/tv_iso" app:layout_constraintHorizontal_bias="0.5"
-                    android:textSize="18sp"
-                    android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/sw_report_3"/>
+                android:id="@+id/tv_shutter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Shutter speed = ????"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tv_iso"
+                app:layout_constraintTop_toBottomOf="@+id/sw_report_3" />
+
             <Button
-                    android:text="@string/btn_send"
-                    android:textAllCaps="true"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" android:id="@+id/btn_report"
-                    android:enabled="false"
-                    android:backgroundTint="@color/grey_700"
-                    style="@style/AppTheme.RoundedCornerMaterialButton" android:textSize="24sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginEnd="8dp"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/tv_shutter"/>
+                android:id="@+id/btn_report"
+                style="@style/AppTheme.RoundedCornerMaterialButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/grey_700"
+                android:enabled="false"
+                android:text="@string/btn_send"
+                android:textAllCaps="true"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_shutter" />
+
             <Switch
-                    android:text="@string/sw_1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" android:id="@+id/sw_report_1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginStart="8dp"
-                    android:textSize="18sp" android:layout_marginTop="9dp"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_report_info"/>
+                android:id="@+id/sw_report_1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="9dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/sw_1"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_report_info" />
+
             <Switch
-                    android:text="@string/sw_2"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/sw_report_2" android:layout_marginTop="8dp"
-                    app:layout_constraintTop_toBottomOf="@+id/sw_report_1" app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginStart="8dp" android:textSize="18sp"/>
+                android:id="@+id/sw_report_2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/sw_2"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sw_report_1" />
+
             <Switch
-                    android:text="@string/sw_3"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/sw_report_3" android:layout_marginTop="8dp"
-                    app:layout_constraintTop_toBottomOf="@+id/sw_report_2" app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginStart="8dp"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    android:textSize="18sp"/>
+                android:id="@+id/sw_report_3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/sw_3"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sw_report_2" />
+
             <TextView
-                    android:text="@string/tv_report"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" android:id="@+id/tv_report_info"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginStart="8dp" app:layout_constraintTop_toTopOf="parent"
-                    android:textSize="18sp" app:layout_constraintHorizontal_bias="1.0"/>
+                android:id="@+id/tv_report_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/tv_report"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

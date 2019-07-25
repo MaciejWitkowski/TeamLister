@@ -7,14 +7,11 @@ import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.exifinterface.media.ExifInterface
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.FitCenter
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.internal_photo_row.view.*
 import maciej_witkowski.teamlister.R
 import maciej_witkowski.teamlister.utils.ImageUtils
 import maciej_witkowski.teamlister.utils.Orientation
+import java.lang.ref.WeakReference
 
 
 private const val LANDSCAPE = 0
@@ -36,15 +33,6 @@ class InternalGalleryRecyclerViewAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderInternalPhoto {
-        if (viewType == PORTRAIT)
-            return ViewHolderInternalPhoto(
-                LayoutInflater.from(context).inflate(
-                    R.layout.internal_photo_row,
-                    parent,
-                    false
-                )
-            )
-        else
             return ViewHolderInternalPhoto(
                 LayoutInflater.from(context).inflate(
                     R.layout.internal_photo_row,
@@ -72,32 +60,11 @@ class InternalGalleryRecyclerViewAdapter(
        holder.itemView.setOnClickListener {
             onItemClick(holder.adapterPosition)
         }
+        ImageUtils.glideWithRoundedCorners(string, WeakReference(holder.ivPhoto),context)
 
-        if (holder.itemViewType == PORTRAIT) {
-            val height = screenWidth * 4 / 3
-            val requestOptions =
-                RequestOptions().transform(RoundedCorners(100), FitCenter()).override(screenWidth, height)
-            Glide.with(holder.ivPhoto.context)
-                .load(uri)
-                .apply(requestOptions)
-                .into(holder.ivPhoto)
-        } else {//landscape
-            val height = screenWidth * 0.75.toInt()
-            val requestOptions = RequestOptions().transform(RoundedCorners(100), FitCenter())
-                .override(screenWidth, height)
-            Glide.with(holder.ivPhoto.context)
-                .load(uri)
-                .apply(requestOptions)
-                .into(holder.ivPhoto)
-        }
     }
 
 }
-
-
-
-
-
 
 
 class ViewHolderInternalPhoto(view: View) : RecyclerView.ViewHolder(view) {

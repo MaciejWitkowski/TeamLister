@@ -7,15 +7,16 @@
                                                    android:layout_height="wrap_content" android:id="@+id/linearLayout3">
 
     <ImageView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content" tools:srcCompat="@tools:sample/backgrounds/scenic"
-            android:id="@+id/iv_report_photo"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:scaleType="centerInside"
-            android:adjustViewBounds="true"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintTop_toBottomOf="@+id/tv_report_number"/>
+        android:id="@+id/iv_report_photo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_report_number"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
     <TextView
             android:text="STATE:"
             android:layout_width="wrap_content"

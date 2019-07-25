@@ -76,6 +76,10 @@ class GalleryPhotoFragment : Fragment() {
                 iv_photo.adjustViewBounds = true
                 iv_photo.scaleType = ImageView.ScaleType.CENTER_CROP
             }
+            else{
+                    iv_photo.adjustViewBounds = false
+                    iv_photo.scaleType = ImageView.ScaleType.FIT_CENTER
+                }
             createPaletteAsync(bitmap)
             iv_photo.setImageBitmap(bitmap)
         }

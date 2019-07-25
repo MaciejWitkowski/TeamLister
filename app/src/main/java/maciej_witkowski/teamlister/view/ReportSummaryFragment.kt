@@ -41,14 +41,9 @@ class ReportSummaryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as? AppCompatActivity)?.supportActionBar?.title = getString(R.string.app_title_report_summary)
-        val metrics = DisplayMetrics()
-        activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
-        val width = metrics.widthPixels-rv_photo_reports.marginLeft-rv_photo_reports.marginRight
-        Log.d(TAG, width.toString())
-        //rvPhotoReports.layoutManager = LinearLayoutManager(requireContext())
         viewModel.reports.observe(this, Observer { reports ->
             rv_photo_reports.layoutManager = LinearLayoutManager(requireContext())
-            rv_photo_reports.adapter = ReportSummaryRecyclerViewAdapter(reports, requireContext(), width)
+            rv_photo_reports.adapter = ReportSummaryRecyclerViewAdapter(reports, requireContext())
             rv_photo_reports.addItemDecoration(
                 DividerItemDecoration(
                     rv_photo_reports.context,

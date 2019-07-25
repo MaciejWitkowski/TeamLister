@@ -8,7 +8,11 @@ import android.util.Log
 import android.util.Rational
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.FitCenter
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import java.lang.ref.WeakReference
+
 private val TAG  = ImageUtils::class.java.simpleName
 class ImageUtils {
     companion object {
@@ -72,19 +76,18 @@ class ImageUtils {
         }
 
 
-
-        fun glideToWidth43(path: String, metrics: DisplayMetrics, imageView: ImageView, context: Context) {
-            val width = metrics.widthPixels
-            val orientation = orientationFromExif(path)
-            if (orientation == Orientation.PORTRAIT) //portrait photo
+        fun glideDefault(path: String, metrics: DisplayMetrics, imageViewRef: WeakReference<ImageView>, context: Context) {
+            val imageView = imageViewRef.get() ?: return
                 Glide.with(context)
                     .load(path)
-                    .apply(RequestOptions().override(width, (width * 4 / 3)))
+                    .apply(RequestOptions().fitCenter())
                     .into(imageView)
-            else
-                Glide.with(context)
+        }
+        fun glideWithRoundedCorners(path: String, imageViewRef: WeakReference<ImageView>, context: Context) {
+            val imageView = imageViewRef.get() ?: return
+            Glide.with(context)
                     .load(path)
-                    .apply(RequestOptions().override(width, width * 3 / 4))
+                    .apply(RequestOptions().transform(RoundedCorners(100), FitCenter()))
                     .into(imageView)
         }
     }

@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProviders
 import android.util.DisplayMetrics
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker.checkSelfPermission
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_photo_report.*
@@ -22,6 +21,7 @@ import maciej_witkowski.teamlister.R
 import maciej_witkowski.teamlister.utils.ImageUtils
 import maciej_witkowski.teamlister.vievmodel.PhotoReportViewModel
 import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
+import java.lang.ref.WeakReference
 
 
 private val TAG = PhotoReportFragment::class.java.simpleName
@@ -34,7 +34,7 @@ class PhotoReportFragment : Fragment() {
     private val pathObserver = Observer<String> { path ->
         val metrics = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
-        ImageUtils.glideToWidth43(path, metrics, iv_photo_report, requireContext())
+        ImageUtils.glideDefault(path, metrics, WeakReference(iv_photo_report), requireContext())
     }
 
 
