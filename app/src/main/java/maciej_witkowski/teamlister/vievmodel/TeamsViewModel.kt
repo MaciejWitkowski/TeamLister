@@ -73,6 +73,11 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         analyzeImage(bitmap)
     }
 
+    fun setImage(bitmap: Bitmap){//TODO tmp for testing
+        image.value = bitmap
+        analyzeImage(bitmap)
+    }
+
     fun splitToTeam1() {
         if (isDataAvailable()) {
             teamSplitter.splitToTeam1()
@@ -141,6 +146,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
     private fun analyzeImage(bitmap: Bitmap) {
         val firebaseVisionImage = FirebaseVisionImage.fromBitmap(bitmap)
         val textRecognizer = FirebaseVision.getInstance().onDeviceTextRecognizer
+        //val textRecognizer = FirebaseVision.getInstance().cloudTextRecognizer
         textRecognizer.processImage(firebaseVisionImage)
             .addOnSuccessListener {
                 Log.d(TAG, "Success")

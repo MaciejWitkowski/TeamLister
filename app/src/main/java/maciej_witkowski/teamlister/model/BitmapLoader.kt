@@ -17,7 +17,7 @@ class BitmapLoader {
 
     fun getBitmap(path:String):Bitmap{
         Log.d(TAG, path)
-        val exif = ExifInterface(path)
+        val exif = ExifInterface(path)//TODO throws FileNotFoundException
         val rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
         val rotationInDegrees = ImageUtils.exifToDegrees(rotation)
         val myBitmap = BitmapFactory.decodeFile(path)
@@ -57,5 +57,4 @@ class BitmapLoader {
         }
         return mutableImage
     }
-
 }

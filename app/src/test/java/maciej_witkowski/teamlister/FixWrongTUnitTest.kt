@@ -14,40 +14,46 @@ class FixWrongTUnitTest {
 
     @Test
     fun slowikUnitTest() {
-        val actual =fixWrongT("Jakub StOWIK")
-        val expected ="Jakub SŁOWIK"
+        val actual = fixWrongT("Jakub StOWIK")
+        val expected = "Jakub SŁOWIK"
         assertEquals(expected, actual)
     }
 
     @Test
     fun holowniaUnitTest() {
-        val actual =fixWrongT("Mateusz HOtOWNIA")
-        val expected ="Mateusz HOŁOWNIA"
+        val actual = fixWrongT("Mateusz HOtOWNIA")
+        val expected = "Mateusz HOŁOWNIA"
         assertEquals(expected, actual)
     }
 
     @Test
     fun lyszczarzUnitTest() {
-        val actual =fixWrongT("Adrian tYSZCZARZ")
-        val expected ="Adrian ŁYSZCZARZ"
+        val actual = fixWrongT("Adrian tYSZCZARZ")
+        val expected = "Adrian ŁYSZCZARZ"
         assertEquals(expected, actual)
     }
+
     @Test
     fun lyszczarz1UnitTest() {
-        val actual =fixWrongT("tYSZCZARZ")
-        val expected ="ŁYSZCZARZ"
+        val actual = fixWrongT("tYSZCZARZ")
+        val expected = "ŁYSZCZARZ"
         assertEquals(expected, actual)
     }
 
     @Test
-    fun unchangedUnitTest(){
-        val actual =fixWrongT("Marcin ROBAK")
-        val expected ="Marcin ROBAK"
+    fun jagielloUnitTest() {
+        val actual = fixWrongT("JAGIEtŁO")
+        val expected = "JAGIEŁŁO"
         assertEquals(expected, actual)
     }
-    //Michat CHRAPEK
-    //Michai
 
+
+    @Test
+    fun unchangedUnitTest() {
+        val actual = fixWrongT("Marcin ROBAK")
+        val expected = "Marcin ROBAK"
+        assertEquals(expected, actual)
+    }
 
 
 }

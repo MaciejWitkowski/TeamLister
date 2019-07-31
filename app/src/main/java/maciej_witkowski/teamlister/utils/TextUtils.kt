@@ -56,38 +56,38 @@ class TextUtils {
         }
 
         fun fixWrongT(input: String): String {
-            val regex = "[A-Z][t][A-Z]".toRegex()
-            val regexStart = "^[t][A-Z]".toRegex()
-            val regexSpace = "[\\s][t][A-Z]".toRegex()
+            val regex = "[A-Z-Ł][t][A-Z-Ł]".toRegex()
+            val regexStart = "^[t][A-Z-Ł]".toRegex()
+            val regexSpace = "[\\s][t][A-Z-Ł]".toRegex()
             return when {
-                regex.containsMatchIn(input) -> replaceT(input, regex)
-                regexSpace.containsMatchIn(input) -> replaceT(input, regexSpace)
-                regexStart.containsMatchIn(input) -> replaceT(input, regexStart)
+                regex.containsMatchIn(input) -> replaceWrong(input, regex,"t","Ł")
+                regexSpace.containsMatchIn(input) -> replaceWrong(input, regexSpace,"t","Ł")
+                regexStart.containsMatchIn(input) -> replaceWrong(input, regexStart,"t","Ł")
                 else -> input
             }
         }
 
-        fun fixDollarSign(input: String): String {
-            return input.replace("$", "S")
+
+        fun fixRandomWrongSigns(input: String): String {
+           return input.replace("$", "S").replace("&", "Ł").replace(" @","").replace(" @ ","")
         }
 
         /** "t"  surrounded by uppercase letters are fixed in @fixWrongT method **/
         fun dictionaryNameFix(input: String, names: List<String>): String {
-            //var current = input
             var corrected = ""
             val split = input.split(" ").toMutableList()
-            split.forEachIndexed {index, string ->
+            split.forEachIndexed { index, string ->
                 names.forEach { dictName ->
                     if (string.contains(dictName, true)) {
                         if (dictName.equals("tomistaw", true))
-                            split[index]= split[index].replaceRange(5, 6, "ł")
+                            split[index] = split[index].replaceRange(5, 6, "ł")
                         else if (dictName.equals("barttomiej", true)) {
-                            split[index] =  split[index].replaceRange(4, 5, "ł")
+                            split[index] = split[index].replaceRange(4, 5, "ł")
                         } else {
                             if (dictName[0] == 't')
-                                split[index] =  split[index].replaceRange(0, 1, "Ł")
+                                split[index] = split[index].replaceRange(0, 1, "Ł")
                             else
-                                split[index] =  split[index].replace("t", "ł")
+                                split[index] = split[index].replace("t", "ł")
 
                         }
 
@@ -95,8 +95,8 @@ class TextUtils {
                 }
             }
 
-            split.forEach{
-                corrected= "$corrected $it"
+            split.forEach {
+                corrected = "$corrected $it"
             }
             return corrected.trim()
         }
@@ -170,6 +170,17 @@ private fun splitKeepDelimiters(s: String, rx: Regex, keep_empty: Boolean = true
 }
 
 
+private fun replaceWrong(input: String, regex: Regex, old: String, new: String): String {
+    val split = splitKeepDelimiters(input, regex)
+    var result = ""
+    for (i: Int in 0 until split.size) {
+        if (regex.containsMatchIn(split[i])) {
+            split[i] = split[i].replace(old, new)
+        }
+        result += split[i]
+    }
+    return result
+}
 
 private fun replaceT(input: String, regex: Regex): String {
     val split = splitKeepDelimiters(input, regex)

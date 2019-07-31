@@ -36,7 +36,7 @@ class RawToString {
             Log.d(TAG, "Names size: " + names.size.toString())
             for (line in data) {
                 var tmp = line.name
-                tmp = TextUtils.fixDollarSign(tmp)
+                tmp = TextUtils.fixRandomWrongSigns(tmp)
                 if (fixT) {
                     tmp = TextUtils.dictionaryNameFix(tmp, names)
                     tmp = TextUtils.fixWrongT(tmp)  //TODO to builder, now needs to be called in particular order
@@ -52,7 +52,7 @@ class RawToString {
                 }
             }
         }
-        newSb.trim()
-        return newSb.toString()
+        //newSb.trim()//TODO
+        return newSb.toString().trim()
     }
 }
