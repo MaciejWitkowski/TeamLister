@@ -150,7 +150,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         textRecognizer.processImage(firebaseVisionImage)
             .addOnSuccessListener {
                 Log.d(TAG, "Success")
-                textLinesHandle.value=LineExtractor().getValidTextLines(it)
+                textLinesHandle.value=LineExtractor().getValidTextLines(it,bitmap.width)
                 teamSplitter = TeamSplitter(textLinesHandle.value!!, image.value!!, getApplication<Application>().applicationContext)
                 updateSplitValues()
                 _toastMessage.value = Event("Image analyzed")

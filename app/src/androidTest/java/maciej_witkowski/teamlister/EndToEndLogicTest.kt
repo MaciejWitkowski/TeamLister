@@ -225,7 +225,7 @@ class EndToEndLogicTest {
         assertEquals(team2ListExpected, team2ListActual)
 
     }
-    @Test
+   /* @Test
     fun chelseaBournemouthTest() {
         val team1Expected ="22 Lukasz Fabianski\r\n" +
                 "5 Jan Bednarek\r\n" +
@@ -326,7 +326,7 @@ class EndToEndLogicTest {
         assertEquals(team1ListExpected, team1ListActual)
         assertEquals(team2ListExpected, team2ListActual)
 
-    }
+    }*/
 }
 
 

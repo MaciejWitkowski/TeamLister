@@ -35,7 +35,7 @@ class TeamSplitter constructor(inputData: MutableList<TextLineLight>, inputImage
         team2Paint.strokeWidth = 6F
         val teamFirst = mutableListOf<PlayerData>()
         val teamSecond = mutableListOf<PlayerData>()
-        if (data.size > 0) {
+        if (data.size > 0) {//TODO split function to splitting and drawing
             val min = data.minBy { it.boundingBox.left }
             data.sortBy { it.boundingBox.top }
             for (line in data) {
@@ -55,6 +55,7 @@ class TeamSplitter constructor(inputData: MutableList<TextLineLight>, inputImage
         team1 = teamFirst
         team2 = teamSecond
     }
+
 
     fun splitToTeam1() {
         val canvas = Canvas(image)
