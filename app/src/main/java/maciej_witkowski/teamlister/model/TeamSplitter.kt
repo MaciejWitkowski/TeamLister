@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import maciej_witkowski.teamlister.R
 
 private val TAG = TeamSplitter::class.java.simpleName
+private const val DEFAULT_SPLIT_RATIO =0.25 //other should be used for "name 10 10 name" pattern.
 
 class TeamSplitter constructor(inputData: MutableList<TextLineLight>, inputImage: Bitmap, appContext: Context) {
     private val data = inputData
@@ -40,7 +41,7 @@ class TeamSplitter constructor(inputData: MutableList<TextLineLight>, inputImage
             data.sortBy { it.boundingBox.top }
             for (line in data) {
 
-                if (line.boundingBox.left < (min!!.boundingBox.left + (imageWidth * 0.25))) {
+                if (line.boundingBox.left < (min!!.boundingBox.left + (imageWidth * DEFAULT_SPLIT_RATIO))) {
                     canvas.drawRect(line.boundingBox, team1Paint)
                     teamFirst.add(line.data)
                     Log.d(TAG, "Team1: " + line.data)
