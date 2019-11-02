@@ -14,25 +14,44 @@ private const val MULTIPLIER = 5
 class LineExtractor {
     fun getValidTextLines(result: FirebaseVisionText, imageWidth: Int): MutableList<TextLineLight> {
         val textLines = extractValidLines(result)
-        //  return textLines}}
+
+       /* val textLines = extractAllLines(result)
+        return textLines}
+
+  private fun extractAllLines(result: FirebaseVisionText): MutableList<TextLineLight> {
+      val textLines = mutableListOf<TextLineLight>()
+      for (block in result.textBlocks) {
+          for (line in block.lines) {
+              Log.d(TAG, line.text.toString() + " " + line.boundingBox.toString())
+              val rect = line.boundingBox
+                  textLines.add(TextLineLight(TextUtils.splitNumbers(line.text), rect!!))
+
+          }
+      }
+      return textLines
+  }}*/
+
+
 
         val sideExtractor = SideExtractor(textLines, imageWidth)
         val leftBoxes = sideExtractor.leftBoxes
         val rightBoxes = sideExtractor.rightBoxes
-        val rightAvg = sideExtractor.rightAvg
-        val leftAvg = sideExtractor.leftAvg
+        val rightBoxesLeftAvg = sideExtractor.rightBoxesLeftAvg
+        val leftBoxesLeftAvg = sideExtractor.leftBoxesLeftAvg
+        val rightBoxesRightAvg = sideExtractor.rightBoxesRightAvg
+        val leftBoxesRightAvg = sideExtractor.leftBoxesRightAvg
 
 
         // different splitting for one team only
         //different list for "suspicious" entries?
         return if (leftBoxes.size == 18 && rightBoxes.size == 18)// Two full teams "out of the box" TODO TMP? Can lead to errors with teams bigger than 18(rugby/af)
             textLines
-        else if (leftBoxes.size < 3 || rightBoxes.size < 3)// values need to be checked, if around 0 & around 0 list numbers and corresponding names.
-            defaultFixing(textLines, result, leftAvg, rightAvg, imageWidth)
-        else if (leftBoxes.size in 3..10 && rightBoxes.size in 3..10)//if >0 && <10 get cords on full lines, get step on partial lines, mby include removed lines like substitutes
-            defaultFixing(textLines, result, leftAvg, rightAvg, imageWidth)
+        else if (leftBoxes.size < 3 || rightBoxes.size < 3)// values need tov be checked, if around 0 & around 0 list numbers and corresponding names. noLinesFixing
+            defaultFixing(textLines, result, leftBoxesLeftAvg, rightBoxesLeftAvg,leftBoxesRightAvg,rightBoxesRightAvg, imageWidth)
+        else if (leftBoxes.size in 3..10 && rightBoxes.size in 3..10)//if >0 && <10 get cords on full lines, get step on partial lines, mby include removed lines like substitutes singleLinesFixing
+            defaultFixing(textLines, result, leftBoxesLeftAvg, rightBoxesLeftAvg,leftBoxesRightAvg,rightBoxesRightAvg, imageWidth)
         else
-            defaultFixing(textLines, result, leftAvg, rightAvg, imageWidth) // if each size >10 limit names to be in boundingBox.height
+            defaultFixing(textLines, result, leftBoxesLeftAvg, rightBoxesLeftAvg,leftBoxesRightAvg,rightBoxesRightAvg, imageWidth) // if each size >10 limit names to be in boundingBox.height
     }
 
 
@@ -59,24 +78,73 @@ class LineExtractor {
     }
 
 
-    private fun defaultFixing(textLines: MutableList<TextLineLight>, result: FirebaseVisionText, leftAvg: Int, rightAvg: Int, imageWidth: Int): MutableList<TextLineLight> {
-        mergeLines(leftAvg, result, imageWidth, textLines)
-        mergeLines(rightAvg, result, imageWidth, textLines)
+    private fun defaultFixing(textLines: MutableList<TextLineLight>, result: FirebaseVisionText, leftBoxesLeftAvg: Int, rightBoxesLeftAvg: Int, leftBoxesRightAvg: Int, rightBoxesRightAvg: Int, imageWidth: Int): MutableList<TextLineLight> {
+        mergeLines(leftBoxesLeftAvg, leftBoxesRightAvg,result, imageWidth, textLines)
+        mergeLines(rightBoxesLeftAvg, rightBoxesRightAvg,result, imageWidth, textLines)
         Log.d(TAG, "==============================")
         Log.d(TAG, textLines.toString())
         return textLines
     }
+
     // inverted order needs right side average
-    private fun mergeLines(averagePosition: Int, result: FirebaseVisionText, imageWidth: Int, textLines: MutableList<TextLineLight>) {
+    private fun mergeLines(leftAvg: Int, rightAvg: Int, result: FirebaseVisionText, imageWidth: Int, textLines: MutableList<TextLineLight>) {
+        if (leftAvg > 0&&rightAvg>0) {
+            val names = mutableListOf<FirebaseVisionText.Line>()
+            val numbers = mutableListOf<FirebaseVisionText.Line>()
+            for (block in result.textBlocks) {//TODO height limits
+                for (line in block.lines) {
+                    val rect = line.boundingBox!!
+                    if (line.text.isDigitsOnly() && rect.left < leftAvg + imageWidth * PERCENT_DIFF && rect.left > leftAvg - imageWidth * PERCENT_DIFF) {
+                        numbers.add(line)
+                    } else if (!LineValidator.isValidLine(line.text) && rect.left > leftAvg + imageWidth * PERCENT_DIFF && rect.left < leftAvg + imageWidth * (MULTIPLIER * PERCENT_DIFF)) {
+                        names.add(line)
+                    }
+
+                }
+            }
+
+            val numberIterator = numbers.iterator()
+            var tmp = 0
+            if (names.size > 0 && numbers.size > 0) {
+                names.forEach {
+                    tmp += (it.boundingBox!!.bottom - it.boundingBox!!.top)
+                }
+                val avgHeight = tmp / names.size
+                val heightPercent = (avgHeight * 0.5).toInt()
+                for (number in numberIterator) {
+                    val nameIterator = names.iterator()
+                    for (name in nameIterator) {
+                        if (name.boundingBox!!.centerY() > number.boundingBox!!.centerY() - heightPercent && name.boundingBox!!.centerY() < number.boundingBox!!.centerY() + heightPercent) {
+                            textLines.add(mergeNumberName(number, name))
+                            numberIterator.remove()
+                            nameIterator.remove()
+                        }
+                    }
+                }
+                if (names.size > 0) {
+                    names.forEach { line ->
+                        textLines.add(TextLineLight(TextUtils.splitNumbers(line.text), line.boundingBox!!))
+                    }
+                }
+                if (numbers.size > 0) {
+                    numbers.forEach { line ->
+                        textLines.add(TextLineLight(TextUtils.splitNumbers(line.text), line.boundingBox!!))
+                    }
+                }
+            }
+        }
+    }
+
+    private fun mergeLinesInverted(averagePosition: Int, result: FirebaseVisionText, imageWidth: Int, textLines: MutableList<TextLineLight>) {
         if (averagePosition > 0) {
             val namesLeft = mutableListOf<FirebaseVisionText.Line>()
             val numbersLeft = mutableListOf<FirebaseVisionText.Line>()
             for (block in result.textBlocks) {//TODO height limits
                 for (line in block.lines) {
                     val rect = line.boundingBox!!
-                    if (line.text.isDigitsOnly() && rect.left < averagePosition + imageWidth * PERCENT_DIFF && rect.left > averagePosition - imageWidth * PERCENT_DIFF) {
+                    if (line.text.isDigitsOnly() && rect.left < averagePosition + imageWidth * PERCENT_DIFF && rect.left > averagePosition - imageWidth * PERCENT_DIFF) {//TODO
                         numbersLeft.add(line)
-                    } else if (!LineValidator.isValidLine(line.text) && rect.left > averagePosition + imageWidth * PERCENT_DIFF && rect.left < averagePosition + imageWidth * (MULTIPLIER * PERCENT_DIFF)) {
+                    } else if (!LineValidator.isValidLine(line.text) && rect.left > averagePosition + imageWidth * PERCENT_DIFF && rect.left < averagePosition + imageWidth * (MULTIPLIER * PERCENT_DIFF)) {//TODO
                         namesLeft.add(line)
                     }
 
@@ -93,7 +161,7 @@ class LineExtractor {
                 for (number in numberIterator) {
                     val nameIterator = namesLeft.iterator()
                     for (name in nameIterator) {
-                        if (name.boundingBox!!.centerY() > number.boundingBox!!.centerY() - heightPercent && name.boundingBox!!.centerY() < number.boundingBox!!.centerY() + heightPercent) {
+                        if (name.boundingBox!!.centerY() > number.boundingBox!!.centerY() - heightPercent && name.boundingBox!!.centerY() < number.boundingBox!!.centerY() + heightPercent) {//TODO
                             textLines.add(mergeNumberName(number, name))
                             numberIterator.remove()
                             nameIterator.remove()
@@ -112,6 +180,7 @@ class LineExtractor {
                 }
             }
         }
+
     }
 
     private fun mergeNumberName(number: FirebaseVisionText.Line, name: FirebaseVisionText.Line): TextLineLight {
@@ -142,13 +211,18 @@ class LineExtractor {
 }
 
 private class SideExtractor constructor(textLines: MutableList<TextLineLight>, imageWidth: Int) {
-    var leftAvg = 0
-    var rightAvg = 0
+    //should also return type(normal, inverted, bridge(name 1 name), mixed) of split data
+    var leftBoxesLeftAvg = 0
+    var rightBoxesLeftAvg = 0
+    var leftBoxesRightAvg = 0
+    var rightBoxesRightAvg = 0
     val leftBoxes = mutableListOf<Rect>()
     val rightBoxes = mutableListOf<Rect>()
+
     init {
         splitLeftRight(textLines, imageWidth)
     }
+
     private fun splitLeftRight(textLines: MutableList<TextLineLight>, imageWidth: Int) {
         val minXLine = textLines.minBy { it.boundingBox.left }
         val maxXLine = textLines.maxBy { it.boundingBox.right }
@@ -162,27 +236,34 @@ private class SideExtractor constructor(textLines: MutableList<TextLineLight>, i
         if (minX != null && maxX != null && minY != null && maxY != null) {
             if (textLines.size > 0) {
                 for (line in textLines) {
-                    if (line.boundingBox.left < minX + (imageWidth * 0.25)) {
+                    if (line.boundingBox.left < minX + (imageWidth * 0.25)) {//left/right boxes mby should be split into leftLeft/leftRight/rightLeft/rightRight
                         leftBoxes.add(line.boundingBox)
                     } else {
                         rightBoxes.add(line.boundingBox)
                     }
+
                 }
             }
         }
-        if (leftBoxes.size > 0) {
-            var tmp = 0
+        if (leftBoxes.size > 0) {   //mby should be split
+            var tmpLeft = 0
+            var tmpRight = 0
             leftBoxes.forEach {
-                tmp += it.left
+                tmpLeft += it.left
+                tmpRight += it.right
             }
-            leftAvg = tmp / leftBoxes.size
+            leftBoxesLeftAvg = tmpLeft / leftBoxes.size
+            leftBoxesRightAvg = tmpRight / leftBoxes.size
         }
         if (rightBoxes.size > 0) {
-            var tmp = 0
+            var tmpLeft = 0
+            var tmpRight = 0
             rightBoxes.forEach {
-                tmp += it.left
+                tmpLeft += it.left
+                tmpRight += it.right
             }
-            rightAvg = tmp / rightBoxes.size
+            rightBoxesLeftAvg = tmpLeft / rightBoxes.size
+            rightBoxesRightAvg = tmpRight / rightBoxes.size
         }
     }
 }
