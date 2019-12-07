@@ -35,8 +35,8 @@ import kotlinx.android.synthetic.main.fragment_gallery.*
 import kotlinx.android.synthetic.main.fragment_photo.btn_team_1
 import kotlinx.android.synthetic.main.fragment_photo.btn_team_2
 import kotlinx.android.synthetic.main.fragment_photo.btn_team_auto
-import kotlinx.android.synthetic.main.fragment_photo.fab_accept_photo
-import kotlinx.android.synthetic.main.fragment_photo.fab_retry_photo
+import kotlinx.android.synthetic.main.fragment_photo.ib_accept_photo
+import kotlinx.android.synthetic.main.fragment_photo.ib_retry_photo
 import kotlinx.android.synthetic.main.fragment_photo.iv_photo
 import maciej_witkowski.teamlister.utils.ImageUtils
 
@@ -152,9 +152,9 @@ class GalleryPhotoFragment : Fragment() {
         } else
             viewModel.image.observe(this, imageObserver)
 
-        fab_retry_photo.setOnClickListener { startGallery() }
-        fab_accept_photo.setOnClickListener { acceptResult() }
-        fab_internal_gallery.setOnClickListener { startInternalGallery() }
+        ib_retry_photo.setOnClickListener { startGallery() }
+        ib_accept_photo.setOnClickListener { acceptResult() }
+        ib_internal_gallery.setOnClickListener { startInternalGallery() }
         btn_team_1.setOnClickListener { viewModel.splitToTeam1() }
         btn_team_auto.setOnClickListener { viewModel.splitAuto() }
         btn_team_2.setOnClickListener { viewModel.splitToTeam2() }

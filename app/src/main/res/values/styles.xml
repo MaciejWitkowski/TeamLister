@@ -19,4 +19,8 @@
         <item name="android:background">@drawable/rounded_shape</item>
     </style>
 
+    <style name="AppTheme.RoundMaterialButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:background">@drawable/round_shape</item>
+    </style>
+
 </resources>

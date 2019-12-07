@@ -26,7 +26,7 @@
             app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintEnd_toStartOf="@+id/btn_team_auto" android:layout_marginTop="8dp"
             app:layout_constraintTop_toTopOf="parent"
-            android:backgroundTint="@color/team_1"
+            android:backgroundTint="@color/team_1_transparent"
             style="@style/AppTheme.RoundedCornerMaterialButton" android:textSize="18sp"
             android:layout_marginStart="8dp"/>
     <Button
@@ -36,7 +36,7 @@
             android:id="@+id/btn_team_auto" app:layout_constraintStart_toEndOf="@+id/btn_team_1"
             app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/btn_team_2"
             android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="parent"
-            android:backgroundTint="@color/grey_700"
+            android:backgroundTint="@color/grey_700_transparent"
             style="@style/AppTheme.RoundedCornerMaterialButton" android:textSize="18sp"
             android:layout_marginStart="8dp" android:layout_marginEnd="8dp"/>
     <Button
@@ -47,31 +47,37 @@
             app:layout_constraintStart_toEndOf="@+id/btn_team_auto" app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="8dp"
             app:layout_constraintTop_toTopOf="parent"
-            android:backgroundTint="@color/team_2"
+            android:backgroundTint="@color/team_2_transparent"
             style="@style/AppTheme.RoundedCornerMaterialButton" android:textSize="18sp" android:layout_marginEnd="8dp"/>
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:src="@drawable/ic_check_white_24dp"
+    <ImageButton
+            android:src="@drawable/ic_check_white_transparent_48dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:id="@+id/fab_accept_photo" android:layout_marginBottom="24dp"
+            style="@style/AppTheme.RoundMaterialButton"
+            android:backgroundTint="@color/grey_700_transparent"
+            android:id="@+id/ib_accept_photo" android:layout_marginBottom="24dp"
             app:layout_constraintBottom_toBottomOf="parent" android:layout_marginEnd="24dp"
             app:layout_constraintEnd_toEndOf="parent" android:focusable="true"/>
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:src="@drawable/ic_refresh_white_24dp"
+    <ImageButton
+            android:src="@drawable/ic_refresh_white_transparent_48dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:id="@+id/fab_retry_photo" android:layout_marginBottom="24dp"
+            style="@style/AppTheme.RoundMaterialButton"
+            android:backgroundTint="@color/grey_700_transparent"
+            android:id="@+id/ib_retry_photo" android:layout_marginBottom="24dp"
             app:layout_constraintBottom_toBottomOf="parent" android:layout_marginStart="24dp"
             app:layout_constraintStart_toStartOf="parent" android:focusable="true"/>
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:src="@drawable/ic_image_black_24dp"
+    <ImageButton
+            android:src="@drawable/ic_image_white_transparent_48dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:id="@+id/fab_internal_gallery"
+            style="@style/AppTheme.RoundMaterialButton"
+            android:backgroundTint="@color/grey_700_transparent"
+            android:id="@+id/ib_internal_gallery"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="24dp" app:layout_constraintStart_toEndOf="@+id/fab_retry_photo"
+            android:layout_marginBottom="24dp" app:layout_constraintStart_toEndOf="@+id/ib_retry_photo"
             android:layout_marginStart="24dp" android:focusable="true"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

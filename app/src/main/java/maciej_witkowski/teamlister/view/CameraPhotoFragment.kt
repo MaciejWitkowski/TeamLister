@@ -139,8 +139,8 @@ class CameraPhotoFragment : Fragment() {
             }
         } else
             viewModel.image.observe(this, imageObserver)
-        fab_retry_photo.setOnClickListener { startCamera() }
-        fab_accept_photo.setOnClickListener { acceptResult() }
+        ib_retry_photo.setOnClickListener { startCamera() }
+        ib_accept_photo.setOnClickListener { acceptResult() }
         btn_team_1.setOnClickListener { viewModel.splitToTeam1() }
         btn_team_auto.setOnClickListener { viewModel.splitAuto() }
         btn_team_2.setOnClickListener { viewModel.splitToTeam2() }

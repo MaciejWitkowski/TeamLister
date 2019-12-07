@@ -6,6 +6,11 @@
     <color name="team_1">#512DA8</color><!--cyan300-->
     <color name="team_2">#FF6F00</color><!--purple200-->
 
+
+    <color name="team_1_transparent">#AA512DA8</color><!--cyan300-->
+    <color name="team_2_transparent">#AAFF6F00</color><!--purple200-->
+    <color name="grey_700_transparent">#AA616161</color>
+    <color name="white_transparent">#AAFFFFFF</color>
     <!-- Material Design - Color Palette -->
 <!-- Date: 1/15/2015 -->
 <!-- http://www.google.com/design/spec/style/color.html#color-color-palette -->

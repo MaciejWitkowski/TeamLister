@@ -17,13 +17,15 @@
             app:layout_constraintVertical_bias="1.0"/>
 
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:src="@drawable/ic_camera_black_24dp"
+    <ImageView
+            android:src="@drawable/ic_shutter_white_transparent_48dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="true"
             android:id="@+id/fab_shutter"
+            style="@style/AppTheme.RoundMaterialButton"
+            android:backgroundTint="@color/grey_700_transparent"
             android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="@+id/textureview_camera"
             android:layout_marginBottom="32dp" app:layout_constraintBottom_toBottomOf="@+id/textureview_camera"
             android:layout_marginStart="8dp" app:layout_constraintStart_toStartOf="parent"/>
