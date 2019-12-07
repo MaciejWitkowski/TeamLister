@@ -39,8 +39,7 @@ class CameraFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(requireActivity(), SavedStateVMFactory(requireActivity()))
-            .get(TeamsViewModel::class.java)
+        viewModel = ViewModelProviders.of(requireActivity(), SavedStateVMFactory(requireActivity())).get(TeamsViewModel::class.java)
     }
 
     override fun onCreateView(

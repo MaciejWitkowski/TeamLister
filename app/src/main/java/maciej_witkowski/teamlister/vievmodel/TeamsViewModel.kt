@@ -4,6 +4,8 @@ import android.app.Application
 import android.graphics.*
 import android.util.Log
 import androidx.annotation.NonNull
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.*
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
@@ -20,18 +22,19 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         return super.getApplication()
     }
 
-    val imagePathHandle: MutableLiveData<String> = handle.getLiveData<String>("path")
+    val imagePathHandle: MutableLiveData<String> = handle.getLiveData<String>("path")//TODO shouldn't be livedata
 
-    private val textLinesHandle: MutableLiveData<MutableList<TextLineLight>> =
+    private val textLinesHandle: MutableLiveData<MutableList<TextLineLight>> =  //TODO shouldn't be livedata
         handle.getLiveData<MutableList<TextLineLight>>("TextLines")
 
-    private val rawTeam1Handle: MutableLiveData<MutableList<PlayerData>> =
-        handle.getLiveData<MutableList<PlayerData>>("RawTeam1")
-    val rawTeam1: LiveData<MutableList<PlayerData>> = rawTeam1Handle
+    private val rawTeam1Handle: MutableLiveData<List<PlayerData>> =
+        handle.getLiveData<List<PlayerData>>("RawTeam1")
 
-    private val rawTeam2Handle: MutableLiveData<MutableList<PlayerData>> =
-        handle.getLiveData<MutableList<PlayerData>>("RawTeam2")
-    val rawTeam2: LiveData<MutableList<PlayerData>> = rawTeam2Handle
+    val rawTeam1: LiveData<List<PlayerData>> = rawTeam1Handle
+
+    private val rawTeam2Handle: MutableLiveData<List<PlayerData>> =
+        handle.getLiveData<List<PlayerData>>("RawTeam2")
+    val rawTeam2: LiveData<List<PlayerData>> = rawTeam2Handle
 
     private val team1Handle: MutableLiveData<String> = handle.getLiveData<String>("Team1")
     val team1: LiveData<String> = team1Handle
@@ -44,7 +47,8 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
     val toastMessage: LiveData<Event<String>>
         get() = _toastMessage
 
-    val image: MutableLiveData<Bitmap> = getImage(imagePathHandle.value)
+    private val imageHandle: MutableLiveData<Bitmap> = getImage(imagePathHandle.value)
+    val image:LiveData<Bitmap> = imageHandle
 
     private lateinit var teamSplitter: TeamSplitter
 
@@ -69,12 +73,12 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
     fun setImagePath(path: String) {
         imagePathHandle.value = path
         val bitmap = BitmapLoader().getBitmap(path)
-        image.value = bitmap
+        imageHandle.value = bitmap
         analyzeImage(bitmap)
     }
 
     fun setImage(bitmap: Bitmap){//TODO tmp for testing
-        image.value = bitmap
+        imageHandle.value = bitmap
         analyzeImage(bitmap)
     }
 
@@ -100,7 +104,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
     }
 
     private fun updateSplitValues() {
-        image.value = teamSplitter.image
+        imageHandle.value = teamSplitter.image
         rawTeam1Handle.value = teamSplitter.team1
         rawTeam2Handle.value = teamSplitter.team2
     }
@@ -131,9 +135,9 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
 
     private fun isDataAvailable(): Boolean {
         val isValid: Boolean
-        if (!textLinesHandle.value.isNullOrEmpty() && image.value != null) {
+        if (!textLinesHandle.value.isNullOrEmpty() && imageHandle.value != null) {
             isValid = true
-        } else if (image.value == null) {
+        } else if (imageHandle.value == null) {
             isValid = false
             _toastMessage.value = Event("Take image first")
         } else {
@@ -151,7 +155,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
             .addOnSuccessListener {
                 Log.d(TAG, "Success")
                 textLinesHandle.value=LineExtractor().getValidTextLines(it,bitmap.width)
-                teamSplitter = TeamSplitter(textLinesHandle.value!!, image.value!!, getApplication<Application>().applicationContext)
+                teamSplitter = TeamSplitter(textLinesHandle.value!!, imageHandle.value!!, getApplication<Application>().applicationContext)
                 updateSplitValues()
                 _toastMessage.value = Event("Image analyzed")
             }

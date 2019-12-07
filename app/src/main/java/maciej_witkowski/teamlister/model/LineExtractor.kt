@@ -14,7 +14,6 @@ private const val MULTIPLIER = 5
 class LineExtractor {
     fun getValidTextLines(result: FirebaseVisionText, imageWidth: Int): MutableList<TextLineLight> {
         val textLines = extractValidLines(result)
-
        /* val textLines = extractAllLines(result)
         return textLines}
 
@@ -30,9 +29,6 @@ class LineExtractor {
       }
       return textLines
   }}*/
-
-
-
         val sideExtractor = SideExtractor(textLines, imageWidth)
         val leftBoxes = sideExtractor.leftBoxes
         val rightBoxes = sideExtractor.rightBoxes
@@ -91,12 +87,17 @@ class LineExtractor {
         if (leftAvg > 0&&rightAvg>0) {
             val names = mutableListOf<FirebaseVisionText.Line>()
             val numbers = mutableListOf<FirebaseVisionText.Line>()
+            val widthPercent =imageWidth * PERCENT_DIFF
             for (block in result.textBlocks) {//TODO height limits
                 for (line in block.lines) {
                     val rect = line.boundingBox!!
-                    if (line.text.isDigitsOnly() && rect.left < leftAvg + imageWidth * PERCENT_DIFF && rect.left > leftAvg - imageWidth * PERCENT_DIFF) {
+                    if (line.text.isDigitsOnly() && rect.left < leftAvg + widthPercent && rect.left > leftAvg - widthPercent) {
                         numbers.add(line)
-                    } else if (!LineValidator.isValidLine(line.text) && rect.left > leftAvg + imageWidth * PERCENT_DIFF && rect.left < leftAvg + imageWidth * (MULTIPLIER * PERCENT_DIFF)) {
+                    } else if (!LineValidator.isValidLine(line.text) && rect.left > leftAvg + widthPercent && rect.left < leftAvg + widthPercent* MULTIPLIER) {
+                        names.add(line)
+                    } else if(line.text.isDigitsOnly()&&rect.right<rightAvg+widthPercent&&rect.right>rightAvg-widthPercent){
+                        numbers.add(line)
+                    } else if(!LineValidator.isValidLine(line.text) && rect.right -widthPercent< rightAvg&&rightAvg-rect.right< widthPercent* MULTIPLIER){//TODO not sure if multiplier value is correct here
                         names.add(line)
                     }
 

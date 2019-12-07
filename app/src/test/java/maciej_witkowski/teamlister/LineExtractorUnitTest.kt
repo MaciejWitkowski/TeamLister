@@ -294,9 +294,9 @@ class LineExtractorUnitTest {
             TextLineLight(PlayerData("18", "Eighteenth NAME"), Rect(148, 812, 484, 846)),
             TextLineLight(PlayerData("4", "Fourth NAME"), Rect(200, 228, 466, 253)),
             TextLineLight(PlayerData("6", "Sixth NAME"), Rect(210, 312, 465, 338)),
-            TextLineLight(PlayerData("7", "Sixteenth NAME"), Rect(184, 350, 467, 381)),
-            TextLineLight(PlayerData("9", "Seventeenth NAME"), Rect(218, 437, 469, 462)),
-            TextLineLight(PlayerData("14", "Eighteenth NAME"), Rect(146, 645, 484, 670))
+            TextLineLight(PlayerData("7", "Seventh NAME"), Rect(184, 350, 467, 381)),
+            TextLineLight(PlayerData("9", "Ninth NAME"), Rect(218, 437, 469, 462)),
+            TextLineLight(PlayerData("14", "Fourteenth NAME"), Rect(146, 645, 484, 670))
         )
         val imageWidth = 968
         `when`(line1?.text).thenReturn("First NAME 1")

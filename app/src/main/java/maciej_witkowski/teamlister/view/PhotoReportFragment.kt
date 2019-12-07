@@ -49,9 +49,7 @@ class PhotoReportFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         viewModel = ViewModelProviders.of(this, SavedStateVMFactory(this)).get(PhotoReportViewModel::class.java)
         if (viewModel.path.value == null) {
-
-            mainViewModel = ViewModelProviders.of(requireActivity(), SavedStateVMFactory(requireActivity()))
-                .get(TeamsViewModel::class.java)
+            mainViewModel = ViewModelProviders.of(requireActivity(), SavedStateVMFactory(requireActivity())).get(TeamsViewModel::class.java)
             val path = mainViewModel.imagePathHandle.value
             path?.let { viewModel.setPath(path) }
         }

@@ -11,7 +11,7 @@ import maciej_witkowski.teamlister.utils.TextUtils
 private val TAG = RawToString::class.java.simpleName
 class RawToString {
 
-    fun rawToTeam(data: MutableList<PlayerData>?,context: Context):String {
+    fun rawToTeam(data: List<PlayerData>?,context: Context):String {
         val sharedPref = getDefaultSharedPreferences(context)
         val fixT = sharedPref.getBoolean("fixt", true)
         val replaceAscii = sharedPref.getBoolean("replace_ascii", true)
