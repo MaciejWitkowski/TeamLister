@@ -163,7 +163,7 @@ class GalleryPhotoFragment : Fragment() {
     private fun startGallery() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "image/*"
+        intent.type = "inputImag/*"
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_GET_SINGLE_FILE)
     }
 
@@ -178,7 +178,7 @@ class GalleryPhotoFragment : Fragment() {
                 if (requestCode == REQUEST_GET_SINGLE_FILE) {
                     val path = getRealPathFromURI(data)
                     Log.d(TAG, path)
-                    viewModel.setImagePath(path)
+                    viewModel.setPathToImage(path)
                 }
             }
         } catch (e: Exception) {

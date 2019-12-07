@@ -61,7 +61,7 @@ class InternalGalleryFragment : Fragment() {
             )
         )
         adapter.onItemClick = { position ->
-            viewModel.setImagePath(reversedFileList[position])
+            viewModel.setPathToImage(reversedFileList[position])
             loadFragment()
            // Toast.makeText(requireContext(), reversedFileList[position],Toast.LENGTH_LONG).show()
         }

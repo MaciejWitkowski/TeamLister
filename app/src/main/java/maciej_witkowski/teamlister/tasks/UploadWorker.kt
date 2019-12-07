@@ -37,7 +37,7 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) : Worker
             result= Result.retry()
             latch.countDown()
         }.addOnSuccessListener {
-            Log.d(TAG, "image uploaded: $it")
+            Log.d(TAG, "inputImag uploaded: $it")
             if (path!=null) {
                 CoroutineScope(Dispatchers.Main).launch {updateDb(path, latch)}
                 latch.countDown()

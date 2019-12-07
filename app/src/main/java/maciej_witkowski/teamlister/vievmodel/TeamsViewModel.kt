@@ -16,16 +16,24 @@ import maciej_witkowski.teamlister.utils.*
 
 private val TAG = TeamsViewModel::class.java.simpleName
 
-class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewModel(app) {
+class TeamsViewModel(app: Application, private val handle: SavedStateHandle) : AndroidViewModel(app) {
     @NonNull
     override fun <T : Application> getApplication(): T {
         return super.getApplication()
     }
 
-    val imagePathHandle: MutableLiveData<String> = handle.getLiveData<String>("path")//TODO shouldn't be livedata
+    var imagePath: String?
+        get() = handle.get("path")
+        private set(value) {
+            handle.set("path", value)
+        }
 
-    private val textLinesHandle: MutableLiveData<MutableList<TextLineLight>> =  //TODO shouldn't be livedata
-        handle.getLiveData<MutableList<TextLineLight>>("TextLines")
+    private var textLines: MutableList<TextLineLight>?
+        get() = handle.get("textLines")
+        private set(value) {
+            handle.set("textLines", value)
+        }
+
 
     private val rawTeam1Handle: MutableLiveData<List<PlayerData>> =
         handle.getLiveData<List<PlayerData>>("RawTeam1")
@@ -47,7 +55,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
     val toastMessage: LiveData<Event<String>>
         get() = _toastMessage
 
-    private val imageHandle: MutableLiveData<Bitmap> = getImage(imagePathHandle.value)
+    private val imageHandle: MutableLiveData<Bitmap> = getImage(imagePath)
     val image:LiveData<Bitmap> = imageHandle
 
     private lateinit var teamSplitter: TeamSplitter
@@ -57,9 +65,9 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         if (!path.isNullOrEmpty()) {
             Log.d(TAG, path)
             val myBitmap = BitmapLoader().getBitmap(path)
-            if (!textLinesHandle.value.isNullOrEmpty()) {
-                teamSplitter = TeamSplitter(textLinesHandle.value!!, myBitmap, getApplication<Application>().applicationContext)
-                imageLiveData.value = teamSplitter.image
+            if (!textLines.isNullOrEmpty()) {
+                teamSplitter = TeamSplitter(textLines!!, myBitmap, getApplication<Application>().applicationContext)
+                imageLiveData.value = teamSplitter.inputImage
                 rawTeam1Handle.value = teamSplitter.team1
                 rawTeam2Handle.value = teamSplitter.team2
             } else {
@@ -70,8 +78,8 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         return imageLiveData
     }
 
-    fun setImagePath(path: String) {
-        imagePathHandle.value = path
+    fun setPathToImage(path: String) {
+        imagePath = path
         val bitmap = BitmapLoader().getBitmap(path)
         imageHandle.value = bitmap
         analyzeImage(bitmap)
@@ -104,7 +112,7 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
     }
 
     private fun updateSplitValues() {
-        imageHandle.value = teamSplitter.image
+        imageHandle.value = teamSplitter.inputImage
         rawTeam1Handle.value = teamSplitter.team1
         rawTeam2Handle.value = teamSplitter.team2
     }
@@ -135,11 +143,11 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
 
     private fun isDataAvailable(): Boolean {
         val isValid: Boolean
-        if (!textLinesHandle.value.isNullOrEmpty() && imageHandle.value != null) {
+        if (!textLines.isNullOrEmpty() && imageHandle.value != null) {
             isValid = true
         } else if (imageHandle.value == null) {
             isValid = false
-            _toastMessage.value = Event("Take image first")
+            _toastMessage.value = Event("Take inputImag first")
         } else {
             isValid = false
             _toastMessage.value = Event("Text lines not found")
@@ -154,8 +162,8 @@ class TeamsViewModel(app: Application, handle: SavedStateHandle) : AndroidViewMo
         textRecognizer.processImage(firebaseVisionImage)
             .addOnSuccessListener {
                 Log.d(TAG, "Success")
-                textLinesHandle.value=LineExtractor().getValidTextLines(it,bitmap.width)
-                teamSplitter = TeamSplitter(textLinesHandle.value!!, imageHandle.value!!, getApplication<Application>().applicationContext)
+                textLines=LineExtractor().getValidTextLines(it,bitmap.width)
+                teamSplitter = TeamSplitter(textLines!!, imageHandle.value!!, getApplication<Application>().applicationContext)
                 updateSplitValues()
                 _toastMessage.value = Event("Image analyzed")
             }

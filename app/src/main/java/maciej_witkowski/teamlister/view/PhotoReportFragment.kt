@@ -50,7 +50,7 @@ class PhotoReportFragment : Fragment() {
         viewModel = ViewModelProviders.of(this, SavedStateVMFactory(this)).get(PhotoReportViewModel::class.java)
         if (viewModel.path.value == null) {
             mainViewModel = ViewModelProviders.of(requireActivity(), SavedStateVMFactory(requireActivity())).get(TeamsViewModel::class.java)
-            val path = mainViewModel.imagePathHandle.value
+            val path = mainViewModel.imagePath
             path?.let { viewModel.setPath(path) }
         }
         super.onCreate(savedInstanceState)
@@ -76,7 +76,7 @@ class PhotoReportFragment : Fragment() {
                 } else
                     Toast.makeText(requireContext(), "Sending report", Toast.LENGTH_SHORT).show()
             } else
-                Toast.makeText(requireContext(), "There is no image!!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "There is no inputImag!!", Toast.LENGTH_SHORT).show()
         }
         viewModel.path.observe(this, pathObserver)
         viewModel.iso.observe(this, isoObserver)

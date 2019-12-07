@@ -68,7 +68,7 @@ class CameraFragment : Fragment() {
                 Log.d(TAG, "Path ext $path")
                 val photoFile = createFile(path, FILENAME, PHOTO_EXTENSION)
                 val metadata = ImageCapture.Metadata().apply {
-                    // Mirror image when using the front camera
+                    // Mirror inputImag when using the front camera
                     isReversedHorizontal = lensFacing == CameraX.LensFacing.FRONT
                 }
                 imageCapture.takePicture(photoFile, imageSavedListener, metadata)
@@ -96,7 +96,7 @@ class CameraFragment : Fragment() {
             Toast.makeText(requireContext(), "it", Toast.LENGTH_SHORT).show()
             CameraX.unbindAll()
             val path = photoFile.absolutePath
-            viewModel.setImagePath(path)
+            viewModel.setPathToImage(path)
             val fragment = PhotoViewPagerFragment()
             val ft = fragmentManager!!.beginTransaction()
             ft.replace(R.id.content_frame, fragment)

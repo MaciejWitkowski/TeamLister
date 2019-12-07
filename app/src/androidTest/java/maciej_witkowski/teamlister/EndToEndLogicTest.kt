@@ -293,7 +293,7 @@ class EndToEndLogicTest {
 
         val viewModel = TeamsViewModel(app, handle = SavedStateHandle())
         CoroutineScope(Dispatchers.Main).launch {
-            viewModel.setImage(bitmap)
+            viewModel.setInputImag(bitmap)
         }
 
         CoroutineScope(Dispatchers.Main).launch {
