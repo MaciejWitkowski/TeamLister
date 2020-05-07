@@ -18,11 +18,7 @@ private const val LANDSCAPE = 0
 private const val PORTRAIT = 1
 private val TAG = InternalGalleryRecyclerViewAdapter::class.java.simpleName
 
-class InternalGalleryRecyclerViewAdapter(
-    private var items: List<String>?,
-    private val context: Context,
-    private val screenWidth: Int
-) :
+class InternalGalleryRecyclerViewAdapter(private var items: List<String>?, private val context: Context, private val screenWidth: Int) :
     RecyclerView.Adapter<ViewHolderInternalPhoto>() {
     var onItemClick: (Int) -> Unit = {}
     override fun getItemCount(): Int {

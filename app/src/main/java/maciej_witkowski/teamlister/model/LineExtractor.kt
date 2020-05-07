@@ -9,47 +9,45 @@ import maciej_witkowski.teamlister.utils.TextUtils
 private val TAG = LineExtractor::class.java.simpleName
 private const val PERCENT_DIFF = 0.02
 private const val MULTIPLIER = 5
+private const val DEBUG_MODE = 1
 
 
 class LineExtractor {
     fun getValidTextLines(result: FirebaseVisionText, imageWidth: Int): MutableList<TextLineLight> {
-        val textLines = extractValidLines(result)
-       /* val textLines = extractAllLines(result)
-        return textLines}
-
-  private fun extractAllLines(result: FirebaseVisionText): MutableList<TextLineLight> {
-      val textLines = mutableListOf<TextLineLight>()
-      for (block in result.textBlocks) {
-          for (line in block.lines) {
-              Log.d(TAG, line.text.toString() + " " + line.boundingBox.toString())
-              val rect = line.boundingBox
-                  textLines.add(TextLineLight(TextUtils.splitNumbers(line.text), rect!!))
-
-          }
-      }
-      return textLines
-  }}*/
-        val sideExtractor = SideExtractor(textLines, imageWidth)
-        val leftBoxes = sideExtractor.leftBoxes
-        val rightBoxes = sideExtractor.rightBoxes
-        val rightBoxesLeftAvg = sideExtractor.rightBoxesLeftAvg
-        val leftBoxesLeftAvg = sideExtractor.leftBoxesLeftAvg
-        val rightBoxesRightAvg = sideExtractor.rightBoxesRightAvg
-        val leftBoxesRightAvg = sideExtractor.leftBoxesRightAvg
+        if (DEBUG_MODE == 0) {
+            return extractAllLines(result)
+        } else {
+            val textLines = extractValidLines(result)
+            val sideExtractor = SideExtractor(textLines, imageWidth)
+            val leftBoxes = sideExtractor.leftBoxes
+            val rightBoxes = sideExtractor.rightBoxes
+            val rightBoxesLeftAvg = sideExtractor.rightBoxesLeftAvg
+            val leftBoxesLeftAvg = sideExtractor.leftBoxesLeftAvg
+            val rightBoxesRightAvg = sideExtractor.rightBoxesRightAvg
+            val leftBoxesRightAvg = sideExtractor.leftBoxesRightAvg
 
 
-        // different splitting for one team only
-        //different list for "suspicious" entries?
-        return if (leftBoxes.size == 18 && rightBoxes.size == 18)// Two full teams "out of the box" TODO TMP? Can lead to errors with teams bigger than 18(rugby/af)
-            textLines
-        else if (leftBoxes.size < 3 || rightBoxes.size < 3)// values need tov be checked, if around 0 & around 0 list numbers and corresponding names. noLinesFixing
-            defaultFixing(textLines, result, leftBoxesLeftAvg, rightBoxesLeftAvg,leftBoxesRightAvg,rightBoxesRightAvg, imageWidth)
-        else if (leftBoxes.size in 3..10 && rightBoxes.size in 3..10)//if >0 && <10 get cords on full lines, get step on partial lines, mby include removed lines like substitutes singleLinesFixing
-            defaultFixing(textLines, result, leftBoxesLeftAvg, rightBoxesLeftAvg,leftBoxesRightAvg,rightBoxesRightAvg, imageWidth)
-        else
-            defaultFixing(textLines, result, leftBoxesLeftAvg, rightBoxesLeftAvg,leftBoxesRightAvg,rightBoxesRightAvg, imageWidth) // if each size >10 limit names to be in boundingBox.height
+            // different splitting for one team only
+            //different list for "suspicious" entries?
+            return if (leftBoxes.size == 18 && rightBoxes.size == 18)// Two full teams "out of the box" TODO TMP? Can lead to errors with teams bigger than 18(rugby/af)
+                textLines
+            else if (leftBoxes.size < 3 || rightBoxes.size < 3)// values need tov be checked, if around 0 & around 0 list numbers and corresponding names. noLinesFixing
+                defaultFixing(textLines, result, leftBoxesLeftAvg, rightBoxesLeftAvg, leftBoxesRightAvg, rightBoxesRightAvg, imageWidth)
+            else if (leftBoxes.size in 3..10 && rightBoxes.size in 3..10)//if >0 && <10 get cords on full lines, get step on partial lines, mby include removed lines like substitutes singleLinesFixing
+                defaultFixing(textLines, result, leftBoxesLeftAvg, rightBoxesLeftAvg, leftBoxesRightAvg, rightBoxesRightAvg, imageWidth)
+            else
+                defaultFixing(
+                    textLines,
+                    result,
+                    leftBoxesLeftAvg,
+                    rightBoxesLeftAvg,
+                    leftBoxesRightAvg,
+                    rightBoxesRightAvg,
+                    imageWidth
+                ) // if each size >10 limit names to be in boundingBox.height
+
+        }
     }
-
 
     private fun singleLinesFixing(textLines: MutableList<TextLineLight>): MutableList<TextLineLight> {
         return textLines
@@ -73,10 +71,30 @@ class LineExtractor {
         return textLines
     }
 
+    private fun extractAllLines(result: FirebaseVisionText): MutableList<TextLineLight> {
+        val textLines = mutableListOf<TextLineLight>()
+        for (block in result.textBlocks) {
+            for (line in block.lines) {
+                Log.d(TAG, line.text.toString() + " " + line.boundingBox.toString())
+                val rect = line.boundingBox
+                textLines.add(TextLineLight(TextUtils.splitNumbers(line.text), rect!!))
 
-    private fun defaultFixing(textLines: MutableList<TextLineLight>, result: FirebaseVisionText, leftBoxesLeftAvg: Int, rightBoxesLeftAvg: Int, leftBoxesRightAvg: Int, rightBoxesRightAvg: Int, imageWidth: Int): MutableList<TextLineLight> {
-        mergeLines(leftBoxesLeftAvg, leftBoxesRightAvg,result, imageWidth, textLines)
-        mergeLines(rightBoxesLeftAvg, rightBoxesRightAvg,result, imageWidth, textLines)
+            }
+        }
+        return textLines
+    }
+
+    private fun defaultFixing(
+        textLines: MutableList<TextLineLight>,
+        result: FirebaseVisionText,
+        leftBoxesLeftAvg: Int,
+        rightBoxesLeftAvg: Int,
+        leftBoxesRightAvg: Int,
+        rightBoxesRightAvg: Int,
+        imageWidth: Int
+    ): MutableList<TextLineLight> {
+        mergeLines(leftBoxesLeftAvg, leftBoxesRightAvg, result, imageWidth, textLines)
+        mergeLines(rightBoxesLeftAvg, rightBoxesRightAvg, result, imageWidth, textLines)
         Log.d(TAG, "==============================")
         Log.d(TAG, textLines.toString())
         return textLines
@@ -84,20 +102,20 @@ class LineExtractor {
 
     // inverted order needs right side average
     private fun mergeLines(leftAvg: Int, rightAvg: Int, result: FirebaseVisionText, imageWidth: Int, textLines: MutableList<TextLineLight>) {
-        if (leftAvg > 0&&rightAvg>0) {
+        if (leftAvg > 0 && rightAvg > 0) {
             val names = mutableListOf<FirebaseVisionText.Line>()
             val numbers = mutableListOf<FirebaseVisionText.Line>()
-            val widthPercent =imageWidth * PERCENT_DIFF
+            val widthPercent = imageWidth * PERCENT_DIFF
             for (block in result.textBlocks) {//TODO height limits
                 for (line in block.lines) {
                     val rect = line.boundingBox!!
                     if (line.text.isDigitsOnly() && rect.left < leftAvg + widthPercent && rect.left > leftAvg - widthPercent) {
                         numbers.add(line)
-                    } else if (!LineValidator.isValidLine(line.text) && rect.left > leftAvg + widthPercent && rect.left < leftAvg + widthPercent* MULTIPLIER) {
+                    } else if (!LineValidator.isValidLine(line.text) && rect.left > leftAvg + widthPercent && rect.left < leftAvg + widthPercent * MULTIPLIER) {
                         names.add(line)
-                    } else if(line.text.isDigitsOnly()&&rect.right<rightAvg+widthPercent&&rect.right>rightAvg-widthPercent){
+                    } else if (line.text.isDigitsOnly() && rect.right < rightAvg + widthPercent && rect.right > rightAvg - widthPercent) {
                         numbers.add(line)
-                    } else if(!LineValidator.isValidLine(line.text) && rect.right -widthPercent< rightAvg&&rightAvg-rect.right< widthPercent* MULTIPLIER){//TODO not sure if multiplier value is correct here
+                    } else if (!LineValidator.isValidLine(line.text) && rect.right - widthPercent < rightAvg && rightAvg - rect.right < widthPercent * MULTIPLIER) {//TODO not sure if multiplier value is correct here
                         names.add(line)
                     }
 

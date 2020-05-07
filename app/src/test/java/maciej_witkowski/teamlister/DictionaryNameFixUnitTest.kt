@@ -1,16 +1,22 @@
 package maciej_witkowski.teamlister
 
-
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import maciej_witkowski.teamlister.utils.TextUtils
+import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
-import org.junit.Assert.*
-
+@RunWith(RobolectricTestRunner::class)
 class DictionaryNameFixUnitTest {
-    private val list = listOf("Barttomiej","Btażej","Btazej","Bogumit","Bogumistaw","Bolestaw","Bronistaw","Czestaw","Jarostaw","tucjan","tukasz","Michat","Mieczystaw",
-        "Mikotaj","Mirostaw","Mitosz","Przemystaw","Radostaw","Rafat","Stawomir","Tomistaw","Wactaw","Wiestaw","Wtadystaw","Władystaw","Wtadysław","Wtodzimierz","Zdzistaw")
-    //TODO list should be loaded from resources
-
+    var list = listOf<String>()
+    @Before
+    fun setup() {
+       val context:Context= ApplicationProvider.getApplicationContext()
+        list = context.resources.getStringArray(R.array.names).toList()
+    }
     @Test
     fun tukaszDefaultCaseTest(){
         val actual = TextUtils.dictionaryNameFix("tukasz Kurek",list)
@@ -95,6 +101,11 @@ class DictionaryNameFixUnitTest {
         assertEquals(expected, actual)
     }
 
-
+    @Test
+    fun pawetDefaultCaseTest(){
+        val actual = TextUtils.dictionaryNameFix("Pawet Bochniewicz", list)
+        val expected = "Paweł Bochniewicz"
+        assertEquals(expected, actual)
+    }
 
 }
