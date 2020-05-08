@@ -1,5 +1,6 @@
 package maciej_witkowski.teamlister.utils
 
+import android.annotation.SuppressLint
 import maciej_witkowski.teamlister.model.PlayerData
 import java.text.Normalizer
 
@@ -16,7 +17,8 @@ class TextUtils {
             }
         }
 
-        fun splitNumbers(str: String): PlayerData {//split text into number + name
+        /** splits text into number + name **/
+        fun splitNumbers(str: String): PlayerData {
             var number = ""
             var result = str.replace("[0-9]{1,3}".toRegex()) { number = it.value; "" }
             result = result.replace("\\s+".toRegex(), " ")
@@ -36,6 +38,7 @@ class TextUtils {
             return REGEX_UNACCENTED.replace(temp, "")
         }
 
+        @SuppressLint("DefaultLocale")
         fun caseFormatting(input: String, format: CaseFormat): String {
             return when (format) {
                 CaseFormat.DEFAULT -> input
@@ -45,40 +48,29 @@ class TextUtils {
             }
         }
 
-        fun fixWrongT(input: String): String {// fixes Ł classified as t eg: "Jakub StOWIK" -> "Jakub SŁOWIK"
-            //TODO will not work with I incorrectly recognized as l
-            //val regex = "[A-Z-Ł][[t]{1,2}][A-Z-Ł]".toRegex()
+        /** fixes Ł classified as t eg: "Jakub StOWIK" -> "Jakub SŁOWIK" **/
+        fun fixWrongT(input: String): String {
             val regex = "[A-Z-Ł][t][A-Z-Ł]".toRegex()
             val regexDouble = "[A-Z-Ł]tt[A-Z-Ł]".toRegex()
             val regexStart = "^[t][A-Z-Ł]".toRegex()
             val regexSpace = "[\\s][t][A-Z-Ł]".toRegex()
+            val regexEnd = "[A-Z][t]".toRegex()
             return when {
                 regex.containsMatchIn(input) -> replaceWrong(input, regex, "t", "Ł")
                 regexDouble.containsMatchIn(input) -> replaceWrong(input, regexDouble, "tt", "ŁŁ")
                 regexSpace.containsMatchIn(input) -> replaceWrong(input, regexSpace, "t", "Ł")
                 regexStart.containsMatchIn(input) -> replaceWrong(input, regexStart, "t", "Ł")
+                regexEnd.containsMatchIn(input) -> replaceWrong(input, regexEnd, "t", "Ł")
                 else -> input
             }
         }
 
+        /** fixes l classified as I eg: "AIa" -> "Ala"  and I classified as l eg: llja -> Ilja**/
         fun fixWrongIL(input: String): String {
             var corrected = input
-            //bad l first: lx -> Ix
-            //bad: xIx -> xlx
-            /*  val regex = "[a-zA-Z-Ł][I][a-z-ł]".toRegex() //-> l
-              val regexStart = "^[l][a-z-ł]".toRegex()// -> I
-              val regexSpace = "[\\s][l][a-z-ł]".toRegex()// -> I
-              return when {
-                  regex.containsMatchIn(input) -> replaceWrong(input, regex, "I", "l")
-                  regexSpace.containsMatchIn(input) -> replaceWrong(input, regexSpace, "l", "I")
-                  regexStart.containsMatchIn(input) -> replaceWrong(input, regexStart, "l", "I")
-                  else -> input
-              }*/
             corrected = fixWrongL(corrected)
             corrected = fixWrongI(corrected)
-
             return corrected
-
         }
 
 
@@ -158,14 +150,11 @@ private fun removeNotClosedBrackets(line: String): String {
     return result
 }
 
-private fun splitKeepDelimiters(s: String, rx: Regex, keep_empty: Boolean = true): MutableList<String> {// fails IIA input
+private fun splitKeepDelimiters(s: String, rx: Regex, keep_empty: Boolean = true): MutableList<String> {
     val res = mutableListOf<String>()
     var start = 0
-    val test = rx.findAll(s)
     rx.findAll(s).forEach {
-        //val subStrBefore = s.substring(start, it.range.first())//problem here?
-        var testNew = it
-        val subStrBefore = s.substring(start, it.range.first())//problem here?
+        val subStrBefore = s.substring(start, it.range.first())
         if (subStrBefore.isNotEmpty() || keep_empty) {
             res.add(subStrBefore)
         }
@@ -189,24 +178,14 @@ private fun replaceWrong(input: String, regex: Regex, old: String, new: String):
     return result
 }
 
-private fun replaceInMatchedRegex(input: String, old: String, new: String): String {//wont work with regex match longer than 2 chars and outside [char]anything[char] pattern
+/**wont work with regex match longer than 2 chars and outside [char]anything[char] pattern **/
+private fun replaceInMatchedRegex(input: String, old: String, new: String): String {
     return if (input.length > 2) {
         input.replaceRange(1 until input.length - 1, new)
     } else input.replace(old, new)
 }
 
-private fun replaceT(input: String, regex: Regex): String {
-    val split = splitKeepDelimiters(input, regex)
-    var result = ""
-    for (i: Int in 0 until split.size) {
-        if (regex.containsMatchIn(split[i])) {
-            split[i] = split[i].replace('t', 'Ł')
-        }
-        result += split[i]
-    }
-    return result
-}
-
+@SuppressLint("DefaultLocale")
 private fun upperLower(str: String): String {
     val input = str.toLowerCase()
     val words = input.split(" ").toMutableList()

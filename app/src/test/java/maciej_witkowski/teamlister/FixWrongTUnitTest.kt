@@ -34,7 +34,7 @@ class FixWrongTUnitTest {
     }
 
     @Test
-    fun lyszczarz1UnitTest() {
+    fun lyszczarzFirstUnitTest() {
         val actual = fixWrongT("tYSZCZARZ")
         val expected = "ŁYSZCZARZ"
         assertEquals(expected, actual)
@@ -58,6 +58,19 @@ class FixWrongTUnitTest {
     fun unchangedUnitTest() {
         val actual = fixWrongT("Marcin ROBAK")
         val expected = "Marcin ROBAK"
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun szczygietTest(){
+        val actual = fixWrongT("SZCZYGIEt Imie")
+        val expected = "SZCZYGIEŁ Imie"
+        assertEquals(expected, actual)
+    }
+    @Test
+    fun szczygietLastTest(){
+        val actual = fixWrongT("SZCZYGIEt")
+        val expected = "SZCZYGIEŁ"
         assertEquals(expected, actual)
     }
 
