@@ -47,6 +47,12 @@ class FixWrongTUnitTest {
         assertEquals(expected, actual)
     }
 
+    @Test
+    fun jagielloDoubleUnitTest(){
+        val actual = fixWrongT("JAGIEttO")
+        val expected = "JAGIEŁŁO"
+        assertEquals(expected, actual)
+    }
 
     @Test
     fun unchangedUnitTest() {

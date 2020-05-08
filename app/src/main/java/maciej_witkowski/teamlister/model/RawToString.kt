@@ -14,6 +14,7 @@ class RawToString {
     fun rawToTeam(data: List<PlayerData>?,context: Context):String {
         val sharedPref = getDefaultSharedPreferences(context)
         val fixT = sharedPref.getBoolean("fixt", true)
+        val fixIL =true //TODO
         val replaceAscii = sharedPref.getBoolean("replace_ascii", true)
         val append = sharedPref.getString("append_t2", null)
         val prepend = sharedPref.getString("prepend_t2", null)
