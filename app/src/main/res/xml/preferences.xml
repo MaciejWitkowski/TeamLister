@@ -115,6 +115,13 @@
                 app:defaultValue="true"
                 app:iconSpaceReserved="false"
         />
+
+        <SwitchPreference
+                app:key="fixil"
+                app:title="Fix wrong il letters"
+                app:defaultValue="true"
+                app:iconSpaceReserved="false"
+                />
         <ListPreference
                 app:key="brackets"
                 app:title="Remove brackets"

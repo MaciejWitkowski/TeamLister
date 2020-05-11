@@ -14,7 +14,7 @@ class RawToString {
     fun rawToTeam(data: List<PlayerData>?,context: Context):String {
         val sharedPref = getDefaultSharedPreferences(context)
         val fixT = sharedPref.getBoolean("fixt", true)
-        val fixIL =true //TODO
+        val fixIL=sharedPref.getBoolean("fixil",true)
         val replaceAscii = sharedPref.getBoolean("replace_ascii", true)
         val append = sharedPref.getString("append_t2", null)
         val prepend = sharedPref.getString("prepend_t2", null)
@@ -41,6 +41,9 @@ class RawToString {
                 if (fixT) {
                     tmp = TextUtils.dictionaryNameFix(tmp, names)
                     tmp = TextUtils.fixWrongT(tmp)  //TODO to builder, now needs to be called in particular order
+                }
+                if (fixIL){
+                    tmp =TextUtils.fixWrongIL(tmp)
                 }
                 tmp = TextUtils.caseFormatting(tmp, caseEnum)
                 if (replaceAscii)
