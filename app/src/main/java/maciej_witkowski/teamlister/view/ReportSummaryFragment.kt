@@ -17,15 +17,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.report_summary_fragment.*
 
 import maciej_witkowski.teamlister.R
+import maciej_witkowski.teamlister.utils.IOnBackPressed
 import maciej_witkowski.teamlister.vievmodel.ReportSummaryViewModel
 
 private val TAG  = ReportSummaryFragment::class.java.simpleName
 
-class ReportSummaryFragment : Fragment() {
+class ReportSummaryFragment : Fragment(),IOnBackPressed {
 
 
     private lateinit var viewModel: ReportSummaryViewModel
 
+    override fun onBackPressed(): Boolean {
+        return true
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(ReportSummaryViewModel::class.java)

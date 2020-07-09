@@ -5,26 +5,29 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.FirebaseApp
+import kotlinx.android.synthetic.main.activity_main.*
 import maciej_witkowski.teamlister.R
 import maciej_witkowski.teamlister.preferences.SettingsFragment
 import maciej_witkowski.teamlister.tasks.CleaningService
+import maciej_witkowski.teamlister.utils.IOnBackPressed
+
 
 private val TAG = MainActivity::class.java.simpleName
 
 private const val REQUEST_CAMERA_PERMISSION = 1
 private const val REQUEST_STORAGE_PERMISSION = 2
+private var isMenuFragment =false
+private var lastFragment = 0
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -35,19 +38,27 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.navigation_list -> {
                 loadFragment(ProcessedTeamFragment())
+                lastFragment=1
+                isMenuFragment = false
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_camera -> {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                     loadFragment(PhotoViewPagerFragment())
+                    lastFragment = 2
+                    isMenuFragment = false
+                }
                 else {
                     getCameraPermission()
                 }
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_gallery -> {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                     loadFragment(GalleryViewPagerFragment())
+                    lastFragment = 3
+                    isMenuFragment = false
+                }
                 else
                     getStoragePermission()
                 return@OnNavigationItemSelectedListener true
@@ -63,6 +74,62 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
+    override fun onBackPressed() {
+        val fragment = supportFragmentManager.findFragmentById(R.id.content_frame)
+        if (fragment !is IOnBackPressed || !(fragment as IOnBackPressed).onBackPressed()) {
+            super.onBackPressed()
+        }
+        else{
+            if (isMenuFragment){
+                if (lastFragment==1){
+                    loadFragment(ProcessedTeamFragment())
+                    isMenuFragment = false
+                }
+                else if(lastFragment==2){
+                    loadFragment(PhotoViewPagerFragment())
+                    isMenuFragment = false
+                }
+                else if(lastFragment==3){
+                    loadFragment(GalleryViewPagerFragment())
+                    isMenuFragment = false
+                }
+            }
+
+            Toast.makeText(applicationContext, "back", Toast.LENGTH_SHORT).show()
+        }
+
+    /*    val fragment = this.supportFragmentManager.findFragmentById(R.id.content_frame)
+        (fragment as? IOnBackPressed)?.onBackPressed()?.not()?.let {
+
+        //    (fragment as? IOnBackPressed)?.onBackPressed()?.takeIf { !it }?.let{
+            super.onBackPressed()
+        }*/
+    }
+
+/*
+    override fun onBackPressed() {
+        if(isMenuFragment){
+            if (lastFragment==1){
+                loadFragment(ProcessedTeamFragment())
+                isMenuFragment=false
+            }
+            else if(lastFragment==2){
+                loadFragment(PhotoViewPagerFragment())
+                isMenuFragment=false
+            }
+            else if(lastFragment==3) {
+                loadFragment(GalleryViewPagerFragment())
+                isMenuFragment=false
+            }
+            else{
+                super.onBackPressed()
+            }
+        }
+        else {
+            super.onBackPressed()
+        }
+    }
+    */
 
     private fun getCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -128,16 +195,19 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_settings -> {
                 loadFragment(SettingsFragment())
+                isMenuFragment=true
                 return true
             }
             R.id.action_photo_report -> {
                 loadFragment(PhotoReportFragment())
+                isMenuFragment=true
                 return true
             }
             R.id.action_report_summary -> {
-
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                     loadFragment(ReportSummaryFragment())
+                    isMenuFragment = true
+                }
                 else
                     getStoragePermission()
                 return true

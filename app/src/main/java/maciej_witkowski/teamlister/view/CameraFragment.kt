@@ -27,8 +27,7 @@ import java.util.*
 private val TAG  = CameraFragment::class.java.simpleName
 private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
 private const val PHOTO_EXTENSION = ".jpg"
-
-class CameraFragment : Fragment() {
+class CameraFragment : Fragment(){
     private lateinit var container: ConstraintLayout
     private lateinit var viewFinder: TextureView
     private var displayId = -1
@@ -104,7 +103,6 @@ class CameraFragment : Fragment() {
             ft.commit()
         }
     }
-
 
     private fun bindCameraUseCases() {
 

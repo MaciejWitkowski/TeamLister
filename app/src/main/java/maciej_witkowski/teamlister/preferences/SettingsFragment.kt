@@ -1,19 +1,23 @@
 package maciej_witkowski.teamlister.preferences
-import androidx.preference.PreferenceFragmentCompat
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceFragmentCompat
 import maciej_witkowski.teamlister.R
+import maciej_witkowski.teamlister.utils.IOnBackPressed
 
 
-class SettingsFragment : PreferenceFragmentCompat() {
+class SettingsFragment : PreferenceFragmentCompat(), IOnBackPressed {
 
 
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
         when (key) {
             }
         }
-
+    override fun onBackPressed(): Boolean {
+        return true
+    }
 
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -30,5 +34,4 @@ class SettingsFragment : PreferenceFragmentCompat() {
         preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
         super.onPause()
     }
-
 }

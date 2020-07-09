@@ -18,6 +18,7 @@ import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_photo_report.*
 
 import maciej_witkowski.teamlister.R
+import maciej_witkowski.teamlister.utils.IOnBackPressed
 import maciej_witkowski.teamlister.utils.ImageUtils
 import maciej_witkowski.teamlister.vievmodel.PhotoReportViewModel
 import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
@@ -26,7 +27,7 @@ import java.lang.ref.WeakReference
 
 private val TAG = PhotoReportFragment::class.java.simpleName
 
-class PhotoReportFragment : Fragment() {
+class PhotoReportFragment : Fragment(),IOnBackPressed {
     //TODO photo from gallery/files etc
     private lateinit var mainViewModel: TeamsViewModel
     private lateinit var viewModel: PhotoReportViewModel
@@ -45,6 +46,9 @@ class PhotoReportFragment : Fragment() {
         tv_shutter.text = getString(R.string.tv_shutter, shutter)
     }
 
+    override fun onBackPressed(): Boolean {
+        return true
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         viewModel = ViewModelProviders.of(this, SavedStateVMFactory(this)).get(PhotoReportViewModel::class.java)
