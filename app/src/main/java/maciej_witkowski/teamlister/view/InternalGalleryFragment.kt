@@ -18,11 +18,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_internal_gallery.*
 
 import maciej_witkowski.teamlister.R
+import maciej_witkowski.teamlister.utils.IOnBackPressed
 import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
 
 private val TAG = InternalGalleryFragment::class.java.simpleName
 
-class InternalGalleryFragment : Fragment() {
+class InternalGalleryFragment : Fragment(),IOnBackPressed {
     private lateinit var viewModel: TeamsViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,6 +66,19 @@ class InternalGalleryFragment : Fragment() {
             loadFragment()
            // Toast.makeText(requireContext(), reversedFileList[position],Toast.LENGTH_LONG).show()
         }
+    }
+    override fun onBackPressed(): Boolean {
+        if (viewModel.image.value!=null){
+            loadFragment()
+            return true
+        }
+        else if(viewModel.image.value==null){//TODO
+            viewModel.setDefaultEmptyImage()
+            loadFragment()
+            return true
+        }
+
+        return false
     }
 
     private fun loadFragment() {

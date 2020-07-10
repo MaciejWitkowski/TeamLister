@@ -181,6 +181,9 @@ class GalleryPhotoFragment : Fragment() {
                     viewModel.setPathToImage(path)
                 }
             }
+            else{
+                viewModel.setDefaultEmptyImage()
+            }
         } catch (e: Exception) {
             Log.e(TAG, "File select error", e)
         }

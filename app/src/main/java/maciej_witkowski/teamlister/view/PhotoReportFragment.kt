@@ -54,8 +54,10 @@ class PhotoReportFragment : Fragment(),IOnBackPressed {
         viewModel = ViewModelProviders.of(this, SavedStateVMFactory(this)).get(PhotoReportViewModel::class.java)
         if (viewModel.path.value == null) {
             mainViewModel = ViewModelProviders.of(requireActivity(), SavedStateVMFactory(requireActivity())).get(TeamsViewModel::class.java)
-            val path = mainViewModel.imagePath
-            path?.let { viewModel.setPath(path) }
+            if (mainViewModel.isPhotoAvailable==true) {
+                val path = mainViewModel.imagePath
+                path?.let { viewModel.setPath(path) }
+            }
         }
         super.onCreate(savedInstanceState)
     }

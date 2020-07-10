@@ -126,7 +126,6 @@ class CameraPhotoFragment : Fragment() {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }
         })
-
         if (viewModel.image.value == null) {
             startCamera()
         }

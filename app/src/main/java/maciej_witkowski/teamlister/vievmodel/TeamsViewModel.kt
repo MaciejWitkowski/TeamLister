@@ -16,7 +16,8 @@ import maciej_witkowski.teamlister.utils.*
 
 private val TAG = TeamsViewModel::class.java.simpleName
 
-class TeamsViewModel(app: Application, private val handle: SavedStateHandle) : AndroidViewModel(app) {
+class TeamsViewModel(private val app: Application, private val handle: SavedStateHandle) : AndroidViewModel(app) {
+    private val bitmapLoader=BitmapLoader(app)
     @NonNull
     override fun <T : Application> getApplication(): T {
         return super.getApplication()
@@ -28,6 +29,11 @@ class TeamsViewModel(app: Application, private val handle: SavedStateHandle) : A
             handle.set("path", value)
         }
 
+    var isPhotoAvailable: Boolean?
+        get() = handle.get("isAvailable")
+        private set(value) {
+            handle.set("isAvailable", value)
+        }
     private var textLines: MutableList<TextLineLight>?
         get() = handle.get("textLines")
         private set(value) {
@@ -64,7 +70,8 @@ class TeamsViewModel(app: Application, private val handle: SavedStateHandle) : A
         val imageLiveData = MutableLiveData<Bitmap>()
         if (!path.isNullOrEmpty()) {
             Log.d(TAG, path)
-            val myBitmap = BitmapLoader().getBitmap(path)
+            val myBitmap = bitmapLoader.getBitmap(path)
+            isPhotoAvailable=bitmapLoader.photoExist
             if (!textLines.isNullOrEmpty()) {
                 teamSplitter = TeamSplitter(textLines!!, myBitmap, getApplication<Application>().applicationContext)
                 imageLiveData.value = teamSplitter.inputImage
@@ -78,16 +85,25 @@ class TeamsViewModel(app: Application, private val handle: SavedStateHandle) : A
         return imageLiveData
     }
 
+    fun setDefaultEmptyImage(){
+        imageHandle.value=bitmapLoader.getDefault()
+    }
+
     fun setPathToImage(path: String) {
         imagePath = path
-        val bitmap = BitmapLoader().getBitmap(path)
+        val bitmap = bitmapLoader.getBitmap(path)
+        isPhotoAvailable=bitmapLoader.photoExist
         imageHandle.value = bitmap
-        analyzeImage(bitmap)
+        if (isPhotoAvailable==true) {
+            analyzeImage(bitmap)
+        }
     }
 
     fun setImage(bitmap: Bitmap){//TODO tmp for testing
         imageHandle.value = bitmap
+        if (isPhotoAvailable==true) {
         analyzeImage(bitmap)
+        }
     }
 
     fun splitToTeam1() {
@@ -156,6 +172,7 @@ class TeamsViewModel(app: Application, private val handle: SavedStateHandle) : A
     }
 
     private fun analyzeImage(bitmap: Bitmap) {
+        _toastMessage.value = Event("Analyzing image")
         val firebaseVisionImage = FirebaseVisionImage.fromBitmap(bitmap)
         val textRecognizer = FirebaseVision.getInstance().onDeviceTextRecognizer
         //val textRecognizer = FirebaseVision.getInstance().cloudTextRecognizer

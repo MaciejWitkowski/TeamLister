@@ -81,55 +81,24 @@ class MainActivity : AppCompatActivity() {
         }
         else{
             if (isMenuFragment){
-                if (lastFragment==1){
-                    loadFragment(ProcessedTeamFragment())
-                    isMenuFragment = false
+                when (lastFragment) {
+                    1 -> {
+                        loadFragment(ProcessedTeamFragment())
+                        isMenuFragment = false
+                    }
+                    2 -> {
+                        loadFragment(PhotoViewPagerFragment())
+                        isMenuFragment = false
+                    }
+                    3 -> {
+                        loadFragment(GalleryViewPagerFragment())
+                        isMenuFragment = false
+                    }
                 }
-                else if(lastFragment==2){
-                    loadFragment(PhotoViewPagerFragment())
-                    isMenuFragment = false
-                }
-                else if(lastFragment==3){
-                    loadFragment(GalleryViewPagerFragment())
-                    isMenuFragment = false
-                }
             }
-
-            Toast.makeText(applicationContext, "back", Toast.LENGTH_SHORT).show()
-        }
-
-    /*    val fragment = this.supportFragmentManager.findFragmentById(R.id.content_frame)
-        (fragment as? IOnBackPressed)?.onBackPressed()?.not()?.let {
-
-        //    (fragment as? IOnBackPressed)?.onBackPressed()?.takeIf { !it }?.let{
-            super.onBackPressed()
-        }*/
-    }
-
-/*
-    override fun onBackPressed() {
-        if(isMenuFragment){
-            if (lastFragment==1){
-                loadFragment(ProcessedTeamFragment())
-                isMenuFragment=false
-            }
-            else if(lastFragment==2){
-                loadFragment(PhotoViewPagerFragment())
-                isMenuFragment=false
-            }
-            else if(lastFragment==3) {
-                loadFragment(GalleryViewPagerFragment())
-                isMenuFragment=false
-            }
-            else{
-                super.onBackPressed()
-            }
-        }
-        else {
-            super.onBackPressed()
         }
     }
-    */
+
 
     private fun getCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -179,7 +148,6 @@ class MainActivity : AppCompatActivity() {
             }
             else -> {
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
             }
         }
     }

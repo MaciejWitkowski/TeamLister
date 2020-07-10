@@ -16,18 +16,18 @@ import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_camera.*
 import maciej_witkowski.teamlister.R
 import maciej_witkowski.teamlister.utils.AutoFitPreviewBuilder
+import maciej_witkowski.teamlister.utils.IOnBackPressed
 import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-
-
-private val TAG  = CameraFragment::class.java.simpleName
+private val TAG = CameraFragment::class.java.simpleName
 private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
 private const val PHOTO_EXTENSION = ".jpg"
-class CameraFragment : Fragment(){
+
+class CameraFragment : Fragment(), IOnBackPressed {
     private lateinit var container: ConstraintLayout
     private lateinit var viewFinder: TextureView
     private var displayId = -1
@@ -35,6 +35,18 @@ class CameraFragment : Fragment(){
     private var imageCapture: ImageCapture? = null
     private lateinit var viewModel: TeamsViewModel
 
+    override fun onBackPressed(): Boolean {
+        if (viewModel.image.value != null) {
+            loadFragment()
+            return true
+        }
+        else if(viewModel.image.value==null){
+            viewModel.setDefaultEmptyImage()
+            loadFragment()
+            return true
+        }
+        return false
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +67,6 @@ class CameraFragment : Fragment(){
         (activity as? AppCompatActivity)?.supportActionBar?.title = getString(R.string.app_title_camera)
         container = view as ConstraintLayout
         viewFinder = container.findViewById(R.id.textureview_camera)
-
         viewFinder.post {
             displayId = viewFinder.display.displayId
             bindCameraUseCases()
@@ -96,12 +107,16 @@ class CameraFragment : Fragment(){
             CameraX.unbindAll()
             val path = photoFile.absolutePath
             viewModel.setPathToImage(path)
-            val fragment = PhotoViewPagerFragment()
-            val ft = fragmentManager!!.beginTransaction()
-            ft.replace(R.id.content_frame, fragment)
-            ft.addToBackStack(null)
-            ft.commit()
+            loadFragment()
         }
+    }
+
+    private fun loadFragment() {
+        val fragment = PhotoViewPagerFragment()
+        val ft = fragmentManager!!.beginTransaction()
+        ft.replace(R.id.content_frame, fragment)
+        ft.addToBackStack(null)
+        ft.commit()
     }
 
     private fun bindCameraUseCases() {
@@ -129,7 +144,7 @@ class CameraFragment : Fragment(){
             setTargetRotation(viewFinder.display.rotation)
         }.build()
 
-        Log.d(TAG, "Target Res: "+viewFinderConfig.targetResolution.toString())
+        Log.d(TAG, "Target Res: " + viewFinderConfig.targetResolution.toString())
 
         // Use the splitAuto-fit preview builder to automatically handle size and orientation changes
         val preview = AutoFitPreviewBuilder.build(viewFinderConfig, viewFinder)
