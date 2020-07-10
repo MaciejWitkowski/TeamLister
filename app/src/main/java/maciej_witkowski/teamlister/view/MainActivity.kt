@@ -26,29 +26,28 @@ private val TAG = MainActivity::class.java.simpleName
 
 private const val REQUEST_CAMERA_PERMISSION = 1
 private const val REQUEST_STORAGE_PERMISSION = 2
-private var isMenuFragment =false
-private var lastFragment = 0
-
+private var isMenuFragment = false
+private var lastFragment = LastFragment.LISTS
 class MainActivity : AppCompatActivity() {
     companion object {
         var isFirstLaunch = true
+      //  var lastFragment = LastFragment.NONE
     }
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_list -> {
                 loadFragment(ProcessedTeamFragment())
-                lastFragment=1
+                lastFragment = LastFragment.LISTS
                 isMenuFragment = false
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_camera -> {
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                     loadFragment(PhotoViewPagerFragment())
-                    lastFragment = 2
+                    lastFragment = LastFragment.CAMERA
                     isMenuFragment = false
-                }
-                else {
+                } else {
                     getCameraPermission()
                 }
                 return@OnNavigationItemSelectedListener true
@@ -56,10 +55,9 @@ class MainActivity : AppCompatActivity() {
             R.id.navigation_gallery -> {
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                     loadFragment(GalleryViewPagerFragment())
-                    lastFragment = 3
+                    lastFragment = LastFragment.GALLERY
                     isMenuFragment = false
-                }
-                else
+                } else
                     getStoragePermission()
                 return@OnNavigationItemSelectedListener true
             }
@@ -77,20 +75,19 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         val fragment = supportFragmentManager.findFragmentById(R.id.content_frame)
         if (fragment !is IOnBackPressed || !(fragment as IOnBackPressed).onBackPressed()) {
-            super.onBackPressed()
-        }
-        else{
-            if (isMenuFragment){
+            finish()
+        } else {
+            if (isMenuFragment) {
                 when (lastFragment) {
-                    1 -> {
+                    LastFragment.LISTS -> {
                         loadFragment(ProcessedTeamFragment())
                         isMenuFragment = false
                     }
-                    2 -> {
+                    LastFragment.CAMERA -> {
                         loadFragment(PhotoViewPagerFragment())
                         isMenuFragment = false
                     }
-                    3 -> {
+                    LastFragment.GALLERY -> {
                         loadFragment(GalleryViewPagerFragment())
                         isMenuFragment = false
                     }
@@ -163,20 +160,19 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_settings -> {
                 loadFragment(SettingsFragment())
-                isMenuFragment=true
+                isMenuFragment = true
                 return true
             }
             R.id.action_photo_report -> {
                 loadFragment(PhotoReportFragment())
-                isMenuFragment=true
+                isMenuFragment = true
                 return true
             }
             R.id.action_report_summary -> {
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                     loadFragment(ReportSummaryFragment())
                     isMenuFragment = true
-                }
-                else
+                } else
                     getStoragePermission()
                 return true
             }
@@ -195,4 +191,10 @@ class MainActivity : AppCompatActivity() {
             baseContext.startService(Intent(baseContext, CleaningService::class.java))
         }
     }
+}
+
+enum class LastFragment {
+    LISTS,
+    CAMERA,
+    GALLERY
 }

@@ -12,11 +12,11 @@ import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_view_pager.*
 
 import maciej_witkowski.teamlister.R
+import maciej_witkowski.teamlister.utils.IOnBackPressed
 import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
 
-class PhotoViewPagerFragment : Fragment() {
+class PhotoViewPagerFragment : Fragment(),IOnBackPressed {
     private lateinit var viewModel: TeamsViewModel
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(requireActivity(), SavedStateVMFactory(requireActivity())).get(TeamsViewModel::class.java)
@@ -36,4 +36,14 @@ class PhotoViewPagerFragment : Fragment() {
         val fragmentAdapter = PhotoViewPagerAdapter(childFragmentManager)
         vp_main.adapter = fragmentAdapter
     }
+
+    override fun onBackPressed(): Boolean {
+        return if (vp_main.currentItem==1){
+            vp_main.currentItem = 0
+            true
+        } else {
+            false
+        }
+    }
+
 }

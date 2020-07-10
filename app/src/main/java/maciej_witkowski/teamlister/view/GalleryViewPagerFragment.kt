@@ -10,8 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.fragment_view_pager.*
 
 import maciej_witkowski.teamlister.R
+import maciej_witkowski.teamlister.utils.IOnBackPressed
 
-class GalleryViewPagerFragment : Fragment() {
+class GalleryViewPagerFragment : Fragment(),IOnBackPressed {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,5 +27,13 @@ class GalleryViewPagerFragment : Fragment() {
         (activity as? AppCompatActivity)?.supportActionBar?.title = getString(R.string.app_title_image_gallery)
         val fragmentAdapter = GalleryViewPagerAdapter(childFragmentManager)
         vp_main.adapter = fragmentAdapter
+    }
+    override fun onBackPressed(): Boolean {
+        return if (vp_main.currentItem==1){
+            vp_main.currentItem = 0
+            true
+        } else {
+            false
+        }
     }
 }

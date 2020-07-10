@@ -26,11 +26,12 @@ import maciej_witkowski.teamlister.vievmodel.TeamsViewModel
 
 import androidx.palette.graphics.Palette
 import io.reactivex.disposables.CompositeDisposable
+import maciej_witkowski.teamlister.utils.IOnBackPressed
 import maciej_witkowski.teamlister.utils.ImageUtils
 
 private val TAG = CameraPhotoFragment::class.java.simpleName
 
-class CameraPhotoFragment : Fragment() {
+class CameraPhotoFragment : Fragment(), IOnBackPressed {
     private lateinit var viewModel: TeamsViewModel
     private lateinit var vf: ImageView
     private lateinit var container: ConstraintLayout
@@ -55,11 +56,10 @@ class CameraPhotoFragment : Fragment() {
         }
 
         override fun onNext(bitmap: Bitmap) {
-            if (Rational(bitmap.height, bitmap.width) == Rational(4, 3)){
+            if (Rational(bitmap.height, bitmap.width) == Rational(4, 3)) {
                 iv_photo.adjustViewBounds = true
                 iv_photo.scaleType = ImageView.ScaleType.CENTER_CROP
-            }
-            else{
+            } else {
                 iv_photo.adjustViewBounds = false
                 iv_photo.scaleType = ImageView.ScaleType.FIT_CENTER
             }
@@ -75,6 +75,11 @@ class CameraPhotoFragment : Fragment() {
         override fun onComplete() {
             compositeDisposable.clear()
         }
+    }
+
+    override fun onBackPressed(): Boolean {
+       // requireActivity().finish()
+        return false
     }
 
     fun createPaletteAsync(bitmap: Bitmap) {
@@ -95,7 +100,7 @@ class CameraPhotoFragment : Fragment() {
         } else {
             val metrics = DisplayMetrics()
             activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
-            val width=metrics.widthPixels
+            val width = metrics.widthPixels
             ImageUtils.rescaleBitmapToWidth(bitmap, width)
         }
     }
